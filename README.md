@@ -15,8 +15,8 @@
 [![LinkedIn][linkedin-shield]][linkedin-url]
 <br/>
 <div align="center">
-  <a href="https://github.com/Raikuji/EasySave/ressources/diskette.png">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/Raikuji/EasySave">
+    <img src="ressources/diskette.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">EasySave</h3>
@@ -24,3 +24,18 @@
     EasySave is a simple and easy to use backup software.
   </p>
 </div>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/Raikuji/EasySave.svg?style=for-the-badge
+[contributors-url]: https://github.com/Raikuji/EasySave/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Raikuji/EasySave.svg?style=for-the-badge
+[forks-url]: https://github.com/Raikuji/EasySave/network/members
+[stars-shield]: https://img.shields.io/github/stars/Raikuji/EasySave.svg?style=for-the-badge
+[stars-url]: https://github.com/Raikuji/EasySave/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Raikuji/EasySave.svg?style=for-the-badge
+[issues-url]: https://github.com/Raikuji/EasySave/issues
+[license-shield]: https://img.shields.io/github/license/Raikuji/EasySave.svg?style=for-the-badge
+[license-url]: https://github.com/Raikuji/EasySave/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/antoine-gachenot-1921aa17b
