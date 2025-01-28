@@ -35,7 +35,7 @@
 [stars-url]: https://github.com/Raikuji/EasySave/stargazers
 [issues-shield]: https://img.shields.io/github/issues/Raikuji/EasySave.svg?style=for-the-badge
 [issues-url]: https://github.com/Raikuji/EasySave/issues
-[license-shield]: https://img.shields.io/github/license/Raikuji/EasySave.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/Raikuji/EasySave?style=for-the-badge
 [license-url]: https://github.com/Raikuji/EasySave/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/antoine-gachenot-1921aa17b
