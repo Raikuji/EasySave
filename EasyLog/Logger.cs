@@ -24,6 +24,7 @@ namespace EasyLog
                 Directory.CreateDirectory(_logDirectory);
             }
         }
+        
 
         
         /// Méthode pour écrire un log. 
@@ -31,18 +32,21 @@ namespace EasyLog
             string backupName,
             string sourceFilePath,
             string destinationFilePath,
+            string backupType,
             long fileSize,
             long transferTimeMs)
         {
-            // 1) Créer un objet LogEntry
-            var entry = new LogEntry
+
+            // 1) Créer une bibliothéque de données pour le log
+            var logData = new Dictionary<string, object>
             {
-                Timestamp = DateTime.Now,
-                BackupName = backupName,
-                SourceFilePath = sourceFilePath,
-                DestinationFilePath = destinationFilePath,
-                FileSize = fileSize,
-                TransferTimeMs = transferTimeMs
+                ["Name"] = "Save1",
+                ["FileSize"] = fileSize,
+                ["Timestamp"] = DateTime.Now
+                ["transferTimeMs"] = transferTimeMs,
+                ["BackupType"] = backupType;
+                ["sourceFilePath"] = sourceFilePath,
+                ["destinationFilePath"] = destinationFilePath
             };
 
             // 2) Générer le nom du fichier journalier (exemple : 2023-02-03.json)
@@ -50,13 +54,13 @@ namespace EasyLog
             string logFilePath = Path.Combine(_logDirectory, logFileName);
 
             // 3) Sérialiser l’objet en JSON
-            string json = JsonSerializer.Serialize(entry);
+            string json = JsonSerializer.Serialize(logData);
 
             // 4) Écrire le JSON dans le fichier, suivi d’un retour à la ligne
             //    Ouvrir en append pour ne pas écraser le contenu existant
-            using (var writer = new StreamWriter(logFilePath, append: true))
-            {
-                writer.WriteLine(json);
-            }
+            
+                File.AppendAllText(myLogFile, json + Environment.NewLine);
+            
         }
+       
 }
