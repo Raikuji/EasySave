@@ -25,10 +25,8 @@ namespace EasyLog
             }
         }
 
-        /// <summary>
+        
         /// Méthode pour écrire un log. 
-        /// On peut soit passer directement un objet LogEntry, soit quelques paramètres bruts.
-        /// </summary>
         public void LogAction(
             string backupName,
             string sourceFilePath,
@@ -52,15 +50,13 @@ namespace EasyLog
             string logFilePath = Path.Combine(_logDirectory, logFileName);
 
             // 3) Sérialiser l’objet en JSON
-            //    Indenter n’est pas forcément nécessaire pour un log, 
-            //    mais vous pouvez utiliser new JsonSerializerOptions { WriteIndented = true } si besoin
-            //string json = JsonSerializer.Serialize(entry);
+            string json = JsonSerializer.Serialize(entry);
 
             // 4) Écrire le JSON dans le fichier, suivi d’un retour à la ligne
             //    Ouvrir en append pour ne pas écraser le contenu existant
-            //using (var writer = new StreamWriter(logFilePath, append: true))
-            //{
-             //   writer.WriteLine(json);
-            //}
+            using (var writer = new StreamWriter(logFilePath, append: true))
+            {
+                writer.WriteLine(json);
+            }
         }
 }
