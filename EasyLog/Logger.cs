@@ -33,17 +33,10 @@ namespace EasyLog
             long transferTimeMs)
         {
             // 1) Create a LogEntry object
-            var entry = new LogEntry
+            foreach (var entry in entries)
             {
-                ["Name"] = "Save1",
-                ["FileSize"] = fileSize,
-                ["Timestamp"] = DateTime.Now
-                ["transferTimeMs"] = transferTimeMs,
-                ["BackupType"] = backupType;
-                ["sourceFilePath"] = sourceFilePath,
-                ["destinationFilePath"] = destinationFilePath
-            };
-
+                Console.WriteLine($"{entry.Key}: {entry.Value}");
+            }
             // 2) Generate the daily log file name (example: 2023-02-03.json)
             string logFileName = DateTime.Now.ToString("yyyy-MM-dd") + ".json";
             string logFilePath = Path.Combine(_logDirectory, logFileName);
