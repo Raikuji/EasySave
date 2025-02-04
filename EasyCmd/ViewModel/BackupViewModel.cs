@@ -12,15 +12,18 @@ namespace EasyCmd.ViewModel
     {
         private BackupJobList _backupJobList;
         private BackupView _backupView;
-        private string _savePath = AppDomain.CurrentDomain.BaseDirectory + "\\resources";
-        private string _backupJobFileName = "backup_jobs.json";
+        private string RESOURCEPATH = AppDomain.CurrentDomain.BaseDirectory + "\\resources";
+        private string BACKUPJOBFILENAME = "backup_jobs.json";
         private string _path;
 
         public BackupViewModel()
         {
             _backupJobList = new BackupJobList();
-            _path = _savePath + "\\" + _backupJobFileName;
+            _path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
             _backupView = new BackupView();
+            LanguageDictionary english = new LanguageDictionary();
+            english.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
+            Language.GetInstance().SetLanguage(english);
         }
         public int GetBackupJobCount()
         {
@@ -36,11 +39,11 @@ namespace EasyCmd.ViewModel
         }
         public void SaveBackupJobs()
         {
-            if (!Directory.Exists(_savePath))
+            if (!Directory.Exists(RESOURCEPATH))
             {
-                Directory.CreateDirectory(_savePath);
+                Directory.CreateDirectory(RESOURCEPATH);
             }
-            string path = _savePath + "\\" + _backupJobFileName;
+            string path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
             _backupJobList.SaveBackupJobs(path);
         }
         public bool AddBackupJob(string name, string source, string destination, int strategyId)
@@ -92,12 +95,12 @@ namespace EasyCmd.ViewModel
         public void Show()
         {
             bool continueLoop = true;
-            _backupView.ShowStartMessage();
+            _backupView.Display(Language.GetInstance().GetString("Start"));
 
             while (continueLoop)
             {
                 LoadBackupJobs();
-                _backupView.ShowMenu();
+                _backupView.Display(Language.GetInstance().GetString("Menu"));
                 string? choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -130,10 +133,14 @@ namespace EasyCmd.ViewModel
                         ShowExecuteBackupJob();
                         break;
                     case "6":
+                        Console.Clear();
+                        ChangeLanguage();
+                        break;
+                    case "7":
                         continueLoop = false;
                         break;
                     default:
-                        _backupView.ShowInvalidOption();
+                        ShowInvalidOption();
                         break;
                 }
                 Console.Clear();
@@ -141,17 +148,17 @@ namespace EasyCmd.ViewModel
         }
         public void ShowAllBackupJobs()
         {
-            _backupView.ShowAllBackupJobs(GetBackupJobList());
+            _backupView.Display(Language.GetInstance().GetString("Remove"),GetBackupJobList());
         }
         public void ShowAddBackupJob()
         {
-            _backupView.ShowAddBackupJobName();
+            _backupView.Display(Language.GetInstance().GetString("AddName"));
             string ?name = Console.ReadLine();
-            _backupView.ShowAddBackupJobSource();
+            _backupView.Display(Language.GetInstance().GetString("AddSource"));
             string ?source = Console.ReadLine();
-            _backupView.ShowAddBackupJobDestination();
+            _backupView.Display(Language.GetInstance().GetString("AddDestination"));
             string ?destination = Console.ReadLine();
-            _backupView.ShowAddBackupJobStrategy();
+            _backupView.Display(Language.GetInstance().GetString("AddStrategy"));
             string? strategyInput = Console.ReadLine();
             if (int.TryParse(strategyInput, out int strategyId))
             {
@@ -172,7 +179,7 @@ namespace EasyCmd.ViewModel
         }
         public void ShowRemoveBackupJob()
         {
-            _backupView.ShowRemoveBackupJob();
+            _backupView.Display(Language.GetInstance().GetString("Remove"));
             string? input = Console.ReadLine();
             if (int.TryParse(input, out int index))
             {
@@ -189,47 +196,20 @@ namespace EasyCmd.ViewModel
         }
         public void ShowUpdateBackupJob()
         {
-            _backupView.ShowRemoveBackupJob();
+            _backupView.Display(Language.GetInstance().GetString("Remove"));
             string? input = Console.ReadLine();
             if (int.TryParse(input, out int index))
             {
-                _backupView.ShowAddBackupJobName();
-                string? name = Console.ReadLine();
-                _backupView.ShowAddBackupJobSource();
-                string? source = Console.ReadLine();
-                _backupView.ShowAddBackupJobDestination();
-                string? destination = Console.ReadLine();
-                _backupView.ShowAddBackupJobStrategy();
-                string? strategyInput = Console.ReadLine();
-                if (int.TryParse(strategyInput, out int strategyId))
-                {
-                    bool isValid = false;
-                    if (name != null && source != null && destination != null)
-                    {
-                        isValid = UpdateBackupJob(index, name, source, destination, strategyId);
-                    }
-                    else
-                    {
-                        ShowInvalidOption();
-                    }
-                    if (!isValid)
-                    {
-                        ShowInvalidOption();
-                    }
-                }
-                else
-                {
-                    ShowInvalidOption();
-                }
+                ShowAddBackupJob();
             }
             else
             {
-                Console.WriteLine("Invalid input");
+                ShowInvalidOption();
             }
         }
         public void ShowExecuteBackupJob()
         {
-            _backupView.ShowExecuteBackupJob();
+            _backupView.Display(Language.GetInstance().GetString("Execute"));
             string? input = Console.ReadLine();
             if (int.TryParse(input, out int index))
             {
@@ -237,12 +217,41 @@ namespace EasyCmd.ViewModel
             }
             else
             {
-                Console.WriteLine("Invalid input");
+                ShowInvalidOption();
+            }
+        }
+        public void ChangeLanguage()
+        {
+            _backupView.Display(Language.GetInstance().GetString("Lang"));
+            string? input = Console.ReadLine();
+            if (int.TryParse(input, out int languageId))
+            {
+                LanguageDictionary language = new LanguageDictionary();
+                string langFileName = "en.json";
+                bool exists = true;
+                switch (languageId)
+                {
+                    case 1:
+                        langFileName = "en.json";
+                        break;
+                    case 2:
+                        langFileName = "fr.json";
+                        break;
+                    default:
+                        ShowInvalidOption();
+                        exists = false;
+                        break;
+                }
+                if (exists)
+                {
+                    language.LoadLanguage(RESOURCEPATH + "\\" + langFileName);
+                    Language.GetInstance().SetLanguage(language);
+                }
             }
         }
         public void ShowInvalidOption()
         {
-            _backupView.ShowInvalidOption();
+            _backupView.Display(Language.GetInstance().GetString("InvalidOption"));
             Console.ReadKey();
         }
     }
