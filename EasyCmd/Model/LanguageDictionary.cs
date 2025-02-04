@@ -56,4 +56,8 @@ public class Language
 
 	// Sets the language dictionary to be used.
 	// param languageDictionary: Instance of the language dictionary
-	public void SetLanguage(LanguageDictionary language
+	public void SetLanguage(LanguageDictionary language)
+	{
+		_languageDictionary = language;
+	}
+}
