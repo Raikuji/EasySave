@@ -24,6 +24,12 @@
     EasySave is a simple and easy to use backup software.
   </p>
 </div>
+<div>
+  <h3>
+  Class diagram
+  </h3>
+  <img src="ressources/class_diagram.png" alt="Class diagram">
+</div>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
