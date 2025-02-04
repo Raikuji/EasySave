@@ -7,6 +7,6 @@ namespace EasyLog
         public string SourceFilePath { get; set; }
         public string DestinationFilePath { get; set; }
         public long FileSize { get; set; }
-        public long TransferTimeMs { get; set; } // Négatif si erreur
+        public long TransferTimeMs { get; set; } // Negative if error
     }
 }
