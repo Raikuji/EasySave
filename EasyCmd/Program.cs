@@ -1,10 +1,14 @@
-﻿namespace EasyCmd;
+﻿using EasyCmd.Model;
+using EasyCmd.ViewModel;
+using System;
+
+namespace EasyCmd;
 
 public static class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine("Welcome to EasySave");
-        Console.ReadKey();
+        BackupViewModel backupViewModel = new BackupViewModel();
+        backupViewModel.Show();
     }
 }
