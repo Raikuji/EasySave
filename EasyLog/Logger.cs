@@ -24,18 +24,13 @@ namespace EasyLog
         }
 
         /// Method to write a log entry.
-        public void LogAction(
-            string backupName,
-            string sourceFilePath,
-            string destinationFilePath,
-            string backupType,
-            long fileSize,
-            long transferTimeMs)
+        public void LogAction()
         {
-            // 1) Create a LogEntry object
+            var lines = new List<string>();
+
             foreach (var entry in entries)
             {
-                Console.WriteLine($"{entry.Key}: {entry.Value}");
+                lines.Add($"\"{entry.Key}\" = \"{entry.Value}\"");
             }
             // 2) Generate the daily log file name (example: 2023-02-03.json)
             string logFileName = DateTime.Now.ToString("yyyy-MM-dd") + ".json";
