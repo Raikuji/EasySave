@@ -10,7 +10,7 @@ namespace EasyCmd.Model
     internal class Language
     {
         // Unique instance of the class (Singleton)
-        private static Language _instance;
+        private static Language? _instance;
 
         // Associated language dictionary
         private LanguageDictionary _languageDictionary;

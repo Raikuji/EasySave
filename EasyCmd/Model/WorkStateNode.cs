@@ -7,14 +7,14 @@ namespace EasyCmd.Model
 {
     internal class WorkStateNode
     {
-        public string Name { get; set; }
-        public object SourceFilePath { get; set; }
-        public object DestinationFilePath { get; set; }
-        public string State { get; set; }
+        public required string Name { get; set; }
+        public required string SourceFilePath { get; set; }
+        public required string DestinationFilePath { get; set; }
+        public required string State { get; set; }
         public int TotalFilesToCopy { get; set; }
-        public object TotalFileSizeToCopy { get; set; }
-        public object RemainingFilesToCopy { get; set; }
-        public object Progression { get; set; }
+        public long TotalFileSizeToCopy { get; set; }
+        public int RemainingFilesToCopy { get; set; }
+        public long Progression { get; set; }
         public DateTime LastUpdate { get; set; }
         public static string LOGPATH = AppDomain.CurrentDomain.BaseDirectory + "\\log";
         public static string WORKSTATENAME = "work_state.json";
