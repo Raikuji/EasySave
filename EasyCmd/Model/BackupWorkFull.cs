@@ -8,20 +8,14 @@ namespace EasyCmd.Model
 {
     internal class BackupWorkFull : IBackupWorkStrategy
     {
-        public void Execute(string source, string destination)
+        public void Execute(BackupJob backupJob, string source, string destination)
         {
-            if (string.IsNullOrWhiteSpace(source) || string.IsNullOrWhiteSpace(destination))
-            {
-                throw new ArgumentNullException();
-            }
-            if (!Directory.Exists(source))
-            {
-                throw new DirectoryNotFoundException(source);
-            }
-            if (!Directory.Exists(destination))
-            {
-                Directory.CreateDirectory(destination);
-            }
+            // Get the total size and number of all files to copy
+            long totalSize = GetTotalSizeOfFiles(source);
+            int totalFiles = GetTotalNumberOfFiles(source);
+            long remainingSize = totalSize;
+            int remainingFiles = totalFiles;
+
             // Recreate all the directories
             foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
             {
@@ -33,7 +27,35 @@ namespace EasyCmd.Model
             {
                 string destFilePath = filePath.Replace(source, destination);
                 File.Copy(filePath, destFilePath, true);
+
+                // Update the remaining size and file count
+                FileInfo fileInfo = new FileInfo(filePath);
+                remainingSize -= fileInfo.Length;
+                remainingFiles--;
+
+                // Update remaining size and file count in the backup job
+                backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
             }
+        }
+
+        public long GetTotalSizeOfFiles(string source)
+        {
+            long totalSize = 0;
+            foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+            {
+                FileInfo fileInfo = new FileInfo(filePath);
+                totalSize += fileInfo.Length;
+            }
+            return totalSize;
+        }
+        public int GetTotalNumberOfFiles(string source)
+        {
+            int totalFiles = 0;
+            foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+            {
+                totalFiles++;
+            }
+            return totalFiles;
         }
     }
 }

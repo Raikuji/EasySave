@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -14,32 +15,28 @@ namespace EasyCmd.Model
         private string _source { get; }
         private string _destination { get; }
         private IBackupWorkStrategy _backupStrategy;
+        private WorkState _workState;
 
-        public BackupJob(string name, string source, string destination, IBackupWorkStrategy backupStrategy)
-        {
-            _name = name;
-            _source = source;
-            _destination = destination;
-            _backupStrategy = backupStrategy;
-        }
         public BackupJob(string name, string source, string destination, int strategyId)
         {
             _name = name;
             _source = source;
             _destination = destination;
             _backupStrategy = GetBackupStrategy(strategyId);
+            _workState = new WorkState();
+        }
+        public string GetName()
+        {
+            return _name;
         }
         public IBackupWorkStrategy GetBackupStrategy(int strategyId)
         {
-            switch (strategyId)
+            return strategyId switch
             {
-                case 1:
-                    return new BackupWorkFull();
-                case 2:
-                    return new BackupWorkDifferential();
-                default:
-                    throw new ArgumentException("Invalid strategy ID");
-            }
+                1 => new BackupWorkFull(),
+                2 => new BackupWorkDifferential(),
+                _ => throw new ArgumentException("Invalid strategy ID")
+            };
         }
         public int GetStrategyId()
         {
@@ -52,7 +49,7 @@ namespace EasyCmd.Model
         }
         public override string ToString()
         {
-            return _name + " " + _source + " " + _destination + " " + _backupStrategy.GetType().Name;
+            return $"{_name} {_source} {_destination} {_backupStrategy.GetType().Name}";
         }
         public string ToJson()
         {
@@ -61,11 +58,38 @@ namespace EasyCmd.Model
             obj.source = _source;
             obj.destination = _destination;
             obj.strategyId = GetStrategyId();
-            return System.Text.Json.JsonSerializer.Serialize(obj);
+            return JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
+        }
+        
+        public void SetTotalWorkState(int totalFiles, long totalSize)
+        {
+            _workState.SetTotal(totalFiles, totalSize);
+            WorkStateNode.AddOrUpdateWorkStateNode(_name, _source, _destination, _workState);
+        }
+        public void UpdateWorkState(int files, long size, string currentFileSource, string currentFileDestination)
+        {
+            _workState.UpdateRemaining(files, size);
+            WorkStateNode.AddOrUpdateWorkStateNode(_name, currentFileSource, currentFileDestination, _workState);
+        }
+        public WorkState GetWorkState()
+        {
+            return _workState;
         }
         public void Execute()
         {
-            _backupStrategy.Execute(_source, _destination);
+            if (string.IsNullOrWhiteSpace(_source) || string.IsNullOrWhiteSpace(_destination))
+            {
+                throw new ArgumentNullException();
+            }
+            if (!Directory.Exists(_source))
+            {
+                throw new DirectoryNotFoundException(_source);
+            }
+            if (!Directory.Exists(_destination))
+            {
+                Directory.CreateDirectory(_destination);
+            }
+            _backupStrategy.Execute(this, _source, _destination);
         }
     }
 }

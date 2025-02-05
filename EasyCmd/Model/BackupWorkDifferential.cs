@@ -8,50 +8,79 @@ namespace EasyCmd.Model
 {
     internal class BackupWorkDifferential : IBackupWorkStrategy
     {
-        public void Execute(string source, string destination)
+        public void Execute(BackupJob backupJob, string source, string destination)
         {
-            if (string.IsNullOrWhiteSpace(source) || string.IsNullOrWhiteSpace(destination))
+            // Get the total size and number of all files to copy
+            try
             {
-                throw new ArgumentNullException();
-            }
-            if (!Directory.Exists(source))
-            {
-                throw new DirectoryNotFoundException(source);
-            }
-            if (!Directory.Exists(destination))
-            {
-                Directory.CreateDirectory(destination);
-            }
+                long totalSize = GetTotalSizeOfFiles(source, destination);
+                int totalFiles = GetTotalNumberOfFiles(source, destination);
+                long remainingSize = totalSize;
+                int remainingFiles = totalFiles;
 
-            DateTime lastBackupTime = GetLastBackupTime(destination);
-
-            // Copy all the modified or new directories
-            foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
-            {
-                string destDirPath = dirPath.Replace(source, destination);
-                if (!Directory.Exists(destDirPath) || Directory.GetLastWriteTime(dirPath) > lastBackupTime)
+                // Recreate all the directories
+                foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
                 {
-                    Directory.CreateDirectory(destDirPath);
+                    Directory.CreateDirectory(dirPath.Replace(source, destination));
+                }
+
+                // Copy only the modified files
+                foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+                {
+                    string destFilePath = filePath.Replace(source, destination);
+                    FileInfo sourceFileInfo = new FileInfo(filePath);
+                    FileInfo destFileInfo = new FileInfo(destFilePath);
+
+                    if (!destFileInfo.Exists || sourceFileInfo.LastWriteTime > destFileInfo.LastWriteTime)
+                    {
+                        File.Copy(filePath, destFilePath, true);
+
+                        // Update the remaining size and file count
+                        remainingSize -= sourceFileInfo.Length;
+                        remainingFiles--;
+
+                        // Update remaining size and file count in the backup job
+                        backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
+                    }
                 }
             }
-
-            // Copy all the modified or new files
-            foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+            catch (UnauthorizedAccessException)
             {
-                string destFilePath = filePath.Replace(source, destination);
-                if (!File.Exists(destFilePath) || File.GetLastWriteTime(filePath) > lastBackupTime)
-                {
-                    File.Copy(filePath, destFilePath, true);
-                }
+                throw new UnauthorizedAccessException("Access denied. Please run the application as an administrator.");
             }
         }
 
-        private DateTime GetLastBackupTime(string destination)
+        public long GetTotalSizeOfFiles(string source, string destination)
         {
-            // Implémentez la logique pour obtenir l'heure de la dernière sauvegarde
-            // Par exemple, vous pouvez lire cette information à partir d'un fichier de métadonnées
-            // Pour cet exemple, nous retournons simplement la date et l'heure actuelles moins un jour
-            return DateTime.Now.AddDays(-1);
+            long totalSize = 0;
+            foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+            {
+                string destFilePath = filePath.Replace(source, destination);
+                FileInfo sourceFileInfo = new FileInfo(filePath);
+                FileInfo destFileInfo = new FileInfo(destFilePath);
+
+                if (!destFileInfo.Exists || sourceFileInfo.LastWriteTime > destFileInfo.LastWriteTime)
+                {
+                    totalSize += sourceFileInfo.Length;
+                }
+            }
+            return totalSize;
+        }
+        public int GetTotalNumberOfFiles(string source, string destination)
+        {
+            int totalFiles = 0;
+            foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+            {
+                string destFilePath = filePath.Replace(source, destination);
+                FileInfo sourceFileInfo = new FileInfo(filePath);
+                FileInfo destFileInfo = new FileInfo(destFilePath);
+
+                if (!destFileInfo.Exists || sourceFileInfo.LastWriteTime > destFileInfo.LastWriteTime)
+                {
+                    totalFiles++;
+                }
+            }
+            return totalFiles;
         }
     }
 }

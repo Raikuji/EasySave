@@ -8,6 +8,6 @@ namespace EasyCmd.Model
 {
     internal interface IBackupWorkStrategy
     {
-        void Execute(string source, string destination);
+        void Execute(BackupJob backupJob,string source, string destination);
     }
 }

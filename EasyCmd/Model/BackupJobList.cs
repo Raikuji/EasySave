@@ -18,7 +18,7 @@ namespace EasyCmd.Model
         }
         public void Add(BackupJob backupJob)
         {
-            if (_backupJobs.Count > 5)
+            if (_backupJobs.Count >= 5)
             {
                 throw new ArgumentException("Backup job list is full");
             }
@@ -26,6 +26,7 @@ namespace EasyCmd.Model
         }
         public void Remove(int index)
         {
+            WorkStateNode.RemoveWorkStateNode(_backupJobs[index].GetName());
             _backupJobs.RemoveAt(index);
         }
         public void Update(int index, BackupJob backupJob)
