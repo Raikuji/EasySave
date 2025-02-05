@@ -4,47 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Xml;
 using System.Text.Json;
 
 namespace EasyLog
 {
     public class Logger
     {
-        private readonly string _logDirectory;  // Path to the directory where logs will be stored
+        private readonly string _logFilePath;
 
-        // Constructor that receives the log directory path
-        public Logger(string logDirectory)
+        public Logger(string logFilePath)
         {
-            // Check and create the directory if it does not exist
-            _logDirectory = logDirectory;
-            if (!Directory.Exists(_logDirectory))
-            {
-                Directory.CreateDirectory(_logDirectory);
-            }
+            _logFilePath = logFilePath;
         }
 
-        /// Method to write a log entry.
-        public void LogAction()
+        public void Log(Dictionary<string, object> data)
         {
-            var lines = new List<string>();
-
-            foreach (var entry in entries)
-            {
-                lines.Add($"\"{entry.Key}\" = \"{entry.Value}\"");
-            }
-            // 2) Generate the daily log file name (example: 2023-02-03.json)
-            string logFileName = DateTime.Now.ToString("yyyy-MM-dd") + ".json";
-            string logFilePath = Path.Combine(_logDirectory, logFileName);
-
-            // 3) Serialize the object to JSON
-            string json = JsonSerializer.Serialize(entry);
-
-            // 4) Write the JSON to the file, followed by a newline
-            //    Open in append mode to avoid overwriting existing content
-            using (var writer = new StreamWriter(logFilePath, append: true))
-            {
-                writer.WriteLine(json);
-            }
+            string json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(_logFilePath, json);
         }
     }
 }
