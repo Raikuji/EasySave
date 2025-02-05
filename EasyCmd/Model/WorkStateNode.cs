@@ -5,6 +5,9 @@ using System.Xml.Linq;
 
 namespace EasyCmd.Model
 {
+    /// <summary>
+    /// Class that represents the state of the backup work.
+    /// </summary>
     internal class WorkStateNode
     {
         public required string Name { get; set; }
@@ -19,6 +22,13 @@ namespace EasyCmd.Model
         public static string LOGPATH = AppDomain.CurrentDomain.BaseDirectory + "\\log";
         public static string WORKSTATENAME = "work_state.json";
 
+        /// <summary>
+        /// Adds or updates a work state node in the work_state.json file.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <param name="workState"></param>
         public static void AddOrUpdateWorkStateNode(string name, string source, string destination, WorkState workState)
         {
             var obj = new WorkStateNode
@@ -72,6 +82,11 @@ namespace EasyCmd.Model
             string updatedJson = JsonSerializer.Serialize(workStates, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(filePath, updatedJson);
         }
+
+        /// <summary>
+        /// Removes a work state node from the work_state.json file.
+        /// </summary>
+        /// <param name="name"></param>
         public static void RemoveWorkStateNode(string name)
         {
             string filePath = LOGPATH + "\\" + WORKSTATENAME;

@@ -6,8 +6,18 @@ using System.Threading.Tasks;
 
 namespace EasyCmd.Model
 {
+    /// <summary>
+    /// Class that represents the backup work strategy for differential backup.
+    /// </summary>
     internal class BackupWorkDifferential : IBackupWorkStrategy
     {
+        /// <summary>
+        /// Executes a differential backup work.
+        /// </summary>
+        /// <param name="backupJob"></param>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <exception cref="UnauthorizedAccessException"></exception>
         public void Execute(BackupJob backupJob, string source, string destination)
         {
             // Get the total size and number of all files to copy
@@ -50,6 +60,12 @@ namespace EasyCmd.Model
             }
         }
 
+        /// <summary>
+        /// Gets the total size of all files in the source directory.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <returns></returns>
         public long GetTotalSizeOfFiles(string source, string destination)
         {
             long totalSize = 0;
@@ -66,6 +82,13 @@ namespace EasyCmd.Model
             }
             return totalSize;
         }
+
+        /// <summary>
+        /// Gets the total number of files in the source directory.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <returns></returns>
         public int GetTotalNumberOfFiles(string source, string destination)
         {
             int totalFiles = 0;

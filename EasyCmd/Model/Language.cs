@@ -6,23 +6,26 @@ using System.Threading.Tasks;
 
 namespace EasyCmd.Model
 {
-    // Class representing the language manager using the Singleton pattern.
+    /// <summary>
+    /// Class that represents the language used in the application.
+    /// </summary>
     internal class Language
     {
-        // Unique instance of the class (Singleton)
         private static Language? _instance;
-
-        // Associated language dictionary
         private LanguageDictionary _languageDictionary;
 
-        // Private constructor to prevent external instantiation (Singleton).
+        /// <summary>
+        /// Constructor of the Language class.
+        /// </summary>
         private Language()
         {
             _languageDictionary = new LanguageDictionary();
         }
 
-        // Returns the unique instance of the Language class.
-        // returns: Unique instance of Language
+        /// <summary>
+        /// Returns the instance of the Language class.
+        /// </summary>
+        /// <returns></returns>
         public static Language GetInstance()
         {
             if (_instance == null)
@@ -32,13 +35,20 @@ namespace EasyCmd.Model
             return _instance;
         }
 
-        // Sets the language dictionary to be used.
-        // param languageDictionary: Instance of the language dictionary
+        /// <summary>
+        /// Sets the language of the application.
+        /// </summary>
+        /// <param name="language"></param>
         public void SetLanguage(LanguageDictionary language)
         {
             _languageDictionary = language;
         }
-        
+
+        /// <summary>
+        /// Returns the string value of the key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public string GetString(string key)
         {
             return _languageDictionary.GetString(key);

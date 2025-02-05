@@ -8,6 +8,9 @@ using EasyCmd.View;
 
 namespace EasyCmd.ViewModel
 {
+    /// <summary>
+    /// Class that represents the view model of the backup.
+    /// </summary>
     internal class BackupViewModel
     {
         private BackupJobList _backupJobList;
@@ -16,6 +19,9 @@ namespace EasyCmd.ViewModel
         private string BACKUPJOBFILENAME = "backup_jobs.json";
         private string _path;
 
+        /// <summary>
+        /// Constructor of the BackupViewModel class.
+        /// </summary>
         public BackupViewModel()
         {
             _backupJobList = new BackupJobList();
@@ -25,18 +31,36 @@ namespace EasyCmd.ViewModel
             english.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
             Language.GetInstance().SetLanguage(english);
         }
+
+        /// <summary>
+        /// Returns the number of backup jobs.
+        /// </summary>
+        /// <returns></returns>
         public int GetBackupJobCount()
         {
             return _backupJobList.Count();
         }
+
+        /// <summary>
+        /// Returns the list of backup jobs.
+        /// </summary>
+        /// <returns></returns>
         public string GetBackupJobList()
         {
             return _backupJobList.ToString();
         }
+
+        /// <summary>
+        /// Loads the backup jobs.
+        /// </summary>
         public void LoadBackupJobs()
         {
             _backupJobList.LoadBackupJobs(_path);
         }
+
+        /// <summary>
+        /// Saves the backup jobs.
+        /// </summary>
         public void SaveBackupJobs()
         {
             if (!Directory.Exists(RESOURCEPATH))
@@ -46,6 +70,15 @@ namespace EasyCmd.ViewModel
             string path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
             _backupJobList.SaveBackupJobs(path);
         }
+
+        /// <summary>
+        /// Adds a backup job.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <param name="strategyId"></param>
+        /// <returns></returns>
         public bool AddBackupJob(string name, string source, string destination, int strategyId)
         {
             bool isValid;
@@ -60,6 +93,12 @@ namespace EasyCmd.ViewModel
             }
             return isValid;
         }
+
+        /// <summary>
+        /// Removes a backup job.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public bool RemoveBackupJob(int index)
         {
             bool isValid;
@@ -74,6 +113,16 @@ namespace EasyCmd.ViewModel
             }
             return isValid;
         }
+
+        /// <summary>
+        /// Updates a backup job.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="name"></param>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <param name="strategyId"></param>
+        /// <returns></returns>
         public bool UpdateBackupJob(int index, string name, string source, string destination, int strategyId)
         {
             bool isValid;
@@ -88,10 +137,19 @@ namespace EasyCmd.ViewModel
             }
             return isValid;
         }
+
+        /// <summary>
+        /// Executes a backup job.
+        /// </summary>
+        /// <param name="index"></param>
         public void ExecuteBackupJob(int index)
         {
             _backupJobList.Execute(index - 1);
         }
+
+        /// <summary>
+        /// Shows the views of the EasyCmd program.
+        /// </summary>
         public void Show()
         {
             bool continueLoop = true;
@@ -146,10 +204,18 @@ namespace EasyCmd.ViewModel
                 Console.Clear();
             }
         }
+
+        /// <summary>
+        /// Shows all backup jobs.
+        /// </summary>
         public void ShowAllBackupJobs()
         {
             _backupView.Display(Language.GetInstance().GetString("All"),GetBackupJobList());
         }
+
+        /// <summary>
+        /// Shows the add backup job view.
+        /// </summary>
         public void ShowAddBackupJob()
         {
             _backupView.Display(Language.GetInstance().GetString("AddName"));
@@ -177,6 +243,10 @@ namespace EasyCmd.ViewModel
                 ShowInvalidOption();
             }
         }
+
+        /// <summary>
+        /// Shows the remove backup job view.
+        /// </summary>
         public void ShowRemoveBackupJob()
         {
             _backupView.Display(Language.GetInstance().GetString("Remove"));
@@ -194,6 +264,10 @@ namespace EasyCmd.ViewModel
                 ShowInvalidOption();
             }
         }
+
+        /// <summary>
+        /// Shows the update backup job view.
+        /// </summary>
         public void ShowUpdateBackupJob()
         {
             _backupView.Display(Language.GetInstance().GetString("Remove"));
@@ -207,6 +281,10 @@ namespace EasyCmd.ViewModel
                 ShowInvalidOption();
             }
         }
+
+        /// <summary>
+        /// Shows the menu to execute a backup job.
+        /// </summary>
         public void ShowExecuteBackupJob()
         {
             _backupView.Display(Language.GetInstance().GetString("Execute"));
@@ -220,6 +298,10 @@ namespace EasyCmd.ViewModel
                 ShowInvalidOption();
             }
         }
+
+        /// <summary>
+        /// Shows the menu to change the language and changes it.
+        /// </summary>
         public void ChangeLanguage()
         {
             _backupView.Display(Language.GetInstance().GetString("Lang"));
@@ -249,6 +331,10 @@ namespace EasyCmd.ViewModel
                 }
             }
         }
+
+        /// <summary>
+        /// Shows the invalid option message.
+        /// </summary>
         public void ShowInvalidOption()
         {
             _backupView.Display(Language.GetInstance().GetString("InvalidOption"));

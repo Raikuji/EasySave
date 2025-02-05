@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace EasyCmd.Model
 {
+    /// <summary>
+    /// Class that represents the full backup work strategy.
+    /// </summary>
     internal class BackupWorkFull : IBackupWorkStrategy
     {
+        /// <summary>
+        /// Executes a full backup work.
+        /// </summary>
+        /// <param name="backupJob"></param>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
         public void Execute(BackupJob backupJob, string source, string destination)
         {
             // Get the total size and number of all files to copy
@@ -38,6 +47,11 @@ namespace EasyCmd.Model
             }
         }
 
+        /// <summary>
+        /// Gets the total size of all files in the source directory.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public long GetTotalSizeOfFiles(string source)
         {
             long totalSize = 0;
@@ -48,6 +62,12 @@ namespace EasyCmd.Model
             }
             return totalSize;
         }
+
+        /// <summary>
+        /// Gets the total number of files in the source directory.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public int GetTotalNumberOfFiles(string source)
         {
             int totalFiles = 0;

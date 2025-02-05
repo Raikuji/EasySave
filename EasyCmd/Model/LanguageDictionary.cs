@@ -2,35 +2,45 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
-// Class representing a language dictionary that stores translations as key/value pairs.
+/// <summary>
+/// Class to manage language dictionary
+/// </summary>
 public class LanguageDictionary
 {
-    // Private dictionary containing translations
     private Dictionary<string, string> _dictionary;
 
-    // Constructor that initializes an empty dictionary.
+    /// <summary>
+    /// Constructor
+    /// </summary>
     public LanguageDictionary()
     {
         _dictionary = new Dictionary<string, string>();
     }
 
-    // Retrieves the translation associated with a given key.
-    // If the key does not exist, it returns the key itself.
-    // param key: Translation key
-    // returns: Translated value if available, otherwise the key
+    /// <summary>
+    /// Get a string from the dictionary
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public string GetString(string key)
     {
         return _dictionary.ContainsKey(key) ? _dictionary[key] : key;
     }
 
-    // Adds a new translation or updates an existing one.
-    // param key: Translation key
-    // param value: Translated value
+    /// <summary>
+    /// Add a string to the dictionary
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
     public void AddString(string key, string value)
     {
         _dictionary.Add(key, value);
     }
 
+    /// <summary>
+    /// Load language from a json file
+    /// </summary>
+    /// <param name="jsonFilePath"></param>
     public void LoadLanguage(string jsonFilePath)
     {
         string stringLang = File.ReadAllText(jsonFilePath);

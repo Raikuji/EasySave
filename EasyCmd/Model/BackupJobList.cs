@@ -9,13 +9,26 @@ using System.Threading.Tasks;
 
 namespace EasyCmd.Model
 {
+    /// <summary>
+    /// Class that represents the list of backup jobs.
+    /// </summary>
     internal class BackupJobList
     {
         private List<BackupJob> _backupJobs;
+
+        /// <summary>
+        /// Constructor of the BackupJobList class.
+        /// </summary>
         public BackupJobList()
         {
             _backupJobs = new List<BackupJob>();
         }
+
+        /// <summary>
+        /// Adds a backup job to the list.
+        /// </summary>
+        /// <param name="backupJob"></param>
+        /// <exception cref="ArgumentException"></exception>
         public void Add(BackupJob backupJob)
         {
             if (_backupJobs.Count >= 5)
@@ -24,23 +37,49 @@ namespace EasyCmd.Model
             }
             _backupJobs.Add(backupJob);
         }
+
+        /// <summary>
+        /// Removes a backup job from the list.
+        /// </summary>
+        /// <param name="index"></param>
         public void Remove(int index)
         {
             WorkStateNode.RemoveWorkStateNode(_backupJobs[index].GetName());
             _backupJobs.RemoveAt(index);
         }
+
+        /// <summary>
+        /// Updates a backup job in the list.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="backupJob"></param>
         public void Update(int index, BackupJob backupJob)
         {
             _backupJobs[index] = backupJob;
         }
+
+        /// <summary>
+        /// Executes a backup job.
+        /// </summary>
+        /// <param name="index"></param>
         public void Execute(int index)
         {
             _backupJobs[index].Execute();
         }
+
+        /// <summary>
+        /// Return the nummber of backup jobs in the list.
+        /// </summary>
+        /// <returns></returns>
         public int Count()
         {
             return _backupJobs.Count;
         }
+
+        /// <summary>
+        /// Returns a string of all backup jobs in the list.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -55,6 +94,11 @@ namespace EasyCmd.Model
             }
             return stringBuilder.ToString();
         }
+
+        /// <summary>
+        /// Saves the backup jobs to a file.
+        /// </summary>
+        /// <param name="path"></param>
         public void SaveBackupJobs(string path)
         {
             File.WriteAllText(path, "[");
@@ -68,6 +112,12 @@ namespace EasyCmd.Model
             }
             File.AppendAllText(path, "]");
         }
+
+        /// <summary>
+        /// Loads the backup jobs from a file.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <exception cref="ArgumentException"></exception>
         public void LoadBackupJobs(string path)
         {
             if (File.Exists(path))
