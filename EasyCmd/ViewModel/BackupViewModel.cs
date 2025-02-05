@@ -148,7 +148,7 @@ namespace EasyCmd.ViewModel
         }
         public void ShowAllBackupJobs()
         {
-            _backupView.Display(Language.GetInstance().GetString("Remove"),GetBackupJobList());
+            _backupView.Display(Language.GetInstance().GetString("All"),GetBackupJobList());
         }
         public void ShowAddBackupJob()
         {
