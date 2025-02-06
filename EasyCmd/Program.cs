@@ -2,13 +2,14 @@
 using EasyCmd.ViewModel;
 using System;
 
-namespace EasyCmd;
-
-public static class Program
+namespace EasyCmd
 {
-    public static void Main(string[] args)
+    public class Program
     {
-        BackupViewModel backupViewModel = new BackupViewModel();
-        backupViewModel.Show();
+        public static void Main(string[] args)
+        {
+            BackupViewModel backupViewModel = new BackupViewModel();
+            backupViewModel.Show();
+        }
     }
 }

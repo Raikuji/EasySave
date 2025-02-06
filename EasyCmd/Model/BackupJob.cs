@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
+﻿using System.Dynamic;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace EasyCmd.Model
 {
@@ -19,6 +13,7 @@ namespace EasyCmd.Model
         private string _destination { get; }
         private IBackupWorkStrategy _backupStrategy;
         private WorkState _workState;
+        private BackupJobLog _backupJobLog;
 
         /// <summary>
         /// Constructor of the BackupJob class.
@@ -97,6 +92,12 @@ namespace EasyCmd.Model
             obj.destination = _destination;
             obj.strategyId = GetStrategyId();
             return JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
+        }
+
+        public void Log(string source, string destination, long size, DateTime transfertStart)
+        {
+            _backupJobLog = new BackupJobLog(_name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, DateTime.Now);
+            _backupJobLog.Log();
         }
 
         /// <summary>

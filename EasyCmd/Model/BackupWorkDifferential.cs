@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EasyCmd.Model
+﻿namespace EasyCmd.Model
 {
     /// <summary>
     /// Class that represents the backup work strategy for differential backup.
@@ -21,27 +15,28 @@ namespace EasyCmd.Model
         public void Execute(BackupJob backupJob, string source, string destination)
         {
             // Get the total size and number of all files to copy
-            try
+            long totalSize = GetTotalSizeOfFiles(source, destination);
+            int totalFiles = GetTotalNumberOfFiles(source, destination);
+            long remainingSize = totalSize;
+            int remainingFiles = totalFiles;
+
+            // Recreate all the directories
+            foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
             {
-                long totalSize = GetTotalSizeOfFiles(source, destination);
-                int totalFiles = GetTotalNumberOfFiles(source, destination);
-                long remainingSize = totalSize;
-                int remainingFiles = totalFiles;
+                Directory.CreateDirectory(dirPath.Replace(source, destination));
+            }
 
-                // Recreate all the directories
-                foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
+            // Copy only the modified files
+            foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+            {
+                string destFilePath = filePath.Replace(source, destination);
+                FileInfo sourceFileInfo = new FileInfo(filePath);
+                FileInfo destFileInfo = new FileInfo(destFilePath);
+
+                if (!destFileInfo.Exists || sourceFileInfo.LastWriteTime > destFileInfo.LastWriteTime)
                 {
-                    Directory.CreateDirectory(dirPath.Replace(source, destination));
-                }
-
-                // Copy only the modified files
-                foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
-                {
-                    string destFilePath = filePath.Replace(source, destination);
-                    FileInfo sourceFileInfo = new FileInfo(filePath);
-                    FileInfo destFileInfo = new FileInfo(destFilePath);
-
-                    if (!destFileInfo.Exists || sourceFileInfo.LastWriteTime > destFileInfo.LastWriteTime)
+                    DateTime transfertStart = DateTime.Now;
+                    try
                     {
                         File.Copy(filePath, destFilePath, true);
 
@@ -51,12 +46,14 @@ namespace EasyCmd.Model
 
                         // Update remaining size and file count in the backup job
                         backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
+                        backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart);
                     }
+                    catch (Exception)
+                    {
+                        backupJob.Log(filePath, destFilePath, -1, transfertStart);
+                    }
+                    
                 }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                throw new UnauthorizedAccessException("Access denied. Please run the application as an administrator.");
             }
         }
 
