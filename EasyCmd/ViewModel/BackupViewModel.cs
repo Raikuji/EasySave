@@ -87,7 +87,7 @@ namespace EasyCmd.ViewModel
 				_backupJobList.Add(new BackupJob(name, source, destination, strategyId));
 				isValid = true;
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{
 				isValid = false;
 			}
@@ -107,7 +107,7 @@ namespace EasyCmd.ViewModel
 				_backupJobList.Remove(index - 1);
 				isValid = true;
 			}
-			catch (ArgumentOutOfRangeException e)
+			catch (ArgumentOutOfRangeException)
 			{
 				isValid = false;
 			}
@@ -131,7 +131,7 @@ namespace EasyCmd.ViewModel
 				_backupJobList.Update(index - 1, new BackupJob(name, source, destination, strategyId));
 				isValid = true;
 			}
-			catch (ArgumentOutOfRangeException e)
+			catch (ArgumentOutOfRangeException)
 			{
 				isValid = false;
 			}

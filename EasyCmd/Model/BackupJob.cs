@@ -13,7 +13,6 @@ namespace EasyCmd.Model
         private string _destination { get; }
         private IBackupWorkStrategy _backupStrategy;
         private WorkState _workState;
-        private BackupJobLog _backupJobLog;
 
         /// <summary>
         /// Constructor of the BackupJob class.
@@ -96,8 +95,8 @@ namespace EasyCmd.Model
 
         public void Log(string source, string destination, long size, DateTime transfertStart)
         {
-            _backupJobLog = new BackupJobLog(_name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, DateTime.Now);
-            _backupJobLog.Log();
+            BackupJobLog backupJobLog = new BackupJobLog(_name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, DateTime.Now);
+            backupJobLog.Log();
         }
 
         /// <summary>
