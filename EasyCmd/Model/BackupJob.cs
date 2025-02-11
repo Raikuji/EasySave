@@ -153,6 +153,7 @@ namespace EasyCmd.Model
                 Directory.CreateDirectory(_destination);
             }
             _backupStrategy.Execute(this, _source, _destination);
-        }
+			UpdateWorkState(0, 0, "", "");
+		}
     }
 }
