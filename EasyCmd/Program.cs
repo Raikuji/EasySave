@@ -8,8 +8,16 @@ namespace EasyCmd
     {
         public static void Main(string[] args)
         {
-            BackupViewModel backupViewModel = new BackupViewModel();
-            backupViewModel.Show();
+			BackupViewModel backupViewModel = new BackupViewModel();
+			if (args.Length == 0)
+            {
+                backupViewModel.Show();
+            }
+            else
+            {
+				bool hasWorked = backupViewModel.ExecuteSomeBackupJobs(args);
+                Environment.Exit(hasWorked ? 0 : 1);
+			}
         }
     }
 }
