@@ -62,9 +62,9 @@ namespace EasyCmd.Model
         /// Executes a backup job.
         /// </summary>
         /// <param name="index"></param>
-        public void Execute(int index)
+        public bool Execute(int index)
         {
-            _backupJobs[index].Execute();
+            return _backupJobs[index].Execute();
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace EasyCmd.Model
             StringBuilder stringBuilder = new StringBuilder();
             foreach (BackupJob backupJob in _backupJobs)
             {
-                stringBuilder.Append(_backupJobs.IndexOf(backupJob)+1 + ". ");
+                stringBuilder.Append(_backupJobs.IndexOf(backupJob) + 1 + ". ");
                 stringBuilder.Append(backupJob.ToString());
                 if (backupJob != _backupJobs.Last())
                 {
@@ -142,6 +142,16 @@ namespace EasyCmd.Model
                     }
                 }
             }
+        }
+
+        internal bool ExecuteRange(int v1, int v2)
+        {
+            bool result = false;
+			for (int i = v1; i <= v2; i++)
+            {
+                result = Execute(i);
+            }
+            return result;
         }
     }
 }

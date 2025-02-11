@@ -138,22 +138,34 @@ namespace EasyCmd.Model
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
-        public void Execute()
+        public bool Execute()
         {
-            if (string.IsNullOrWhiteSpace(_source) || string.IsNullOrWhiteSpace(_destination))
+            bool success = true;
+			try
             {
-                throw new ArgumentNullException();
-            }
-            if (!Directory.Exists(_source))
-            {
-                throw new DirectoryNotFoundException(_source);
-            }
-            if (!Directory.Exists(_destination))
-            {
-                Directory.CreateDirectory(_destination);
-            }
-            _backupStrategy.Execute(this, _source, _destination);
-			UpdateWorkState(0, 0, "", "");
+				if (string.IsNullOrWhiteSpace(_source) || string.IsNullOrWhiteSpace(_destination))
+				{
+					throw new ArgumentNullException();
+				}
+				if (!Directory.Exists(_source))
+				{
+					throw new DirectoryNotFoundException(_source);
+				}
+				if (!Directory.Exists(_destination))
+				{
+					Directory.CreateDirectory(_destination);
+				}
+				_backupStrategy.Execute(this, _source, _destination);
+			}
+			catch (Exception)
+			{
+				success = false;
+			}
+			finally
+			{
+				UpdateWorkState(0, 0, "", "");
+			}
+            return success;
 		}
     }
 }
