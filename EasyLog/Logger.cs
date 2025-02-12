@@ -10,7 +10,7 @@ namespace EasyLog
     public enum LogFormat
     {
         JSON,
-        XAML
+        XML
     }
 
     public class Logger
@@ -33,13 +33,13 @@ namespace EasyLog
             }
             else // XAML
             {
-                output = SerializeToXaml(data);
+                output = SerializeToXml(data);
             }
 
             File.AppendAllText(_logFilePath, output + Environment.NewLine);
         }
 
-        private string SerializeToXaml(Dictionary<string, object> data)
+        private string SerializeToXml(Dictionary<string, object> data)
         {
             var root = new XElement("Log");
             foreach (var kvp in data)

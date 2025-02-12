@@ -6,12 +6,23 @@ namespace EasyCmd.Model
     {
         private Dictionary<string, object> _logDictionary;
         private Logger _logger;
+        private LogFormat _logFormat;
         public static string LOGPATH = $"{AppDomain.CurrentDomain.BaseDirectory}\\log";
-        static string LOGFILE = $"backup_{DateTime.Now.ToString("yyyyMMdd")}.log";
+        string _logfile = $"backup_{DateTime.Now.ToString("yyyyMMdd")}";
 
 
-        public BackupJobLog(string name, string source, string destination, long size, double transfertTime, DateTime time)
+        public BackupJobLog(string name, string source, string destination, long size, double transfertTime, DateTime time, string logFormat)
         {
+            if (logFormat == "JSON")
+            {
+                _logfile += ".json";
+                _logFormat = LogFormat.JSON;
+            }
+            else
+            {
+                _logfile += ".xml";
+                _logFormat = LogFormat.XML;
+            }
             _logger = new Logger($"{LOGPATH}\\{LOGFILE}");
             _logDictionary = new Dictionary<string, object>();
             _logDictionary.Add("Name", name);
@@ -22,10 +33,10 @@ namespace EasyCmd.Model
             _logDictionary.Add("Time", time);
         }
 
-        public void Log(LogFormat logFormat = LogFormat.JSON)
+        public void Log()
         {
             
-            _logger = new Logger($"{LOGPATH}\\{LOGFILE}", logFormat);
+            _logger = new Logger($"{LOGPATH}\\{LOGFILE}", _logFormat);
             _logger.Log(_logDictionary);
         }
 
