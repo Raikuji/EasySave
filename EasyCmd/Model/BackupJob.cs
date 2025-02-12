@@ -95,7 +95,7 @@ namespace EasyCmd.Model
 
         public void Log(string source, string destination, long size, DateTime transfertStart)
         {
-            BackupJobLog backupJobLog = new BackupJobLog(_name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, DateTime.Now,);
+            BackupJobLog backupJobLog = new BackupJobLog(_name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, DateTime.Now);
             backupJobLog.Log();
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Xml.Linq;
-using System.Xaml;
+using System.Xml;
 
 namespace EasyLog
 {
@@ -31,7 +31,7 @@ namespace EasyLog
             {
                 output = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
             }
-            else // XAML
+            else // XML
             {
                 output = SerializeToXml(data);
             }
@@ -46,6 +46,7 @@ namespace EasyLog
             {
                 root.Add(new XElement(kvp.Key, kvp.Value));
             }
-            return XamlServices.Save(root);
+            return root.ToString();
         }
     }
+}
