@@ -22,9 +22,10 @@ namespace EasyCmd.Model
             _logDictionary.Add("Time", time);
         }
 
-        public void Log()
+        public void Log(LogFormat logFormat = LogFormat.JSON)
         {
+            
+            _logger = new Logger($"{LOGPATH}\\{LOGFILE}", logFormat);
             _logger.Log(_logDictionary);
         }
-    }
-}
+

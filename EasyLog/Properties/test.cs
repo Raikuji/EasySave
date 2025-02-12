@@ -1,51 +1,32 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-using System.Xml.Linq;
-using System.Xaml;
-
-namespace EasyLog
+/*
+//Fonctionnalité graphique avec menu déroulant ou bouton radio "RadioButton"
+private void BtnSaveLogSettings_Click(object sender, EventArgs e)
 {
-    public enum LogFormat
-    {
-        JSON,
-        XAML
-    }
+    // Supposons qu'on ait un ComboBox avec les choix "JSON" et "XAML"
+    string selectedFormat = comboBoxLogFormat.SelectedItem.ToString();
+    LogFormat format = selectedFormat == "XAML" ? LogFormat.XAML : LogFormat.JSON;
 
-    public class Logger
-    {
-        private readonly string _logFilePath;
-        private readonly LogFormat _format;
+    // Sauvegarder cette préférence dans le fichier de configuration
+    SaveLogFormatToConfig(format);
+}
 
-        public Logger(string logFilePath, LogFormat format)
-        {
-            _logFilePath = logFilePath;
-            _format = format;
-        }
+private void SaveLogFormatToConfig(LogFormat format)
+{
+    var config = new Config { LogFormat = format.ToString() };
+    string json = JsonSerializer.Serialize(config);
+    File.WriteAllText("config.json", json);
+}
+//Fonctionnalité graphique avec une option de réinitialisation du format de log à tout moment pour l'utilisateur
+public void ChangerFormat()
+{
+    Console.WriteLine("Choisissez un nouveau format de log :");
+    Console.WriteLine("1 - JSON");
+    Console.WriteLine("2 - XAML");
 
-        public void Log(Dictionary<string, object> data)
-        {
-            string output;
-            if (_format == LogFormat.JSON)
-            {
-                output = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-            }
-            else // XAML
-            {
-                output = SerializeToXaml(data);
-            }
+    string choix = Console.ReadLine();
+    LogFormat formatChoisi = choix == "2" ? LogFormat.XAML : LogFormat.JSON;
 
-            File.AppendAllText(_logFilePath, output + Environment.NewLine);
-        }
-
-        private string SerializeToXaml(Dictionary<string, object> data)
-        {
-            var root = new XElement("Log");
-            foreach (var kvp in data)
-            {
-                root.Add(new XElement(kvp.Key, kvp.Value));
-            }
-            return XamlServices.Save(root);
-        }
-    }
+    // Mettre à jour la configuration ou la logique du programme en fonction du format choisi
+    Console.WriteLine($"Le format de log a été changé en : {formatChoisi}");
+}
+*/

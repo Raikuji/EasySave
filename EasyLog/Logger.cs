@@ -1,7 +1,18 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Xml.Linq;
+using System.Xaml;
 
 namespace EasyLog
 {
+    public enum LogFormat
+    {
+        JSON,
+        XAML
+    }
+
     public class Logger
     {
         private readonly string _logFilePath;
@@ -15,12 +26,26 @@ namespace EasyLog
 
         public void Log(Dictionary<string, object> data)
         {
-            if (File.Exists(_logFilePath))
+            string output;
+            if (_format == LogFormat.JSON)
             {
-                File.AppendAllText(_logFilePath, $",{Environment.NewLine}");
+                output = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
             }
-            string json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-            File.AppendAllText(_logFilePath, json);
+            else // XAML
+            {
+                output = SerializeToXaml(data);
+            }
+
+            File.AppendAllText(_logFilePath, output + Environment.NewLine);
+        }
+
+        private string SerializeToXaml(Dictionary<string, object> data)
+        {
+            var root = new XElement("Log");
+            foreach (var kvp in data)
+            {
+                root.Add(new XElement(kvp.Key, kvp.Value));
+            }
+            return XamlServices.Save(root);
         }
     }
-}
