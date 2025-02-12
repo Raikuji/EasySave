@@ -5,10 +5,12 @@ namespace EasyLog
     public class Logger
     {
         private readonly string _logFilePath;
+        private readonly LogFormat _format;
 
-        public Logger(string logFilePath)
+        public Logger(string logFilePath, LogFormat format)
         {
             _logFilePath = logFilePath;
+            _format = format;
         }
 
         public void Log(Dictionary<string, object> data)

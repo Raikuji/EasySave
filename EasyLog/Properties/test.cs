@@ -49,4 +49,3 @@ namespace EasyLog
             return XamlServices.Save(root);
         }
     }
-}
