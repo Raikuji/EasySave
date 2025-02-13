@@ -41,7 +41,7 @@ namespace EasyCmd.Model
         /// <param name="language"></param>
         public void SetLanguage(LanguageDictionary language)
         {
-            _languageDictionary = language;
+            _languageDictionary = language; 
         }
 
         /// <summary>
