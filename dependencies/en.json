@@ -10,5 +10,6 @@
     {"Remove": "Enter the index of the backup job to remove:"},
     {"Update": "Enter the index of the backup job to update:"},
     {"Execute": "Enter the index of the backup job to execute:"},
-    {"Lang": "Choose the language: \n  1. English \n  2. French"}
+    { "Lang": "Choose the language: \n  1. English \n  2. French" },
+    { "LogFormat": "Choose the format: \n  1. Json \n  2. XML" }
 ]
