@@ -31,6 +31,7 @@ namespace EasyCmd.ViewModel
             LanguageDictionary english = new LanguageDictionary();
             english.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
             Language.GetInstance().SetLanguage(english);
+            BackupJobLog.logFormat = LogFormat.JSON;
         }
 
         /// <summary>
@@ -80,12 +81,12 @@ namespace EasyCmd.ViewModel
         /// <param name="destination"></param>
         /// <param name="strategyId"></param>
         /// <returns></returns>
-        public bool AddBackupJob(string name, string source, string destination, int strategyId, LogFormat _format)
+        public bool AddBackupJob(string name, string source, string destination, int strategyId)
         {
             bool isValid;
             try
             {
-                _backupJobList.Add(new BackupJob(name, source, destination, strategyId, _format.Value));
+                _backupJobList.Add(new BackupJob(name, source, destination, strategyId));
                 isValid = true;
             }
             catch (ArgumentException e)
@@ -124,12 +125,12 @@ namespace EasyCmd.ViewModel
         /// <param name="destination"></param>
         /// <param name="strategyId"></param>
         /// <returns></returns>
-        public bool UpdateBackupJob(int index, string name, string source, string destination, int strategyId, LogFormat _format)
+        public bool UpdateBackupJob(int index, string name, string source, string destination, int strategyId)
         {
             bool isValid;
             try
             {
-                _backupJobList.Update(index - 1, new BackupJob(name, source, destination, strategyId, _format));
+                _backupJobList.Update(index - 1, new BackupJob(name, source, destination, strategyId));
                 isValid = true;
             }
             catch (ArgumentOutOfRangeException e)
@@ -253,6 +254,10 @@ namespace EasyCmd.ViewModel
                         ChangeLanguage();
                         break;
                     case "7":
+                        Console.Clear();
+                        ChangeLogFormat();
+                        break;
+                    case "8":
                         continueLoop = false;
                         break;
                     default:
@@ -260,6 +265,24 @@ namespace EasyCmd.ViewModel
                         break;
                 }
                 Console.Clear();
+            }
+        }
+
+        private void ChangeLogFormat()
+        {
+            _backupView.Display(Language.GetInstance().GetString("LogFormat"));
+            string? input = Console.ReadLine();
+            switch (input)
+            {
+                case "1":
+                    BackupJobLog.logFormat = LogFormat.JSON;
+                    break;
+                case "2":
+                    BackupJobLog.logFormat = LogFormat.XML;
+                    break;
+                default:
+                    ShowInvalidOption();
+                    break;
             }
         }
 
@@ -285,15 +308,13 @@ namespace EasyCmd.ViewModel
             _backupView.Display(Language.GetInstance().GetString("AddStrategy"));
             string? strategyInput = Console.ReadLine();
             _backupView.Display(Language.GetInstance().GetString("AddStrategy"));
-            LogFormat? _format = Console.ReadLine();
-            _backupView.Display(Language.GetInstance().GetFormat("AddStrategy", _format?.ToString() ?? "DefaultFormat"));
 
             if (int.TryParse(strategyInput, out int strategyId))
             {
                 bool isValid = false;
                 if (name != null && source != null && destination != null)
                 {
-                    isValid = AddBackupJob(name, source, destination, strategyId, _format);
+                    isValid = AddBackupJob(name, source, destination, strategyId);
                 }
                 else
                 {

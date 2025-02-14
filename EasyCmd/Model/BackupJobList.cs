@@ -135,7 +135,7 @@ namespace EasyCmd.Model
 
                     if (name != null && source != null && destination != null)
                     {
-                        Add(new BackupJob(name, source, destination, strategyId, LogFormat.JSON));
+                        Add(new BackupJob(name, source, destination, strategyId));
                     }
                     else
                     {

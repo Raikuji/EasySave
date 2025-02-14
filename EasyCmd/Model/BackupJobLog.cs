@@ -6,27 +6,12 @@ namespace EasyCmd.Model
     {
         private Dictionary<string, object> _logDictionary;
         private Logger _logger;
-        private LogFormat _logFormat;
+        public static LogFormat logFormat;
         public static string LOGPATH = $"{AppDomain.CurrentDomain.BaseDirectory}\\log";
         private string _logfile = $"backup_{DateTime.Now.ToString("yyyyMMdd")}";
 
-        public BackupJobLog(string name, string source, string destination, long size, double transfertTime, DateTime time, string logFormat)
+        public BackupJobLog(string name, string source, string destination, long size, double transfertTime, DateTime time)
         {
-            // Log format verification and assignment
-            if (logFormat == "JSON")
-            {
-                _logfile += ".json";
-                _logFormat = LogFormat.JSON;
-            }
-            else if (logFormat == "XML")
-            {
-                _logfile += ".xml";
-                _logFormat = LogFormat.XML;
-            }
-            else
-            {
-                throw new ArgumentException("Format de log invalide. Utilisez 'JSON' ou 'XML'.");
-            }
 
             // Ensure that the log file exists
             if (!Directory.Exists(LOGPATH))
@@ -35,7 +20,7 @@ namespace EasyCmd.Model
             }
 
             // Logger initialization
-            _logger = new Logger($"{LOGPATH}\\{_logfile}", _logFormat);
+            _logger = new Logger($"{LOGPATH}\\{_logfile}", logFormat);
 
             // Dictionary creation with backup information
             _logDictionary = new Dictionary<string, object>();
