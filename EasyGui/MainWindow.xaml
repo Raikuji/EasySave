@@ -18,7 +18,7 @@
                 <MenuItem Header="Exit" Command="{Binding CloseApplicationCommand}"/>
             </MenuItem>
         </Menu>
-        <Menu DockPanel.Dock="Left" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="125" Visibility="Visible">
+        <Menu DockPanel.Dock="Left" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="100" Visibility="Visible">
             <MenuItem Header="Backup Job List" Command="{Binding ChangeViewCommand}" CommandParameter="BackupList"/>
             <MenuItem Header="Add Backup Job" Command="{Binding ChangeViewCommand}" CommandParameter="AddBackup"/>
             <MenuItem Header="Settings"/>
