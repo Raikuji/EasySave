@@ -53,5 +53,11 @@ namespace EasyCmd.Model
         {
             return _languageDictionary.GetString(key);
         }
+
+        //méthode getFormat
+        public string GetFormat(string key, params object[] args)
+        {
+            return string.Format(_languageDictionary.GetString(key), args);
+        }
     }
 }
