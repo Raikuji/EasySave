@@ -12,7 +12,7 @@ namespace EasyCmd.Model
     /// <summary>
     /// Class that represents the state of the backup work.
     /// </summary>
-    internal class WorkState
+    public class WorkState
     {
         private int _totalFiles;
         private long _totalSize;
