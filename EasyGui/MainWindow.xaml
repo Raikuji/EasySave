@@ -1,0 +1,28 @@
+﻿<Window x:Class="EasyGui.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:EasyGui"
+		xmlns:ViewModels="clr-namespace:EasyGui.ViewModels"
+		mc:Ignorable="d"
+		Title="MainWindow" Height="450" Width="800" WindowStyle="ThreeDBorderWindow" Background="White">
+
+    <Window.DataContext>
+        <ViewModels:MainWindowViewModel x:Name="ViewModel"/>
+    </Window.DataContext>
+    <DockPanel x:Name="TopDock" Margin="0,0,0,0" >
+        <Menu DockPanel.Dock="Top" Focusable="False" >
+            <MenuItem Header="File" IsTabStop="False">
+                <MenuItem Header="Settings" />
+                <MenuItem Header="Exit" Command="{Binding CloseApplicationCommand}"/>
+            </MenuItem>
+        </Menu>
+        <Menu DockPanel.Dock="Left" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="125" Visibility="Visible">
+            <MenuItem Header="Backup Job List" Command="{Binding ChangeViewCommand}" CommandParameter="BackupList"/>
+            <MenuItem Header="Add Backup Job" Command="{Binding ChangeViewCommand}" CommandParameter="AddBackup"/>
+            <MenuItem Header="Settings"/>
+        </Menu>
+        <Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" />
+    </DockPanel>
+</Window>
