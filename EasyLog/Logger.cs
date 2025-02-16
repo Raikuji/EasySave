@@ -20,8 +20,18 @@ namespace EasyLog
 
         public Logger(string logFilePath, LogFormat format)
         {
-            _logFilePath = logFilePath;
-            _format = format;
+            switch (format)
+			{
+				case LogFormat.JSON:
+					_logFilePath = $"{logFilePath}.json";
+					break;
+				case LogFormat.XML:
+					_logFilePath = $"{logFilePath}.xml";
+					break;
+				default:
+					throw new ArgumentException("Invalid log format");
+			}
+			_format = format;
         }
 
         public void Log(Dictionary<string, object> data)
@@ -30,23 +40,35 @@ namespace EasyLog
             if (_format == LogFormat.JSON)
             {
                 output = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+                File.AppendAllText(_logFilePath, output + Environment.NewLine);
             }
             else // XML
             {
                 output = SerializeToXml(data);
+                File.WriteAllText(_logFilePath, output);
             }
-
-            File.AppendAllText(_logFilePath, output + Environment.NewLine);
         }
 
         private string SerializeToXml(Dictionary<string, object> data)
         {
-            var root = new XElement("Log");
-            foreach (var kvp in data)
-            {
-                root.Add(new XElement(kvp.Key, kvp.Value));
-            }
-            return root.ToString();
-        }
-    }
+			XElement root;
+			if (File.Exists(_logFilePath))
+			{
+				root = XElement.Load(_logFilePath);
+			}
+			else
+			{
+				root = new XElement("Logs");
+			}
+
+			var logEntry = new XElement("Log");
+			foreach (var kvp in data)
+			{
+				logEntry.Add(new XElement(kvp.Key, kvp.Value));
+			}
+
+			root.Add(logEntry);
+			return root.ToString();
+		}
+	}
 }
