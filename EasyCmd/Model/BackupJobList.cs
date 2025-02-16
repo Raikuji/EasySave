@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using EasyLog;
 
 namespace EasyCmd.Model
 {
@@ -61,7 +62,7 @@ namespace EasyCmd.Model
 		{
 			_backupJobs[index] = backupJob;
 		}
-
+    
 		/// <summary>
 		/// Executes a backup job.
 		/// </summary>
@@ -138,15 +139,14 @@ namespace EasyCmd.Model
 				}
 			}
 		}
-
-		internal bool ExecuteRange(int v1, int v2)
-		{
-			bool result = false;
-			for (int i = v1; i <= v2; i++)
-			{
-				result = Execute(i);
-			}
-			return result;
-		}
-	}
+    internal bool ExecuteRange(int v1, int v2)
+    {
+        bool result = false;
+        for (int i = v1; i <= v2; i++)
+        {
+            result = Execute(i);
+        }
+        return result;
+    }
+  }
 }

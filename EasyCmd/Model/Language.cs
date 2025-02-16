@@ -41,7 +41,7 @@ namespace EasyCmd.Model
         /// <param name="language"></param>
         public void SetLanguage(LanguageDictionary language)
         {
-            _languageDictionary = language;
+            _languageDictionary = language; 
         }
 
         /// <summary>
@@ -52,6 +52,12 @@ namespace EasyCmd.Model
         public string GetString(string key)
         {
             return _languageDictionary.GetString(key);
+        }
+
+        //méthode getFormat
+        public string GetFormat(string key, params object[] args)
+        {
+            return string.Format(_languageDictionary.GetString(key), args);
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using System.Dynamic;
+﻿using System;
+using System.Dynamic;
+using System.IO;
 using System.Text.Json;
-
+using EasyLog;
 namespace EasyCmd.Model
 {
 	/// <summary>
