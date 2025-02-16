@@ -20,18 +20,41 @@ namespace EasyCmd.ViewModel
         private string BACKUPJOBFILENAME = "backup_jobs.json";
         private string _path;
 
-        /// <summary>
-        /// Constructor of the BackupViewModel class.
-        /// </summary>
-        public BackupViewModel()
+		/// <summary>
+		/// Constructor of the BackupViewModel class.
+		/// </summary>
+		public BackupViewModel()
         {
-            _backupJobList = new BackupJobList();
-            _path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
-            _backupView = new BackupView();
-            LanguageDictionary english = new LanguageDictionary();
-            english.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
-            Language.GetInstance().SetLanguage(english);
-            BackupJobLog.logFormat = LogFormat.JSON;
+			_path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
+			_backupJobList = new BackupJobList();
+			Settings.GetInstance().LoadSettings();
+			switch (Settings.GetInstance().LogFormat)
+			{
+				case LogFormat.JSON:
+					BackupJobLog.logFormat = LogFormat.JSON;
+					break;
+				case LogFormat.XML:
+					BackupJobLog.logFormat = LogFormat.XML;
+					break;
+				default:
+					BackupJobLog.logFormat = LogFormat.JSON;
+					break;
+			}
+			LanguageDictionary language = new LanguageDictionary();
+			switch (Settings.GetInstance().Language)
+			{
+				case "en":
+					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
+					break;
+				case "fr":
+					language.LoadLanguage(RESOURCEPATH + "\\" + "fr.json");
+					break;
+				default:
+					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
+					break;
+			}
+			Language.GetInstance().SetLanguage(language);
+			_backupView = new BackupView();
         }
 
         /// <summary>
@@ -284,7 +307,9 @@ namespace EasyCmd.ViewModel
                     ShowInvalidOption();
                     break;
             }
-        }
+			Settings.GetInstance().LogFormat = BackupJobLog.logFormat;
+			Settings.GetInstance().SaveSettings();
+		}
 
         /// <summary>
         /// Shows all backup jobs.
@@ -398,10 +423,12 @@ namespace EasyCmd.ViewModel
                 {
                     case 1:
                         langFileName = "en.json";
-                        break;
+						Settings.GetInstance().Language = "en";
+						break;
                     case 2:
                         langFileName = "fr.json";
-                        break;
+						Settings.GetInstance().Language = "fr";
+						break;
                     default:
                         ShowInvalidOption();
                         exists = false;
@@ -411,7 +438,8 @@ namespace EasyCmd.ViewModel
                 {
                     language.LoadLanguage(RESOURCEPATH + "\\" + langFileName);
                     Language.GetInstance().SetLanguage(language);
-                }
+					Settings.GetInstance().SaveSettings();
+				}
             }
         }
 
