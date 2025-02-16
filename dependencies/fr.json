@@ -10,6 +10,6 @@
     {"Remove": "Entrer l'indice de la sauvegarde a supprimmer :"},
     {"Update": "Entrer l'indice de la sauvegarde a modifier :"},
     {"Execute": "Entrer l'indice de la sauvegarde a executer :"},
-    {"Lang": "Choisir la langue : \n  1. Anglais \n  2. Francais" }
+    {"Lang": "Choisir la langue : \n  1. Anglais \n  2. Francais" },
     {"LogFormat": "Choisir le format : \n  1. Json \n  2. XML" }
 ]
