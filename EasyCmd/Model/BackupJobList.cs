@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using EasyLog;
 
 namespace EasyCmd.Model
 {
@@ -68,7 +69,7 @@ namespace EasyCmd.Model
         }
 
         /// <summary>
-        /// Return the nummber of backup jobs in the list.
+        /// Returns the number of backup jobs in the list.
         /// </summary>
         /// <returns></returns>
         public int Count()
@@ -147,7 +148,7 @@ namespace EasyCmd.Model
         internal bool ExecuteRange(int v1, int v2)
         {
             bool result = false;
-			for (int i = v1; i <= v2; i++)
+            for (int i = v1; i <= v2; i++)
             {
                 result = Execute(i);
             }

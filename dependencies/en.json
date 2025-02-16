@@ -1,6 +1,6 @@
 [
     {"Start": "Welcome to EasyCmd Backup"},
-    {"Menu": "Select an option: \n  1. Show backup jobs \n  2. Add backup job \n  3. Remove backup job \n  4. Update backup job \n  5. Execute backup job \n  6. Change language \n  7. Exit "},
+    {"Menu": "Select an option: \n  1. Show backup jobs \n  2. Add backup job \n  3. Remove backup job \n  4. Update backup job \n  5. Execute backup job \n  6. Change language \n  7. Change log format \n  8. Exit "},
     {"All": "Backup jobs:"},
     {"InvalidOption": "Invalid option"},
     {"AddName": "Enter the name of the backup job:"},
@@ -10,5 +10,6 @@
     {"Remove": "Enter the index of the backup job to remove:"},
     {"Update": "Enter the index of the backup job to update:"},
     {"Execute": "Enter the index of the backup job to execute:"},
-    {"Lang": "Choose the language: \n  1. English \n  2. French"}
+    { "Lang": "Choose the language: \n  1. English \n  2. French" },
+    { "LogFormat": "Choose the format: \n  1. Json \n  2. XML" }
 ]
