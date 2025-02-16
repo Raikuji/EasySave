@@ -1,6 +1,6 @@
 [
     {"Start": "Bienvenue dans EasySave"},
-    {"Menu": "Selectionner une option : \n  1. Lister les travaux de sauvegarde \n  2. Ajouter un travail de sauvegarde \n  3. Supprimer un travail de sauvegarde \n  4. Modifier un travail de sauvegarde \n  5. Executer un travail de sauvegarde \n  6. Changer de langue \n 7. Changer de format de log \n 8. Quitter "},
+    {"Menu": "Selectionner une option : \n  1. Lister les travaux de sauvegarde \n  2. Ajouter un travail de sauvegarde \n  3. Supprimer un travail de sauvegarde \n  4. Modifier un travail de sauvegarde \n  5. Executer un travail de sauvegarde \n  6. Changer de langue \n  7. Changer de format de log \n  8. Quitter "},
     {"All": "Travaux de sauvegarde :"},
     {"InvalidOption": "Option invalide"},
     {"AddName": "Entrer le nom du nouveau travail :"},
