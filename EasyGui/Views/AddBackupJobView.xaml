@@ -1,0 +1,36 @@
+﻿<Page x:Class="EasyGui.Views.AddBackupJobView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EasyGui.Views"
+      xmlns:ViewModels="clr-namespace:EasyGui.ViewModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AddBackupJobView">
+    <Page.DataContext>
+        <ViewModels:AddBackupJobViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
+
+    <Grid>
+        <Label Content="Name of the job:" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top"/>
+        <TextBox Text="{Binding Name}" HorizontalAlignment="Left" Margin="20,45,0,0" VerticalAlignment="Top" MinWidth="100" MaxWidth="200"/>
+        
+        <Label Content="Source directory:" HorizontalAlignment="Left" Margin="20,65,0,0" VerticalAlignment="Top"/>
+        <Label Content="Invalid source directory" HorizontalAlignment="Left" Margin="115,65,0,0" VerticalAlignment="Top" Visibility="{Binding SourceError}" Foreground="#FFD60000"/>
+        <Button Content="..." Command="{Binding BrowseSource}" HorizontalAlignment="Left" Margin="20,90,0,0" VerticalAlignment="Top" Width="18" Height="18"/>
+        <TextBox Text="{Binding SourceFolder}" HorizontalAlignment="Left" Margin="45,90,0,0" VerticalAlignment="Top" MinWidth="100" MaxWidth="500"/>
+        
+        <Label Content="Destination directory:" HorizontalAlignment="Left" Margin="20,110,0,0" VerticalAlignment="Top"/>
+        <Label Content="Invalid source directory" HorizontalAlignment="Left" Margin="140,110,0,0" VerticalAlignment="Top" Visibility="{Binding SourceError}" Foreground="#FFD60000"/>
+        <Button Content="..." Command="{Binding BrowseDestination}" HorizontalAlignment="Left" Margin="20,135,0,0" VerticalAlignment="Top" Width="18" Height="18"/>
+        <TextBox Text="{Binding DestinationFolder}" HorizontalAlignment="Left" Margin="45,135,0,0" VerticalAlignment="Top" MinWidth="100" MaxWidth="500"/>
+        
+        <Label Content="Job type:" HorizontalAlignment="Left" Margin="20,155,0,0" VerticalAlignment="Top"/>
+        <RadioButton GroupName="Type" Content="Full" HorizontalAlignment="Left" Margin="20,180,0,0" VerticalAlignment="Top" IsChecked="{Binding FullType}"/>
+        <RadioButton GroupName="Type" Content="Incremental" HorizontalAlignment="Left" Margin="20,195,0,0" VerticalAlignment="Top" IsChecked="{Binding IncrementalType}"/>
+        
+        <Button Content="Save" Command="{Binding AddBackupJob}" HorizontalAlignment="Left" Margin="20,220,0,0" VerticalAlignment="Top" Width="75"/>
+        
+    </Grid>
+</Page>

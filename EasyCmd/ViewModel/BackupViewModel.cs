@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,48 +96,48 @@ namespace EasyCmd.ViewModel
             _backupJobList.SaveBackupJobs(path);
         }
 
-        /// <summary>
-        /// Adds a backup job.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="source"></param>
-        /// <param name="destination"></param>
-        /// <param name="strategyId"></param>
-        /// <returns></returns>
-        public bool AddBackupJob(string name, string source, string destination, int strategyId)
-        {
-            bool isValid;
-            try
-            {
-                _backupJobList.Add(new BackupJob(name, source, destination, strategyId));
-                isValid = true;
-            }
-            catch (ArgumentException e)
-            {
-                isValid = false;
-            }
-            return isValid;
-        }
+		/// <summary>
+		/// Adds a backup job.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <param name="strategyId"></param>
+		/// <returns></returns>
+		public bool AddBackupJob(string name, string source, string destination, int strategyId)
+		{
+			bool isValid;
+			try
+			{
+				_backupJobList.AddJob(new BackupJob(name, source, destination, strategyId));
+				isValid = true;
+			}
+			catch (ArgumentException)
+			{
+				isValid = false;
+			}
+			return isValid;
+		}
 
-        /// <summary>
-        /// Removes a backup job.
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public bool RemoveBackupJob(int index)
-        {
-            bool isValid;
-            try
-            {
-                _backupJobList.Remove(index - 1);
-                isValid = true;
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                isValid = false;
-            }
-            return isValid;
-        }
+		/// <summary>
+		/// Removes a backup job.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public bool RemoveBackupJob(int index)
+		{
+			bool isValid;
+			try
+			{
+				_backupJobList.RemoveJobAt(index - 1);
+				isValid = true;
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				isValid = false;
+			}
+			return isValid;
+		}
 
         /// <summary>
         /// Updates a backup job.
