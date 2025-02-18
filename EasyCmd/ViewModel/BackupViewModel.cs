@@ -31,17 +31,17 @@ namespace EasyCmd.ViewModel
 			switch (Settings.GetInstance().LogFormat)
 			{
 				case LogFormat.JSON:
-					BackupJobLog.logFormat = LogFormat.JSON;
+					Settings.GetInstance().LogFormat = LogFormat.JSON;
 					break;
 				case LogFormat.XML:
-					BackupJobLog.logFormat = LogFormat.XML;
+					Settings.GetInstance().LogFormat = LogFormat.XML;
 					break;
 				default:
-					BackupJobLog.logFormat = LogFormat.JSON;
+					Settings.GetInstance().LogFormat = LogFormat.JSON;
 					break;
 			}
 			LanguageDictionary language = new LanguageDictionary();
-			switch (Settings.GetInstance().Language)
+			switch (Settings.GetInstance().LanguageCode)
 			{
 				case "en":
 					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
@@ -156,7 +156,7 @@ namespace EasyCmd.ViewModel
                 _backupJobList.Update(index - 1, new BackupJob(name, source, destination, strategyId));
                 isValid = true;
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 isValid = false;
             }
@@ -298,16 +298,15 @@ namespace EasyCmd.ViewModel
             switch (input)
             {
                 case "1":
-                    BackupJobLog.logFormat = LogFormat.JSON;
+					Settings.GetInstance().LogFormat = LogFormat.JSON;
                     break;
                 case "2":
-                    BackupJobLog.logFormat = LogFormat.XML;
+					Settings.GetInstance().LogFormat = LogFormat.XML;
                     break;
                 default:
                     ShowInvalidOption();
                     break;
-            }
-			Settings.GetInstance().LogFormat = BackupJobLog.logFormat;
+            };
 			Settings.GetInstance().SaveSettings();
 		}
 
@@ -423,11 +422,11 @@ namespace EasyCmd.ViewModel
                 {
                     case 1:
                         langFileName = "en.json";
-						Settings.GetInstance().Language = "en";
+						Settings.GetInstance().LanguageCode = "en";
 						break;
                     case 2:
                         langFileName = "fr.json";
-						Settings.GetInstance().Language = "fr";
+						Settings.GetInstance().LanguageCode = "fr";
 						break;
                     default:
                         ShowInvalidOption();
