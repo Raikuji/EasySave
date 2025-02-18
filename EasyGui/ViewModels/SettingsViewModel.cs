@@ -33,7 +33,7 @@ namespace EasyGui.ViewModels
 			set => SetProperty(ref _logFormat, value);
 		}
 
-		public string Language
+		public string CurrentLanguage
 		{
 			get => _language;
 			set => SetProperty(ref _language, value);
@@ -53,6 +53,9 @@ namespace EasyGui.ViewModels
 			Settings.GetInstance().LanguageCode = language;
 			Settings.GetInstance().SetLanguage();
 			Settings.GetInstance().SaveSettings();
+			OnPropertyChanged(nameof(LogBoxSetting));
+			OnPropertyChanged(nameof(FrenchRadioSetting));
+			OnPropertyChanged(nameof(EnglishRadioSetting));
 			MainWindowViewModel.Instance.UpdateLanguage();
 		}
 
@@ -103,5 +106,9 @@ namespace EasyGui.ViewModels
 				}
 			}
 		}
+
+		public string LogBoxSetting => Language.GetInstance().GetString("LogBoxSetting");
+		public string FrenchRadioSetting => Language.GetInstance().GetString("FrenchRadioSetting");
+		public string EnglishRadioSetting => Language.GetInstance().GetString("EnglishRadioSetting");
 	}
 }

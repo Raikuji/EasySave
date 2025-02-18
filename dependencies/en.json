@@ -17,5 +17,8 @@
     {"TypeLabelAdd": "Job type:"},
     {"FullLabelAdd": "Full"},
     {"IncrementalLabelAdd": "Incremental"},
-    {"SaveButtonAdd": "Save"}
+    {"SaveButtonAdd": "Save"},
+    {"LogBoxSetting": "Log format"},
+    {"FrenchRadioSetting": "French"},
+    {"EnglishRadioSetting": "English"}
 ]

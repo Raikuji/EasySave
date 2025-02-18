@@ -17,5 +17,8 @@
     {"TypeLabelAdd": "Type de sauvegarde :"},
     {"FullLabelAdd": "Complète"},
     {"IncrementalLabelAdd": "Incrémentale"},
-    {"SaveButtonAdd": "Sauvegarder"}
+    {"SaveButtonAdd": "Sauvegarder"},
+    {"LogBoxSetting": "Format de log"},
+    {"FrenchRadioSetting": "Français"},
+    {"EnglishRadioSetting": "Anglais"}
 ]

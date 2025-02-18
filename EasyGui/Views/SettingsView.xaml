@@ -12,7 +12,7 @@
         <ViewModels:SettingsViewModel x:Name="ViewModel"/>
     </Page.DataContext>
     <Grid>
-        <GroupBox Header="Log Format" Margin="10, 10, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding LogBoxSetting}" Margin="10, 10, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <RadioButton x:Name="LogFormatJson" Content="JSON" IsChecked="{Binding LogFormatJson}" Margin="10, 10, 0, 0"/>
                 <RadioButton x:Name="LogFormatXml" Content="XML" IsChecked="{Binding LogFormatXml}" Margin="10, 10, 0, 0"/>
@@ -20,8 +20,8 @@
         </GroupBox>
         <GroupBox Header="Language" Margin="10, 100, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
-                <RadioButton x:Name="LanguageEnglish" Content="English" IsChecked="{Binding LanguageEnglish}" Margin="10, 10, 0, 0"/>
-                <RadioButton x:Name="LanguageFrench" Content="French" IsChecked="{Binding LanguageFrench}" Margin="10, 10, 0, 0"/>
+                <RadioButton x:Name="LanguageEnglish" Content="{Binding EnglishRadioSetting}" IsChecked="{Binding LanguageEnglish}" Margin="10, 10, 0, 0"/>
+                <RadioButton x:Name="LanguageFrench" Content="{Binding FrenchRadioSetting}" IsChecked="{Binding LanguageFrench}" Margin="10, 10, 0, 0"/>
             </StackPanel>
         </GroupBox>
     </Grid>
