@@ -12,20 +12,20 @@
 	</Page.DataContext>
 	<Grid Background="White">
 		<DockPanel x:Name="TopDock" Margin="0,0,0,0" >
-			<ListView x:Name="BackupJobList" ItemsSource="{Binding BackupJobs}" IsSynchronizedWithCurrentItem="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" MaxWidth="625">
+			<ListView x:Name="BackupJobList" ItemsSource="{Binding BackupJobs}" IsSynchronizedWithCurrentItem="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" MaxWidth="{Binding ListSize}">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-						<GridViewColumn Header="Source" DisplayMemberBinding="{Binding Source}"/>
-						<GridViewColumn Header="Destination" DisplayMemberBinding="{Binding Destination}"/>
-						<GridViewColumn Header="Type" DisplayMemberBinding="{Binding Strategy}"/>
+						<GridViewColumn Header="{Binding NameHeaderList}" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="{Binding SourceHeaderList}" DisplayMemberBinding="{Binding Source}"/>
+                        <GridViewColumn Header="{Binding DestinationHeaderList}" DisplayMemberBinding="{Binding Destination}"/>
+                        <GridViewColumn Header="{Binding TypeHeaderList}" DisplayMemberBinding="{Binding Strategy}"/>
 					</GridView>
 				</ListView.View>
 			</ListView>
-			<Menu DockPanel.Dock="Right" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="60" Visibility="Visible" HorizontalAlignment="Right" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
-				<MenuItem Header="Execute" Command="{Binding ExecuteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
-				<MenuItem Header="Edit" Command="{Binding UpdateBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
-				<MenuItem Header="Delete" Command="{Binding DeleteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
+			<Menu DockPanel.Dock="Right" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="{Binding MenuSize}" Visibility="Visible" HorizontalAlignment="Right" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+                <MenuItem Header="{Binding ExecuteMenuList}" Command="{Binding ExecuteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
+                <MenuItem Header="{Binding EditMenuList}" Command="{Binding UpdateBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
+                <MenuItem Header="{Binding DeleteMenuList}" Command="{Binding DeleteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
 			</Menu>
 		</DockPanel>
 	</Grid>

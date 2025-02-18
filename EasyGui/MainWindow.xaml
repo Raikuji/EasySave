@@ -13,15 +13,15 @@
     </Window.DataContext>
     <DockPanel x:Name="TopDock" Margin="0,0,0,0" >
         <Menu DockPanel.Dock="Top" Focusable="False" >
-            <MenuItem Header="File" IsTabStop="False">
-                <MenuItem Header="Settings" />
-                <MenuItem Header="Exit" Command="{Binding CloseApplicationCommand}"/>
+            <MenuItem Header="{Binding FileDockMain}" IsTabStop="False">
+                <MenuItem Header="{Binding SettingsMain}" />
+                <MenuItem Header="{Binding QuitDockMain}" Command="{Binding CloseApplicationCommand}"/>
             </MenuItem>
         </Menu>
-        <Menu DockPanel.Dock="Left" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="100" Visibility="Visible">
-            <MenuItem Header="Backup Job List" Command="{Binding ChangeViewCommand}" CommandParameter="BackupList"/>
-            <MenuItem Header="Add Backup Job" Command="{Binding ChangeViewCommand}" CommandParameter="AddBackup"/>
-            <MenuItem Header="Settings"/>
+        <Menu DockPanel.Dock="Left" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="105" Visibility="Visible">
+            <MenuItem Header="{Binding ListMenuMain}" Command="{Binding ChangeViewCommand}" CommandParameter="BackupList"/>
+            <MenuItem Header="{Binding AddMenuMain}" Command="{Binding ChangeViewCommand}" CommandParameter="AddBackup"/>
+            <MenuItem Header="{Binding SettingsMain}" Command="{Binding ChangeViewCommand}" CommandParameter="Settings"/>
         </Menu>
 		<StatusBar DockPanel.Dock="Bottom"
 				 Background="LightGray"

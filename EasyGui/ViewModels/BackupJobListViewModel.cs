@@ -44,28 +44,38 @@ namespace EasyGui.ViewModels
 			}
 		}
 
-		private void RemoveBackupJob(BackupJob job)
+		private void RemoveBackupJob(BackupJob? job)
 		{
-			BackupJobs.RemoveJob(job);
-			BackupJobs.SaveBackupJobs(PATH);
+			if (job != null)
+			{
+				BackupJobs.RemoveJob(job);
+				BackupJobs.SaveBackupJobs(PATH);
+			}
 		}
 
-		public void UpdateBackupJob(BackupJob job)
+		public void UpdateBackupJob(BackupJob? job)
 		{
-			RemoveBackupJob(job);
-			MainWindowViewModel.Instance.BackupJob = job;
-			MainWindowViewModel.Instance.ChangeView("UpdateBackup");
+			if (job != null)
+			{
+				RemoveBackupJob(job);
+				MainWindowViewModel.Instance.BackupJob = job;
+				MainWindowViewModel.Instance.ChangeView("UpdateBackup");
+			}
 		}
 
-		public void DeleteBackupJob(BackupJob job)
+		public void DeleteBackupJob(BackupJob? job)
 		{
-			RemoveBackupJob(job);
-			MainWindowViewModel.Instance.ChangeView("BackupList");
+			if (job != null)
+			{
+				RemoveBackupJob(job);
+				MainWindowViewModel.Instance.ChangeView("BackupList");
+			}
 		}
 
-		public void ExecuteBackupJob(BackupJob job)
+		public void ExecuteBackupJob(BackupJob? job)
 		{
-			job.Execute();
+			if (job != null)
+				job.Execute();
 		}
 
 		public BackupJobList BackupJobs
@@ -73,5 +83,15 @@ namespace EasyGui.ViewModels
 			get => _backupJobs;
 			set => SetProperty(ref _backupJobs, value);
 		}
+
+		public static int ListSize => Settings.GetInstance().LanguageCode == "en" ? 620 : 610;
+		public static int MenuSize => 685 - ListSize;
+		public static string NameHeaderList => Language.GetInstance().GetString("NameHeaderList");
+		public static string SourceHeaderList => Language.GetInstance().GetString("SourceHeaderList");
+		public static string DestinationHeaderList => Language.GetInstance().GetString("DestinationHeaderList");
+		public static string TypeHeaderList => Language.GetInstance().GetString("TypeHeaderList");
+		public static string ExecuteMenuList => Language.GetInstance().GetString("ExecuteMenuList");
+		public static string EditMenuList => Language.GetInstance().GetString("EditMenuList");
+		public static string DeleteMenuList => Language.GetInstance().GetString("DeleteMenuList");
 	}
 }
