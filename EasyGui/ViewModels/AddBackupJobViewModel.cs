@@ -157,5 +157,13 @@ namespace EasyGui.ViewModels
 			get => _destinationError;
 			set => SetProperty(ref _destinationError, value);
 		}
+
+		public static string NameLabelAdd => Language.GetInstance().GetString("NameLabelAdd");
+		public static string SourceLabelAdd => Language.GetInstance().GetString("SourceLabelAdd");
+		public static string DestinationLabelAdd => Language.GetInstance().GetString("DestinationLabelAdd");
+		public static string TypeLabelAdd => Language.GetInstance().GetString("TypeLabelAdd");
+		public static string FullLabelAdd => Language.GetInstance().GetString("FullLabelAdd");
+		public static string IncrementalLabelAdd => Language.GetInstance().GetString("IncrementalLabelAdd");
+		public static string SaveButtonAdd => Language.GetInstance().GetString("SaveButtonAdd");
 	}
 }
