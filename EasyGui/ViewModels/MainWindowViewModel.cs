@@ -17,15 +17,20 @@ namespace EasyGui.ViewModels
 
 		public ICommand ChangeViewCommand { get; }
 		public ICommand CloseApplicationCommand { get; }
-
-		public MainWindowViewModel()
+        private string _statusMessage = "Bienvenue dans EasySave !";
+        public MainWindowViewModel()
 		{
 			ChangeViewCommand = new RelayCommand<string>(ChangeView);
 			CloseApplicationCommand = new RelayCommand(() => System.Windows.Application.Current.Shutdown());
 			_currentView = new Views.BackupJobListView();
 		}
-
-		public Page CurrentView
+        
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set => SetProperty(ref _statusMessage, value);
+        }
+        public Page CurrentView
 		{
 			get => _currentView;
 			set => SetProperty(ref _currentView, value);

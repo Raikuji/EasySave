@@ -23,6 +23,11 @@
             <MenuItem Header="Add Backup Job" Command="{Binding ChangeViewCommand}" CommandParameter="AddBackup"/>
             <MenuItem Header="Settings"/>
         </Menu>
-        <Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" />
+		<StatusBar DockPanel.Dock="Bottom"
+				 Background="LightGray"
+				 Height="40">
+			<TextBlock Text="{Binding StatusMessage}" />
+		</StatusBar>
+        <Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" Navigated="Frame_Navigated_1" />
     </DockPanel>
 </Window>

@@ -22,5 +22,15 @@ namespace EasyGui
 			InitializeComponent();
 			DataContext = MainWindowViewModel.Instance;
 		}
-	}
+
+        private void Frame_Navigated(object sender, NavigationEventArgs e)
+        {
+
+        }
+
+        private void Frame_Navigated_1(object sender, NavigationEventArgs e)
+        {
+
+        }
+    }
 }
