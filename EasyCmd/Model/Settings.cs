@@ -31,7 +31,7 @@ namespace EasyCmd.Model
 			}
 			return _instance;
 		}
-		public string Language
+		public string LanguageCode
 		{
 			get => _language;
 			set => _language = value;
@@ -55,6 +55,24 @@ namespace EasyCmd.Model
 				Directory.CreateDirectory(SETTINGSDIR);
 			}
 			File.WriteAllText(SETTINGSFILEPATH, JsonSerializer.Serialize(this));
+		}
+
+		public void SetLanguage()
+		{
+			LanguageDictionary languageDictionnary = new LanguageDictionary();
+			switch (LanguageCode)
+			{
+				case "en":
+					languageDictionnary.LoadLanguage(SETTINGSDIR + "\\" + "en.json");
+					break;
+				case "fr":
+					languageDictionnary.LoadLanguage(SETTINGSDIR + "\\" + "fr.json");
+					break;
+				default:
+					languageDictionnary.LoadLanguage(SETTINGSDIR + "\\" + "en.json");
+					break;
+			}
+			Language.GetInstance().SetLanguage(languageDictionnary);
 		}
 	}
 }

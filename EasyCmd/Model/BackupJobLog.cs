@@ -6,7 +6,6 @@ namespace EasyCmd.Model
     {
         private Dictionary<string, object> _logDictionary;
         private Logger _logger;
-        public static LogFormat logFormat;
         public static string LOGPATH = $"{AppDomain.CurrentDomain.BaseDirectory}\\log";
         private string _logfile = $"backup_{DateTime.Now.ToString("yyyyMMdd")}";
 
@@ -20,7 +19,7 @@ namespace EasyCmd.Model
             }
 
             // Logger initialization
-            _logger = new Logger($"{LOGPATH}\\{_logfile}", logFormat);
+            _logger = new Logger($"{LOGPATH}\\{_logfile}", Settings.GetInstance().LogFormat);
 
             // Dictionary creation with backup information
             _logDictionary = new Dictionary<string, object>();
