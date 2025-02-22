@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Text.Json;
@@ -16,6 +17,7 @@ namespace EasyCmd.Model
 		public string Strategy { get; set; }
 		private IBackupWorkStrategy BackupStrategy { get; }
 		private WorkState _workState;
+		private ManualResetEvent _pauseEvent;
 
 		/// <summary>
 		/// Constructor of the BackupJob class.
@@ -32,6 +34,7 @@ namespace EasyCmd.Model
 			Strategy = GetBackupStrategy(strategyId).GetType().Name;
 			BackupStrategy = GetBackupStrategy(strategyId);
 			_workState = new WorkState();
+			_pauseEvent = new ManualResetEvent(true);
 		}
 
 		/// <summary>
@@ -88,9 +91,9 @@ namespace EasyCmd.Model
 			return JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
 		}
 
-		public void Log(string source, string destination, long size, DateTime transfertStart)
+		public void Log(string source, string destination, long size, DateTime transfertStart, int encryptionTime)
 		{
-			BackupJobLog backupJobLog = new BackupJobLog(Name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, DateTime.Now);
+			BackupJobLog backupJobLog = new BackupJobLog(Name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, encryptionTime, DateTime.Now);
 			backupJobLog.Log();
 		}
 
@@ -149,7 +152,8 @@ namespace EasyCmd.Model
 				{
 					Directory.CreateDirectory(Destination);
 				}
-				BackupStrategy.Execute(this, Source, Destination);
+				Thread thread = new Thread(() => BackupStrategy.Execute(this, Source, Destination));
+				thread.Start();
 			}
 			catch (Exception)
 			{
@@ -160,6 +164,39 @@ namespace EasyCmd.Model
 				UpdateWorkState(0, 0, "", "");
 			}
 			return success;
+		}
+
+		public void Pause()
+		{
+			_pauseEvent.WaitOne();
+		}
+
+		public void Resume()
+		{
+			_pauseEvent.Set();
+		}
+
+		public int EncryptFile(string filePath)
+		{
+			int encryptionTime = 0;
+			string extension = filePath.Split(".").Last();
+			if (Settings.GetInstance().FileExtensions.Contains(extension))
+			{
+				string cryptoSoftPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft", "CryptoSoft.exe");
+				if (!File.Exists(cryptoSoftPath))
+				{
+					throw new FileNotFoundException($"CryptoSoft.exe not found at {cryptoSoftPath}");
+				}
+				Process process = new();
+				process.StartInfo.FileName = cryptoSoftPath;
+				process.StartInfo.Arguments = $"\"{filePath}\" {Settings.GetInstance().Key}";
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.CreateNoWindow = true;
+				process.Start();
+				process.WaitForExit();
+				encryptionTime = process.ExitCode;
+			}
+			return encryptionTime;
 		}
 	}
 }

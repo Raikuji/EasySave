@@ -9,7 +9,7 @@ namespace EasyCmd.Model
         public static string LOGPATH = $"{AppDomain.CurrentDomain.BaseDirectory}\\log";
         private string _logfile = $"backup_{DateTime.Now.ToString("yyyyMMdd")}";
 
-        public BackupJobLog(string name, string source, string destination, long size, double transfertTime, DateTime time)
+        public BackupJobLog(string name, string source, string destination, long size, double transfertTime, int encryptionTime, DateTime time)
         {
 
             // Ensure that the log file exists
@@ -28,6 +28,7 @@ namespace EasyCmd.Model
             _logDictionary.Add("Destination", destination);
             _logDictionary.Add("Size", size);
             _logDictionary.Add("TransfertTime", transfertTime);
+            _logDictionary.Add("EncryptionTime", encryptionTime);
             _logDictionary.Add("Time", time);
         }
 

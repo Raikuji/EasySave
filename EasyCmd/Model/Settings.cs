@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,6 +15,8 @@ namespace EasyCmd.Model
 		private static Settings? _instance;
 		private string _language;
 		private LogFormat _logFormat;
+		private List<string> _fileExtensions;
+		private Byte[] _key;
 		public static string SETTINGSDIR = $"{AppDomain.CurrentDomain.BaseDirectory}\\resources";
 		public static string SETTINGSFILEPATH = $"{SETTINGSDIR}\\settings.json";
 
@@ -22,6 +25,10 @@ namespace EasyCmd.Model
 		{
 			_language = "en";
 			_logFormat = LogFormat.JSON;
+			_fileExtensions = new List<string>();
+			Aes aes = Aes.Create();
+			aes.KeySize = 256;
+			_key = aes.Key;
 		}
 		public static Settings GetInstance()
 		{
@@ -40,6 +47,16 @@ namespace EasyCmd.Model
 		{
 			get => _logFormat;
 			set => _logFormat = value;
+		}
+		public List<string> FileExtensions
+		{
+			get => _fileExtensions;
+			set => _fileExtensions = value;
+		}
+		public Byte[] Key
+		{
+			get => _key;
+			set => _key = value;
 		}
 		public void LoadSettings()
 		{

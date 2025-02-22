@@ -39,6 +39,7 @@
                     try
                     {
                         File.Copy(filePath, destFilePath, true);
+                        int encryptionTime = backupJob.EncryptFile(filePath);
 
                         // Update the remaining size and file count
                         remainingSize -= sourceFileInfo.Length;
@@ -46,11 +47,11 @@
 
                         // Update remaining size and file count in the backup job
                         backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
-                        backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart);
+                        backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
                     }
                     catch (Exception)
                     {
-                        backupJob.Log(filePath, destFilePath, -1, transfertStart);
+                        backupJob.Log(filePath, destFilePath, -1, transfertStart, -1);
                     }
                     
                 }
