@@ -15,17 +15,44 @@ namespace EasyGui.ViewModels
 	{
 		private LogFormat _logFormat;
 		private string _language;
+		private List<string> _fileExtensions;
 		public ICommand ChangeLogFormat { get; }
 		public ICommand ChangeLanguage { get; }
+		public ICommand AddFileExtension { get; }
+		public ICommand RemoveFileExtension { get; }
 
 		public SettingsViewModel()
 		{
 			Settings.GetInstance().LoadSettings();
 			_logFormat = Settings.GetInstance().LogFormat;
 			_language = Settings.GetInstance().LanguageCode;
+			_fileExtensions = Settings.GetInstance().FileExtensions;
 			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
 			ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
+			AddFileExtension = new RelayCommand(AddExtension);
+			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
 		}
+
+		private void RemoveExtension(string? obj)
+		{
+			if (obj != null) 
+			{
+				Settings.GetInstance().FileExtensions.Remove(obj);
+				Settings.GetInstance().SaveSettings();
+				MainWindowViewModel.Instance.ChangeView("Settings");
+			}
+				
+		}
+
+		private void AddExtension()
+		{
+			Settings.GetInstance().FileExtensions.Add(NewFileExtension);
+			FileExtensions = Settings.GetInstance().FileExtensions;
+			Settings.GetInstance().SaveSettings();
+			MainWindowViewModel.Instance.ChangeView("Settings");
+		}
+
+		public string NewFileExtension { get; set; } = string.Empty;
 
 		public LogFormat LogFormat
 		{
@@ -37,6 +64,12 @@ namespace EasyGui.ViewModels
 		{
 			get => _language;
 			set => SetProperty(ref _language, value);
+		}
+
+		public List<string> FileExtensions
+		{
+			get => _fileExtensions;
+			set => SetProperty(ref _fileExtensions, value);
 		}
 
 		public void UpdateLogFormat(LogFormat format)
