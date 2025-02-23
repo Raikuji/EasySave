@@ -17,7 +17,7 @@ namespace EasyGui.ViewModels
 
 		public ICommand ChangeViewCommand { get; }
 		public ICommand CloseApplicationCommand { get; }
-        private string _statusMessage = "Bienvenue dans EasySave !";
+		private string _statusMessage;
         public MainWindowViewModel()
 		{
 			ChangeViewCommand = new RelayCommand<string>(ChangeView);
@@ -25,6 +25,7 @@ namespace EasyGui.ViewModels
 			_currentView = new Views.BackupJobListView();
 			Settings.GetInstance().LoadSettings();
 			Settings.GetInstance().SetLanguage();
+			_statusMessage = Language.GetInstance().GetString("WelcomeMain");
 		}
         
         public string StatusMessage
@@ -79,6 +80,7 @@ namespace EasyGui.ViewModels
 			OnPropertyChanged(nameof(ListMenuMain));
 			OnPropertyChanged(nameof(AddMenuMain));
 			OnPropertyChanged(nameof(SettingsMain));
+			StatusMessage = Language.GetInstance().GetString("WelcomeMain");
 		}
 	}
 }

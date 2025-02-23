@@ -93,6 +93,15 @@ namespace EasyCmd.Model
 		}
 
 		/// <summary>
+		/// Executes a backup job.
+		/// </summary>
+		/// <param name="index"></param>
+		public void ExecuteAsync(int index)
+		{
+			_backupJobs[index].Execute();
+		}
+
+		/// <summary>
 		/// Returns a string of all backup jobs in the list.
 		/// </summary>
 		/// <returns></returns>

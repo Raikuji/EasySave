@@ -142,8 +142,46 @@ namespace EasyCmd.Model
 		/// </summary>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
+		public async Task ExecuteAsync()
+		{
+			IsRunning = true;
+			foreach (string process in Settings.GetInstance().LockProcesses)
+			{
+				if (Process.GetProcessesByName(process).Length > 0)
+				{
+					IsRunning = false;
+				}
+			}
+			try
+			{
+				if (string.IsNullOrWhiteSpace(Source) || string.IsNullOrWhiteSpace(Destination))
+				{
+					throw new ArgumentNullException();
+				}
+				if (!Directory.Exists(Source))
+				{
+					throw new DirectoryNotFoundException(Source);
+				}
+				if (!Directory.Exists(Destination))
+				{
+					Directory.CreateDirectory(Destination);
+				}
+				await Task.Run(() => BackupStrategy.Execute(this, Source, Destination));
+			}
+			catch (Exception)
+			{
+				IsRunning = false;
+			}
+			finally
+			{
+				UpdateWorkState(0, 0, "", "");
+				IsRunning = false;
+			}
+		}
+
 		public bool Execute()
 		{
+			
 			foreach (string process in Settings.GetInstance().LockProcesses)
 			{
 				if (Process.GetProcessesByName(process).Length > 0)
@@ -152,7 +190,6 @@ namespace EasyCmd.Model
 				}
 			}
 			IsRunning = true;
-			bool success = true;
 			try
 			{
 				if (string.IsNullOrWhiteSpace(Source) || string.IsNullOrWhiteSpace(Destination))
@@ -171,14 +208,14 @@ namespace EasyCmd.Model
 			}
 			catch (Exception)
 			{
-				success = false;
+				return false;
 			}
 			finally
 			{
 				UpdateWorkState(0, 0, "", "");
 				IsRunning = false;
 			}
-			return success;
+			return true;
 		}
 
 		public int EncryptFile(string filePath)

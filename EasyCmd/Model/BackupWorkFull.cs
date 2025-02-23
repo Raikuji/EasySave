@@ -52,7 +52,6 @@ namespace EasyCmd.Model
                     // Update remaining size and file count in the backup job
                     backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
                     backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
-                    Thread.Sleep(1000);
                 }
                 catch (Exception)
                 {

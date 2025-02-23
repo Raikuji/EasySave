@@ -17,6 +17,7 @@ namespace EasyGui.ViewModels
 	public class BackupJobListViewModel : ObservableObject
 	{
 		private BackupJobList _backupJobs;
+		private bool _isRunning = false;
 
 		public static string RESOURCEPATH = AppDomain.CurrentDomain.BaseDirectory + "\\resources";
 		public static string BACKUPJOBFILENAME = "backup_jobs.json";
@@ -72,10 +73,32 @@ namespace EasyGui.ViewModels
 			}
 		}
 
-		public void ExecuteBackupJob(BackupJob? job)
+		public async void ExecuteBackupJob(BackupJob? job)
 		{
 			if (job != null)
-				job.Execute();
+			{
+				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobRunning")}";
+				await job.ExecuteAsync();
+				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobEnded")}";
+			}
+		}
+
+		public async void Execute()
+		{
+			if (!_isRunning)
+			{
+				_isRunning = true;
+				foreach (BackupJob job in BackupJobs)
+				{
+					if (job.IsRunning)
+					{
+						MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobRunning")}";
+						await job.ExecuteAsync();
+						MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobEnded")}";
+					}
+				}
+				_isRunning = false;
+			}
 		}
 
 		public BackupJobList BackupJobs

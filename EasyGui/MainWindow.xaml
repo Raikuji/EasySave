@@ -26,7 +26,7 @@
 		<StatusBar DockPanel.Dock="Bottom"
 				 Background="LightGray"
 				 Height="40">
-			<TextBlock Text="{Binding StatusMessage}" />
+			<TextBlock Text="{Binding StatusMessage}" Padding="10, 0, 0, 0"/>
 		</StatusBar>
         <Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" Navigated="Frame_Navigated_1" />
     </DockPanel>
