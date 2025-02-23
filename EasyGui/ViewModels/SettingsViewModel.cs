@@ -89,6 +89,9 @@ namespace EasyGui.ViewModels
 			OnPropertyChanged(nameof(LogBoxSetting));
 			OnPropertyChanged(nameof(FrenchRadioSetting));
 			OnPropertyChanged(nameof(EnglishRadioSetting));
+			OnPropertyChanged(nameof(EncryptExtensionSetting));
+			OnPropertyChanged(nameof(AddButtonSetting));
+			OnPropertyChanged(nameof(RemoveButtonSetting));
 			MainWindowViewModel.Instance.UpdateLanguage();
 		}
 
@@ -143,5 +146,9 @@ namespace EasyGui.ViewModels
 		public string LogBoxSetting => Language.GetInstance().GetString("LogBoxSetting");
 		public string FrenchRadioSetting => Language.GetInstance().GetString("FrenchRadioSetting");
 		public string EnglishRadioSetting => Language.GetInstance().GetString("EnglishRadioSetting");
+		public string EncryptExtensionSetting => Language.GetInstance().GetString("EncryptExtensionSetting");
+		public string AddButtonSetting => Language.GetInstance().GetString("AddButtonSetting");
+		public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
+
 	}
 }

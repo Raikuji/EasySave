@@ -20,5 +20,8 @@
     {"SaveButtonAdd": "Save"},
     {"LogBoxSetting": "Log format"},
     {"FrenchRadioSetting": "French"},
-    {"EnglishRadioSetting": "English"}
+    {"EnglishRadioSetting": "English"},
+    {"EncryptExtensionSetting": "Files to encrypt"},
+    {"AddButtonSetting": "Add"},
+    {"RemoveButtonSetting": "Remove"}
 ]
