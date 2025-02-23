@@ -29,7 +29,12 @@
             // Copy only the modified files
             foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
             {
-                string destFilePath = filePath.Replace(source, destination);
+                if (!backupJob.IsRunning)
+				{
+					break;
+				}
+
+				string destFilePath = filePath.Replace(source, destination);
                 FileInfo sourceFileInfo = new FileInfo(filePath);
                 FileInfo destFileInfo = new FileInfo(destFilePath);
 
@@ -39,6 +44,7 @@
                     try
                     {
                         File.Copy(filePath, destFilePath, true);
+                        int encryptionTime = backupJob.EncryptFile(filePath);
 
                         // Update the remaining size and file count
                         remainingSize -= sourceFileInfo.Length;
@@ -46,11 +52,11 @@
 
                         // Update remaining size and file count in the backup job
                         backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
-                        backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart);
+                        backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
                     }
                     catch (Exception)
                     {
-                        backupJob.Log(filePath, destFilePath, -1, transfertStart);
+                        backupJob.Log(filePath, destFilePath, -1, transfertStart, -1);
                     }
                     
                 }

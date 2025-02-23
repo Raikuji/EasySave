@@ -1,24 +1,98 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Xml.Linq;
+using System.Xml;
+using System.Text.Json.Nodes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EasyLog
 {
+    public enum LogFormat
+    {
+        JSON,
+        XML
+    }
+
     public class Logger
     {
         private readonly string _logFilePath;
+        private readonly LogFormat _format;
 
-        public Logger(string logFilePath)
+        public Logger(string logFilePath, LogFormat format)
         {
-            _logFilePath = logFilePath;
+            switch (format)
+			{
+				case LogFormat.JSON:
+					_logFilePath = $"{logFilePath}.json";
+					break;
+				case LogFormat.XML:
+					_logFilePath = $"{logFilePath}.xml";
+					break;
+				default:
+					throw new ArgumentException("Invalid log format");
+			}
+			_format = format;
         }
 
-        public void Log(Dictionary<string, object> data)
+		public void Log(Dictionary<string, object> data)
+		{
+			if (_format == LogFormat.JSON)
+			{
+				File.WriteAllText(_logFilePath, SerializeToJson(data));
+			}
+			else
+			{
+				File.WriteAllText(_logFilePath, SerializeToXml(data));
+			}
+		}
+
+		private string SerializeToJson(Dictionary<string, object> data)
+		{
+			JsonArray jsonArray;
+			if (File.Exists(_logFilePath))
+			{
+				string existingJson = File.ReadAllText(_logFilePath);
+				jsonArray = JsonNode.Parse(existingJson)?.AsArray() ?? new JsonArray();
+			}
+			else
+			{
+				jsonArray = new JsonArray();
+			}
+
+			JsonObject jsonObject = new JsonObject();
+			foreach (var kvp in data)
+			{
+				jsonObject[kvp.Key] = JsonValue.Create(kvp.Value);
+			}
+
+			jsonArray.Add(jsonObject);
+			string json = JsonSerializer.Serialize(jsonArray, new JsonSerializerOptions { WriteIndented = true });
+			File.WriteAllText(_logFilePath, json);
+			return json;
+		}
+
+		private string SerializeToXml(Dictionary<string, object> data)
         {
-            if (File.Exists(_logFilePath))
-            {
-                File.AppendAllText(_logFilePath, $",{Environment.NewLine}");
-            }
-            string json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-            File.AppendAllText(_logFilePath, json);
-        }
-    }
+			XElement root;
+			if (File.Exists(_logFilePath))
+			{
+				root = XElement.Load(_logFilePath);
+			}
+			else
+			{
+				root = new XElement("Logs");
+			}
+
+			var logEntry = new XElement("Log");
+			foreach (var kvp in data)
+			{
+				logEntry.Add(new XElement(kvp.Key, kvp.Value));
+			}
+
+			root.Add(logEntry);
+			return root.ToString();
+		}
+	}
 }

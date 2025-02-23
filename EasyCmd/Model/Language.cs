@@ -9,7 +9,7 @@ namespace EasyCmd.Model
     /// <summary>
     /// Class that represents the language used in the application.
     /// </summary>
-    internal class Language
+    public class Language
     {
         private static Language? _instance;
         private LanguageDictionary _languageDictionary;
@@ -41,7 +41,7 @@ namespace EasyCmd.Model
         /// <param name="language"></param>
         public void SetLanguage(LanguageDictionary language)
         {
-            _languageDictionary = language;
+            _languageDictionary = language; 
         }
 
         /// <summary>

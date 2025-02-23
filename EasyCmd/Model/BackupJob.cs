@@ -1,170 +1,244 @@
-﻿using System.Dynamic;
+﻿using System;
+using System.Diagnostics;
+using System.Dynamic;
+using System.IO;
 using System.Text.Json;
+using System.Threading;
+using EasyLog;
 
 namespace EasyCmd.Model
 {
-    /// <summary>
-    /// Represents a backup job.
-    /// </summary>
-    internal class BackupJob
-    {
-        private string _name { get; }
-        private string _source { get; }
-        private string _destination { get; }
-        private IBackupWorkStrategy _backupStrategy;
-        private WorkState _workState;
+	/// <summary>
+	/// Represents a backup job.
+	/// </summary>
+	public class BackupJob
+	{
+		public string Name { get; set; }
+		public string Source { get; set; }
+		public string Destination { get; set; }
+		public string Strategy { get; set; }
+		private IBackupWorkStrategy BackupStrategy { get; }
+		private WorkState _workState;
+		public bool IsRunning { get; set; }
 
-        /// <summary>
-        /// Constructor of the BackupJob class.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="source"></param>
-        /// <param name="destination"></param>
-        /// <param name="strategyId"></param>
-        public BackupJob(string name, string source, string destination, int strategyId)
-        {
-            _name = name;
-            _source = source;
-            _destination = destination;
-            _backupStrategy = GetBackupStrategy(strategyId);
-            _workState = new WorkState();
-        }
+		/// <summary>
+		/// Constructor of the BackupJob class.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <param name="strategyId"></param>
+		public BackupJob(string name, string source, string destination, int strategyId)
+		{
+			Name = name;
+			Source = source;
+			Destination = destination;
+			Strategy = GetBackupStrategy(strategyId).GetType().Name;
+			BackupStrategy = GetBackupStrategy(strategyId);
+			_workState = new WorkState();
+			IsRunning = false;
+		}
 
-        /// <summary>
-        /// Returns the name of the backup job.
-        /// </summary>
-        /// <returns></returns>
-        public string GetName()
-        {
-            return _name;
-        }
+		/// <summary>
+		/// Returns the source of the backup job.
+		/// </summary>
+		/// <param name="strategyId"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
+		public IBackupWorkStrategy GetBackupStrategy(int strategyId)
+		{
+			return strategyId switch
+			{
+				1 => new BackupWorkFull(),
+				2 => new BackupWorkDifferential(),
+				_ => throw new ArgumentException("Invalid strategy ID")
+			};
+		}
 
-        /// <summary>
-        /// Returns the source of the backup job.
-        /// </summary>
-        /// <param name="strategyId"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public IBackupWorkStrategy GetBackupStrategy(int strategyId)
-        {
-            return strategyId switch
-            {
-                1 => new BackupWorkFull(),
-                2 => new BackupWorkDifferential(),
-                _ => throw new ArgumentException("Invalid strategy ID")
-            };
-        }
+		/// <summary>
+		/// Returns the strategy ID of the backup job.
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
+		public int GetStrategyId()
+		{
+			return BackupStrategy switch
+			{
+				BackupWorkFull => 1,
+				BackupWorkDifferential => 2,
+				_ => throw new ArgumentException("Invalid strategy")
+			};
+		}
 
-        /// <summary>
-        /// Returns the strategy ID of the backup job.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public int GetStrategyId()
-        {
-            return _backupStrategy switch
-            {
-                BackupWorkFull => 1,
-                BackupWorkDifferential => 2,
-                _ => throw new ArgumentException("Invalid strategy")
-            };
-        }
+		/// <summary>
+		/// Returns a string representation of the backup job.
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return $"{Name} {Source} {Destination} {BackupStrategy.GetType().Name}";
+		}
 
-        /// <summary>
-        /// Returns a string representation of the backup job.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{_name} {_source} {_destination} {_backupStrategy.GetType().Name}";
-        }
+		/// <summary>
+		/// Returns a JSON representation of the backup job.
+		/// </summary>
+		/// <returns></returns>
+		public string ToJson()
+		{
+			dynamic obj = new ExpandoObject();
+			obj.name = Name;
+			obj.source = Source;
+			obj.destination = Destination;
+			obj.strategyId = GetStrategyId();
+			return JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
+		}
 
-        /// <summary>
-        /// Returns a JSON representation of the backup job.
-        /// </summary>
-        /// <returns></returns>
-        public string ToJson()
-        {
-            dynamic obj = new ExpandoObject();
-            obj.name = _name;
-            obj.source = _source;
-            obj.destination = _destination;
-            obj.strategyId = GetStrategyId();
-            return JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
-        }
+		public void Log(string source, string destination, long size, DateTime transfertStart, int encryptionTime)
+		{
+			BackupJobLog backupJobLog = new BackupJobLog(Name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, encryptionTime, DateTime.Now);
+			backupJobLog.Log();
+		}
 
-        public void Log(string source, string destination, long size, DateTime transfertStart)
-        {
-            BackupJobLog backupJobLog = new BackupJobLog(_name, source, destination, size, (DateTime.Now - transfertStart).TotalSeconds, DateTime.Now);
-            backupJobLog.Log();
-        }
+		/// <summary>
+		/// Sets the total work state of the backup job.
+		/// </summary>
+		/// <param name="totalFiles"></param>
+		/// <param name="totalSize"></param>
+		public void SetTotalWorkState(int totalFiles, long totalSize)
+		{
+			_workState.SetTotal(totalFiles, totalSize);
+			WorkStateNode.AddOrUpdateWorkStateNode(Name, Source, Destination, _workState);
+		}
 
-        /// <summary>
-        /// Sets the total work state of the backup job.
-        /// </summary>
-        /// <param name="totalFiles"></param>
-        /// <param name="totalSize"></param>
-        public void SetTotalWorkState(int totalFiles, long totalSize)
-        {
-            _workState.SetTotal(totalFiles, totalSize);
-            WorkStateNode.AddOrUpdateWorkStateNode(_name, _source, _destination, _workState);
-        }
+		/// <summary>
+		/// Updates the work state of the backup job.
+		/// </summary>
+		/// <param name="files"></param>
+		/// <param name="size"></param>
+		/// <param name="currentFileSource"></param>
+		/// <param name="currentFileDestination"></param>
+		public void UpdateWorkState(int files, long size, string currentFileSource, string currentFileDestination)
+		{
+			_workState.UpdateRemaining(files, size);
+			WorkStateNode.AddOrUpdateWorkStateNode(Name, currentFileSource, currentFileDestination, _workState);
+		}
 
-        /// <summary>
-        /// Updates the work state of the backup job.
-        /// </summary>
-        /// <param name="files"></param>
-        /// <param name="size"></param>
-        /// <param name="currentFileSource"></param>
-        /// <param name="currentFileDestination"></param>
-        public void UpdateWorkState(int files, long size, string currentFileSource, string currentFileDestination)
-        {
-            _workState.UpdateRemaining(files, size);
-            WorkStateNode.AddOrUpdateWorkStateNode(_name, currentFileSource, currentFileDestination, _workState);
-        }
+		/// <summary>
+		/// Returns the work state of the backup job.
+		/// </summary>
+		/// <returns></returns>
+		public WorkState GetWorkState()
+		{
+			return _workState;
+		}
 
-        /// <summary>
-        /// Returns the work state of the backup job.
-        /// </summary>
-        /// <returns></returns>
-        public WorkState GetWorkState()
-        {
-            return _workState;
-        }
+		public void Stop()
+		{
+			IsRunning = false;
+		}
 
-        /// <summary>
-        /// Executes the backup job.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="DirectoryNotFoundException"></exception>
-        public bool Execute()
-        {
-            bool success = true;
+		/// <summary>
+		/// Executes the backup job.
+		/// </summary>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="DirectoryNotFoundException"></exception>
+		public async Task ExecuteAsync()
+		{
+			IsRunning = true;
+			foreach (string process in Settings.GetInstance().LockProcesses)
+			{
+				if (Process.GetProcessesByName(process).Length > 0)
+				{
+					IsRunning = false;
+				}
+			}
 			try
-            {
-				if (string.IsNullOrWhiteSpace(_source) || string.IsNullOrWhiteSpace(_destination))
+			{
+				if (string.IsNullOrWhiteSpace(Source) || string.IsNullOrWhiteSpace(Destination))
 				{
 					throw new ArgumentNullException();
 				}
-				if (!Directory.Exists(_source))
+				if (!Directory.Exists(Source))
 				{
-					throw new DirectoryNotFoundException(_source);
+					throw new DirectoryNotFoundException(Source);
 				}
-				if (!Directory.Exists(_destination))
+				if (!Directory.Exists(Destination))
 				{
-					Directory.CreateDirectory(_destination);
+					Directory.CreateDirectory(Destination);
 				}
-				_backupStrategy.Execute(this, _source, _destination);
+				await Task.Run(() => BackupStrategy.Execute(this, Source, Destination));
 			}
 			catch (Exception)
 			{
-				success = false;
+				IsRunning = false;
 			}
 			finally
 			{
 				UpdateWorkState(0, 0, "", "");
+				IsRunning = false;
 			}
-            return success;
 		}
-    }
+
+		public bool Execute()
+		{
+			
+			foreach (string process in Settings.GetInstance().LockProcesses)
+			{
+				if (Process.GetProcessesByName(process).Length > 0)
+				{
+					return false;
+				}
+			}
+			IsRunning = true;
+			try
+			{
+				if (string.IsNullOrWhiteSpace(Source) || string.IsNullOrWhiteSpace(Destination))
+				{
+					throw new ArgumentNullException();
+				}
+				if (!Directory.Exists(Source))
+				{
+					throw new DirectoryNotFoundException(Source);
+				}
+				if (!Directory.Exists(Destination))
+				{
+					Directory.CreateDirectory(Destination);
+				}
+				BackupStrategy.Execute(this, Source, Destination);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			finally
+			{
+				UpdateWorkState(0, 0, "", "");
+				IsRunning = false;
+			}
+			return true;
+		}
+
+		public int EncryptFile(string filePath)
+		{
+			int encryptionTime = 0;
+			string extension = filePath.Split(".").Last();
+			if (Settings.GetInstance().FileExtensions.Contains(extension))
+			{
+				string cryptoSoftPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft", "CryptoSoft.exe");
+				if (!File.Exists(cryptoSoftPath))
+				{
+					throw new FileNotFoundException($"CryptoSoft.exe not found at {cryptoSoftPath}");
+				}
+				Process process = new();
+				process.StartInfo.FileName = cryptoSoftPath;
+				process.StartInfo.Arguments = $"\"{filePath}\" {Settings.GetInstance().Key}";
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.CreateNoWindow = true;
+				process.Start();
+				process.WaitForExit();
+				encryptionTime = process.ExitCode;
+			}
+			return encryptionTime;
+		}
+	}
 }
