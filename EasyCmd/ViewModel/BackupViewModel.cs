@@ -26,7 +26,7 @@ namespace EasyCmd.ViewModel
 		public BackupViewModel()
         {
 			_path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
-			_backupJobList = new BackupJobList();
+			_backupJobList = BackupJobList.GetInstance();
 			Settings.GetInstance().LoadSettings();
 			switch (Settings.GetInstance().LogFormat)
 			{
