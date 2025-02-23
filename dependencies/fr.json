@@ -22,6 +22,7 @@
     {"FrenchRadioSetting": "Français"},
     {"EnglishRadioSetting": "Anglais"},
     {"EncryptExtensionSetting": "Fichiers à chiffrer"},
+    {"ProcessLockSetting": "Processus métier"},
     {"AddButtonSetting": "Ajouter"},
     {"RemoveButtonSetting": "Retirer"}
 ]

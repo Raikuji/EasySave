@@ -22,6 +22,7 @@
     {"FrenchRadioSetting": "French"},
     {"EnglishRadioSetting": "English"},
     {"EncryptExtensionSetting": "Files to encrypt"},
+    {"ProcessLockSetting": "Work processes"},
     {"AddButtonSetting": "Add"},
     {"RemoveButtonSetting": "Remove"}
 ]

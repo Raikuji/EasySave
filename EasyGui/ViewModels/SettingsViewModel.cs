@@ -16,10 +16,13 @@ namespace EasyGui.ViewModels
 		private LogFormat _logFormat;
 		private string _language;
 		private List<string> _fileExtensions;
+		private List<string> _lockProcesses;
 		public ICommand ChangeLogFormat { get; }
 		public ICommand ChangeLanguage { get; }
 		public ICommand AddFileExtension { get; }
 		public ICommand RemoveFileExtension { get; }
+		public ICommand AddLockProcess { get; }
+		public ICommand RemoveLockProcess { get; }
 
 		public SettingsViewModel()
 		{
@@ -27,10 +30,13 @@ namespace EasyGui.ViewModels
 			_logFormat = Settings.GetInstance().LogFormat;
 			_language = Settings.GetInstance().LanguageCode;
 			_fileExtensions = Settings.GetInstance().FileExtensions;
+			_lockProcesses = Settings.GetInstance().LockProcesses;
 			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
 			ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
 			AddFileExtension = new RelayCommand(AddExtension);
 			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
+			AddLockProcess = new RelayCommand(AddProcess);
+			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
 		}
 
 		private void RemoveExtension(string? obj)
@@ -54,6 +60,26 @@ namespace EasyGui.ViewModels
 
 		public string NewFileExtension { get; set; } = string.Empty;
 
+		private void RemoveProcess(string? obj)
+		{
+			if (obj != null)
+			{
+				Settings.GetInstance().LockProcesses.Remove(obj);
+				Settings.GetInstance().SaveSettings();
+				MainWindowViewModel.Instance.ChangeView("Settings");
+			}
+		}
+
+		private void AddProcess()
+		{
+			Settings.GetInstance().LockProcesses.Add(NewLockProcess);
+			LockProcesses = Settings.GetInstance().LockProcesses;
+			Settings.GetInstance().SaveSettings();
+			MainWindowViewModel.Instance.ChangeView("Settings");
+		}
+
+		public string NewLockProcess { get; set; } = string.Empty;
+
 		public LogFormat LogFormat
 		{
 			get => _logFormat;
@@ -70,6 +96,12 @@ namespace EasyGui.ViewModels
 		{
 			get => _fileExtensions;
 			set => SetProperty(ref _fileExtensions, value);
+		}
+
+		public List<string> LockProcesses
+		{
+			get => _lockProcesses;
+			set => SetProperty(ref _lockProcesses, value);
 		}
 
 		public void UpdateLogFormat(LogFormat format)
@@ -90,6 +122,7 @@ namespace EasyGui.ViewModels
 			OnPropertyChanged(nameof(FrenchRadioSetting));
 			OnPropertyChanged(nameof(EnglishRadioSetting));
 			OnPropertyChanged(nameof(EncryptExtensionSetting));
+			OnPropertyChanged(nameof(ProcessLockSetting));
 			OnPropertyChanged(nameof(AddButtonSetting));
 			OnPropertyChanged(nameof(RemoveButtonSetting));
 			MainWindowViewModel.Instance.UpdateLanguage();
@@ -147,6 +180,7 @@ namespace EasyGui.ViewModels
 		public string FrenchRadioSetting => Language.GetInstance().GetString("FrenchRadioSetting");
 		public string EnglishRadioSetting => Language.GetInstance().GetString("EnglishRadioSetting");
 		public string EncryptExtensionSetting => Language.GetInstance().GetString("EncryptExtensionSetting");
+		public string ProcessLockSetting => Language.GetInstance().GetString("ProcessLockSetting");
 		public string AddButtonSetting => Language.GetInstance().GetString("AddButtonSetting");
 		public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
 
