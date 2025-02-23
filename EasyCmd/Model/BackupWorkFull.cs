@@ -1,4 +1,6 @@
-﻿namespace EasyCmd.Model
+﻿using System.Diagnostics;
+
+namespace EasyCmd.Model
 {
     /// <summary>
     /// Class that represents the full backup work strategy.
@@ -24,31 +26,36 @@
             {
                 string destPath = dirPath.Replace(source, destination);
                 Directory.CreateDirectory(destPath);
-                backupJob.Log(dirPath, destPath, 0, DateTime.Now);
+                backupJob.Log(dirPath, destPath, 0, DateTime.Now, 0);
             }
 
             // Copy all the files
             foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
             {
-                DateTime transfertStart = DateTime.Now;
+				if (!backupJob.IsRunning)
+				{
+					break;
+				}
+
+				DateTime transfertStart = DateTime.Now;
                 string destFilePath = filePath.Replace(source, destination);
                 try
                 {
-                    File.Copy(filePath, destFilePath, true);
+					File.Copy(filePath, destFilePath, true);
+                    int encryptionTime = backupJob.EncryptFile(destFilePath);
 
-                    // Update the remaining size and file count
-                    FileInfo sourceFileInfo = new FileInfo(filePath);
+					// Update the remaining size and file count
+					FileInfo sourceFileInfo = new FileInfo(filePath);
                     remainingSize -= sourceFileInfo.Length;
                     remainingFiles--;
 
                     // Update remaining size and file count in the backup job
                     backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
-                    backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart);
-                
+                    backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
                 }
                 catch (Exception)
                 {
-                    backupJob.Log(filePath, destFilePath, -1, transfertStart);
+                    backupJob.Log(filePath, destFilePath, -1, transfertStart, -1);
                 }
             }
         }

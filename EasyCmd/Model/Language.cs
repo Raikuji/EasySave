@@ -9,7 +9,7 @@ namespace EasyCmd.Model
     /// <summary>
     /// Class that represents the language used in the application.
     /// </summary>
-    internal class Language
+    public class Language
     {
         private static Language? _instance;
         private LanguageDictionary _languageDictionary;
@@ -52,12 +52,6 @@ namespace EasyCmd.Model
         public string GetString(string key)
         {
             return _languageDictionary.GetString(key);
-        }
-
-        //méthode getFormat
-        public string GetFormat(string key, params object[] args)
-        {
-            return string.Format(_languageDictionary.GetString(key), args);
         }
     }
 }

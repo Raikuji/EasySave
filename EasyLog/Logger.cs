@@ -4,6 +4,8 @@ using System.IO;
 using System.Text.Json;
 using System.Xml.Linq;
 using System.Xml;
+using System.Text.Json.Nodes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EasyLog
 {
@@ -34,22 +36,44 @@ namespace EasyLog
 			_format = format;
         }
 
-        public void Log(Dictionary<string, object> data)
-        {
-            string output;
-            if (_format == LogFormat.JSON)
-            {
-                output = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-                File.AppendAllText(_logFilePath, output + Environment.NewLine);
-            }
-            else // XML
-            {
-                output = SerializeToXml(data);
-                File.WriteAllText(_logFilePath, output);
-            }
-        }
+		public void Log(Dictionary<string, object> data)
+		{
+			if (_format == LogFormat.JSON)
+			{
+				File.WriteAllText(_logFilePath, SerializeToJson(data));
+			}
+			else
+			{
+				File.WriteAllText(_logFilePath, SerializeToXml(data));
+			}
+		}
 
-        private string SerializeToXml(Dictionary<string, object> data)
+		private string SerializeToJson(Dictionary<string, object> data)
+		{
+			JsonArray jsonArray;
+			if (File.Exists(_logFilePath))
+			{
+				string existingJson = File.ReadAllText(_logFilePath);
+				jsonArray = JsonNode.Parse(existingJson)?.AsArray() ?? new JsonArray();
+			}
+			else
+			{
+				jsonArray = new JsonArray();
+			}
+
+			JsonObject jsonObject = new JsonObject();
+			foreach (var kvp in data)
+			{
+				jsonObject[kvp.Key] = JsonValue.Create(kvp.Value);
+			}
+
+			jsonArray.Add(jsonObject);
+			string json = JsonSerializer.Serialize(jsonArray, new JsonSerializerOptions { WriteIndented = true });
+			File.WriteAllText(_logFilePath, json);
+			return json;
+		}
+
+		private string SerializeToXml(Dictionary<string, object> data)
         {
 			XElement root;
 			if (File.Exists(_logFilePath))

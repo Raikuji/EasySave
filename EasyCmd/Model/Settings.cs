@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,6 +15,9 @@ namespace EasyCmd.Model
 		private static Settings? _instance;
 		private string _language;
 		private LogFormat _logFormat;
+		private List<string> _fileExtensions;
+		private List<string> _lockProcesses;
+		private Byte[] _key;
 		public static string SETTINGSDIR = $"{AppDomain.CurrentDomain.BaseDirectory}\\resources";
 		public static string SETTINGSFILEPATH = $"{SETTINGSDIR}\\settings.json";
 
@@ -22,6 +26,11 @@ namespace EasyCmd.Model
 		{
 			_language = "en";
 			_logFormat = LogFormat.JSON;
+			_fileExtensions = new List<string>();
+			_lockProcesses = new List<string>();
+			Aes aes = Aes.Create();
+			aes.KeySize = 256;
+			_key = aes.Key;
 		}
 		public static Settings GetInstance()
 		{
@@ -31,7 +40,7 @@ namespace EasyCmd.Model
 			}
 			return _instance;
 		}
-		public string Language
+		public string LanguageCode
 		{
 			get => _language;
 			set => _language = value;
@@ -40,6 +49,21 @@ namespace EasyCmd.Model
 		{
 			get => _logFormat;
 			set => _logFormat = value;
+		}
+		public List<string> FileExtensions
+		{
+			get => _fileExtensions;
+			set => _fileExtensions = value;
+		}
+		public List<string> LockProcesses
+		{
+			get => _lockProcesses;
+			set => _lockProcesses = value;
+		}
+		public Byte[] Key
+		{
+			get => _key;
+			set => _key = value;
 		}
 		public void LoadSettings()
 		{
@@ -55,6 +79,24 @@ namespace EasyCmd.Model
 				Directory.CreateDirectory(SETTINGSDIR);
 			}
 			File.WriteAllText(SETTINGSFILEPATH, JsonSerializer.Serialize(this));
+		}
+
+		public void SetLanguage()
+		{
+			LanguageDictionary languageDictionnary = new LanguageDictionary();
+			switch (LanguageCode)
+			{
+				case "en":
+					languageDictionnary.LoadLanguage(SETTINGSDIR + "\\" + "en.json");
+					break;
+				case "fr":
+					languageDictionnary.LoadLanguage(SETTINGSDIR + "\\" + "fr.json");
+					break;
+				default:
+					languageDictionnary.LoadLanguage(SETTINGSDIR + "\\" + "en.json");
+					break;
+			}
+			Language.GetInstance().SetLanguage(languageDictionnary);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,22 +26,22 @@ namespace EasyCmd.ViewModel
 		public BackupViewModel()
         {
 			_path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
-			_backupJobList = new BackupJobList();
+			_backupJobList = BackupJobList.GetInstance();
 			Settings.GetInstance().LoadSettings();
 			switch (Settings.GetInstance().LogFormat)
 			{
 				case LogFormat.JSON:
-					BackupJobLog.logFormat = LogFormat.JSON;
+					Settings.GetInstance().LogFormat = LogFormat.JSON;
 					break;
 				case LogFormat.XML:
-					BackupJobLog.logFormat = LogFormat.XML;
+					Settings.GetInstance().LogFormat = LogFormat.XML;
 					break;
 				default:
-					BackupJobLog.logFormat = LogFormat.JSON;
+					Settings.GetInstance().LogFormat = LogFormat.JSON;
 					break;
 			}
 			LanguageDictionary language = new LanguageDictionary();
-			switch (Settings.GetInstance().Language)
+			switch (Settings.GetInstance().LanguageCode)
 			{
 				case "en":
 					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
@@ -96,48 +96,48 @@ namespace EasyCmd.ViewModel
             _backupJobList.SaveBackupJobs(path);
         }
 
-        /// <summary>
-        /// Adds a backup job.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="source"></param>
-        /// <param name="destination"></param>
-        /// <param name="strategyId"></param>
-        /// <returns></returns>
-        public bool AddBackupJob(string name, string source, string destination, int strategyId)
-        {
-            bool isValid;
-            try
-            {
-                _backupJobList.Add(new BackupJob(name, source, destination, strategyId));
-                isValid = true;
-            }
-            catch (ArgumentException e)
-            {
-                isValid = false;
-            }
-            return isValid;
-        }
+		/// <summary>
+		/// Adds a backup job.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <param name="strategyId"></param>
+		/// <returns></returns>
+		public bool AddBackupJob(string name, string source, string destination, int strategyId)
+		{
+			bool isValid;
+			try
+			{
+				_backupJobList.AddJob(new BackupJob(name, source, destination, strategyId));
+				isValid = true;
+			}
+			catch (ArgumentException)
+			{
+				isValid = false;
+			}
+			return isValid;
+		}
 
-        /// <summary>
-        /// Removes a backup job.
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public bool RemoveBackupJob(int index)
-        {
-            bool isValid;
-            try
-            {
-                _backupJobList.Remove(index - 1);
-                isValid = true;
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                isValid = false;
-            }
-            return isValid;
-        }
+		/// <summary>
+		/// Removes a backup job.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public bool RemoveBackupJob(int index)
+		{
+			bool isValid;
+			try
+			{
+				_backupJobList.RemoveJobAt(index - 1);
+				isValid = true;
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				isValid = false;
+			}
+			return isValid;
+		}
 
         /// <summary>
         /// Updates a backup job.
@@ -156,7 +156,7 @@ namespace EasyCmd.ViewModel
                 _backupJobList.Update(index - 1, new BackupJob(name, source, destination, strategyId));
                 isValid = true;
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 isValid = false;
             }
@@ -298,16 +298,15 @@ namespace EasyCmd.ViewModel
             switch (input)
             {
                 case "1":
-                    BackupJobLog.logFormat = LogFormat.JSON;
+					Settings.GetInstance().LogFormat = LogFormat.JSON;
                     break;
                 case "2":
-                    BackupJobLog.logFormat = LogFormat.XML;
+					Settings.GetInstance().LogFormat = LogFormat.XML;
                     break;
                 default:
                     ShowInvalidOption();
                     break;
-            }
-			Settings.GetInstance().LogFormat = BackupJobLog.logFormat;
+            };
 			Settings.GetInstance().SaveSettings();
 		}
 
@@ -423,11 +422,11 @@ namespace EasyCmd.ViewModel
                 {
                     case 1:
                         langFileName = "en.json";
-						Settings.GetInstance().Language = "en";
+						Settings.GetInstance().LanguageCode = "en";
 						break;
                     case 2:
                         langFileName = "fr.json";
-						Settings.GetInstance().Language = "fr";
+						Settings.GetInstance().LanguageCode = "fr";
 						break;
                     default:
                         ShowInvalidOption();

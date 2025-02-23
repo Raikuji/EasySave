@@ -1,4 +1,5 @@
 dotnet build --configuration Release
-xcopy /s/e EasyCmd\bin\Release\net8.0\* %APPDATA%\EasyCmd\
-xcopy /s/e dependencies\* %APPDATA%\EasyCmd\resources\
-md %APPDATA%\EasyCmd\log
+xcopy /s/e/y EasyGui\bin\Release\net8.0-windows %APPDATA%\EasySave\
+xcopy /s/e/y CryptoSoft\bin\Release\net8.0\win-x64 %APPDATA%\EasySave\CryptoSoft\
+xcopy /s/e/y dependencies\* %APPDATA%\EasySave\resources\
+md %APPDATA%\EasySave\log

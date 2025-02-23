@@ -9,7 +9,7 @@ namespace EasyCmd.Model
     /// <summary>
     /// Interface that represents the backup work strategy.
     /// </summary>
-    internal interface IBackupWorkStrategy
+    public interface IBackupWorkStrategy
     {
         /// <summary>
         /// Executes the backup work.
