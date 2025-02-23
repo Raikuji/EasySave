@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using EasyLog;
+
 namespace EasyCmd.Model
 {
 	/// <summary>
@@ -17,7 +19,7 @@ namespace EasyCmd.Model
 		public string Strategy { get; set; }
 		private IBackupWorkStrategy BackupStrategy { get; }
 		private WorkState _workState;
-		private ManualResetEvent _pauseEvent;
+		public bool IsRunning { get; set; }
 
 		/// <summary>
 		/// Constructor of the BackupJob class.
@@ -34,7 +36,7 @@ namespace EasyCmd.Model
 			Strategy = GetBackupStrategy(strategyId).GetType().Name;
 			BackupStrategy = GetBackupStrategy(strategyId);
 			_workState = new WorkState();
-			_pauseEvent = new ManualResetEvent(true);
+			IsRunning = false;
 		}
 
 		/// <summary>
@@ -130,6 +132,11 @@ namespace EasyCmd.Model
 			return _workState;
 		}
 
+		public void Stop()
+		{
+			IsRunning = false;
+		}
+
 		/// <summary>
 		/// Executes the backup job.
 		/// </summary>
@@ -137,6 +144,14 @@ namespace EasyCmd.Model
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		public bool Execute()
 		{
+			foreach (string process in Settings.GetInstance().LockProcesses)
+			{
+				if (Process.GetProcessesByName(process).Length > 0)
+				{
+					return false;
+				}
+			}
+			IsRunning = true;
 			bool success = true;
 			try
 			{
@@ -152,8 +167,7 @@ namespace EasyCmd.Model
 				{
 					Directory.CreateDirectory(Destination);
 				}
-				Thread thread = new Thread(() => BackupStrategy.Execute(this, Source, Destination));
-				thread.Start();
+				BackupStrategy.Execute(this, Source, Destination);
 			}
 			catch (Exception)
 			{
@@ -162,18 +176,9 @@ namespace EasyCmd.Model
 			finally
 			{
 				UpdateWorkState(0, 0, "", "");
+				IsRunning = false;
 			}
 			return success;
-		}
-
-		public void Pause()
-		{
-			_pauseEvent.WaitOne();
-		}
-
-		public void Resume()
-		{
-			_pauseEvent.Set();
 		}
 
 		public int EncryptFile(string filePath)

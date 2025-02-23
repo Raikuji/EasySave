@@ -32,7 +32,12 @@ namespace EasyCmd.Model
             // Copy all the files
             foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
             {
-                DateTime transfertStart = DateTime.Now;
+				if (!backupJob.IsRunning)
+				{
+					break;
+				}
+
+				DateTime transfertStart = DateTime.Now;
                 string destFilePath = filePath.Replace(source, destination);
                 try
                 {
@@ -47,6 +52,7 @@ namespace EasyCmd.Model
                     // Update remaining size and file count in the backup job
                     backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
                     backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
+                    Thread.Sleep(1000);
                 }
                 catch (Exception)
                 {

@@ -29,7 +29,12 @@
             // Copy only the modified files
             foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
             {
-                string destFilePath = filePath.Replace(source, destination);
+                if (!backupJob.IsRunning)
+				{
+					break;
+				}
+
+				string destFilePath = filePath.Replace(source, destination);
                 FileInfo sourceFileInfo = new FileInfo(filePath);
                 FileInfo destFileInfo = new FileInfo(destFilePath);
 
