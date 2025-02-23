@@ -28,7 +28,7 @@ namespace EasyGui.ViewModels
 
 		public BackupJobListViewModel()
 		{
-			_backupJobs = new BackupJobList();
+			_backupJobs = BackupJobList.GetInstance();
 			LoadBackupJobs();
 			UpdateBackupJobCommand = new RelayCommand<BackupJob>(UpdateBackupJob);
 			DeleteBackupJobCommand = new RelayCommand<BackupJob>(DeleteBackupJob);
@@ -39,7 +39,7 @@ namespace EasyGui.ViewModels
 		{
 			if (File.Exists(PATH))
 			{
-				BackupJobs.LoadBackupJobs(PATH);
+				BackupJobList.GetInstance().LoadBackupJobs(PATH);
 				OnPropertyChanged(nameof(BackupJobs));
 			}
 		}
@@ -48,8 +48,8 @@ namespace EasyGui.ViewModels
 		{
 			if (job != null)
 			{
-				BackupJobs.RemoveJob(job);
-				BackupJobs.SaveBackupJobs(PATH);
+				BackupJobList.GetInstance().RemoveJob(job);
+				BackupJobList.GetInstance().SaveBackupJobs(PATH);
 			}
 		}
 

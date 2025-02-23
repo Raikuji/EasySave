@@ -18,19 +18,39 @@ namespace EasyCmd.Model
 	{
 		private List<BackupJob> _backupJobs;
 		public List<BackupJob> BackupJobs { get => _backupJobs; }
+		private static BackupJobList? _instance;
 
 		/// <summary>
 		/// Constructor of the BackupJobList class.
 		/// </summary>
-		public BackupJobList()
+		private BackupJobList()
 		{
 			_backupJobs = new List<BackupJob>();
 		}
 
+		public static BackupJobList GetInstance()
+		{
+			if (_instance == null)
+			{
+				_instance = new BackupJobList();
+			}
+			return _instance;
+		}
+
+		public void StopAll()
+		{
+			foreach (BackupJob job in GetInstance())
+			{
+				if (job.IsRunning)
+				{
+					job.Stop();
+				}
+			}
+		}
+
 		public void AddJob(BackupJob backupJob)
 		{
-			Add(backupJob);
-			BackupJobs.Add(backupJob);
+			GetInstance().Add(backupJob);
 		}
 
 		/// <summary>
@@ -39,8 +59,8 @@ namespace EasyCmd.Model
 		/// <param name="index"></param>
 		public void RemoveJobAt(int index)
 		{
-			WorkStateNode.RemoveWorkStateNode(BackupJobs[index].Name);
-			BackupJobs.RemoveAt(index);
+			WorkStateNode.RemoveWorkStateNode(GetInstance().BackupJobs[index].Name);
+			GetInstance().RemoveAt(index);
 		}
 
 		/// <summary>
@@ -50,7 +70,7 @@ namespace EasyCmd.Model
 		public void RemoveJob(BackupJob job)
 		{
 			WorkStateNode.RemoveWorkStateNode(job.Name);
-			BackupJobs.Remove(job);
+			GetInstance().Remove(job);
 		}
 
 		/// <summary>
@@ -79,11 +99,11 @@ namespace EasyCmd.Model
 		public override string ToString()
 		{
 			StringBuilder stringBuilder = new StringBuilder();
-			foreach (BackupJob backupJob in _backupJobs)
+			foreach (BackupJob backupJob in GetInstance())
 			{
-				stringBuilder.Append(_backupJobs.IndexOf(backupJob) + 1 + ". ");
+				stringBuilder.Append(GetInstance().IndexOf(backupJob) + 1 + ". ");
 				stringBuilder.Append(backupJob.ToString());
-				if (backupJob != _backupJobs.Last())
+				if (backupJob != GetInstance().Last())
 				{
 					stringBuilder.Append(Environment.NewLine);
 				}
@@ -98,10 +118,10 @@ namespace EasyCmd.Model
 		public void SaveBackupJobs(string path)
 		{
 			File.WriteAllText(path, "[");
-			foreach (BackupJob backupJob in _backupJobs)
+			foreach (BackupJob backupJob in GetInstance())
 			{
 				File.AppendAllText(path, backupJob.ToJson() + Environment.NewLine);
-				if (backupJob != _backupJobs.Last())
+				if (backupJob != GetInstance().Last())
 				{
 					File.AppendAllText(path, ",");
 				}
@@ -118,7 +138,7 @@ namespace EasyCmd.Model
 		{
 			if (File.Exists(path))
 			{
-				_backupJobs.Clear();
+				GetInstance().Clear();
 				string jsonString = File.ReadAllText(path);
 				JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
 				foreach (JsonElement element in jsonDocument.RootElement.EnumerateArray())
@@ -130,7 +150,7 @@ namespace EasyCmd.Model
 
 					if (name != null && source != null && destination != null)
 					{
-						AddJob(new BackupJob(name, source, destination, strategyId));
+						GetInstance().AddJob(new BackupJob(name, source, destination, strategyId));
 					}
 					else
 					{

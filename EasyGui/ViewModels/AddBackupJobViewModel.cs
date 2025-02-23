@@ -50,8 +50,6 @@ namespace EasyGui.ViewModels
 
 		public void AddBackup()
 		{
-			BackupJobList backupJobs = new BackupJobList();
-			backupJobs.LoadBackupJobs(BackupJobListViewModel.PATH);
 			if (!(string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(SourceFolder) || string.IsNullOrEmpty(DestinationFolder)))
 			{
 				SourceError = System.Windows.Visibility.Hidden;
@@ -72,8 +70,8 @@ namespace EasyGui.ViewModels
 					}
 					if (create)
 					{
-						backupJobs.AddJob(new BackupJob(Name, SourceFolder, DestinationFolder, Type));
-						backupJobs.SaveBackupJobs(BackupJobListViewModel.PATH);
+						BackupJobList.GetInstance().AddJob(new BackupJob(Name, SourceFolder, DestinationFolder, Type));
+						BackupJobList.GetInstance().SaveBackupJobs(BackupJobListViewModel.PATH);
 						MainWindowViewModel.Instance.ChangeView("BackupList");
 					}
 					else

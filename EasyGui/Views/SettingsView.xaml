@@ -24,7 +24,7 @@
                 <RadioButton x:Name="LanguageFrench" Content="{Binding FrenchRadioSetting}" IsChecked="{Binding LanguageFrench}" Margin="10, 10, 0, 0"/>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="{Binding EncryptExtensionSetting}" Margin="150, 10, 0, 0" Height="170" Width="180" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding EncryptExtensionSetting}" Margin="150, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -35,10 +35,28 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBox x:Name="FileTextBox" Text="{Binding NewFileExtension}" Width="80" Margin="10, 10, 0, 10" HorizontalAlignment="Left" Height="20" Grid.Column="0" Grid.Row="0"/>
+                    <TextBox x:Name="FileTextBox" Text="{Binding NewFileExtension}" Width="100" Margin="10, 10, 0, 10" HorizontalAlignment="Left" Height="20" Grid.Column="0" Grid.Row="0"/>
                     <Button x:Name="AddFileButton" Content="{Binding AddButtonSetting}" Command="{Binding AddFileExtension}" CommandParameter="{Binding NewFileExtension}" Margin="10" HorizontalAlignment="Left" Width="60" Grid.Column="1" Grid.Row="0"/>
-                    <ListBox x:Name="FileExtensionList" ItemsSource="{Binding FileExtensions}" Width="80" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 10, 0, 10" Grid.Column="0" Grid.Row="1"/>
+                    <ListBox x:Name="FileExtensionList" ItemsSource="{Binding FileExtensions}" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 10, 0, 10" Grid.Column="0" Grid.Row="1"/>
                     <Button x:Name="DeleteFileButton" Content="{Binding RemoveButtonSetting}" Command="{Binding RemoveFileExtension}" CommandParameter="{Binding SelectedItem, ElementName=FileExtensionList}" Margin="10" HorizontalAlignment="Left" Width="60" Height="20" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="{Binding ProcessLockSetting}" Margin="370, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="ProcessTextBox" Text="{Binding NewLockProcess}" Width="100" Margin="10, 10, 0, 10" HorizontalAlignment="Left" Height="20" Grid.Column="0" Grid.Row="0"/>
+                    <Button x:Name="AddProcessButton" Content="{Binding AddButtonSetting}" Command="{Binding AddLockProcess}" CommandParameter="{Binding NewLockProcess}" Margin="10" HorizontalAlignment="Left" Width="60" Grid.Column="1" Grid.Row="0"/>
+                    <ListBox x:Name="ProcessList" ItemsSource="{Binding LockProcesses}" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 10, 0, 10" Grid.Column="0" Grid.Row="1"/>
+                    <Button x:Name="DeleteProcessButton" Content="{Binding RemoveButtonSetting}" Command="{Binding RemoveLockProcess}" CommandParameter="{Binding SelectedItem, ElementName=ProcessList}" Margin="10" HorizontalAlignment="Left" Width="60" Height="20" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
                 </Grid>
             </StackPanel>
         </GroupBox>
