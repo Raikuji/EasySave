@@ -44,13 +44,13 @@ namespace EasyCmd.ViewModel
 			switch (Settings.GetInstance().LanguageCode)
 			{
 				case "en":
-					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
+					language.LoadLanguage(RESOURCEPATH + "\\" + "en_cmd.json");
 					break;
 				case "fr":
-					language.LoadLanguage(RESOURCEPATH + "\\" + "fr.json");
+					language.LoadLanguage(RESOURCEPATH + "\\" + "fr_cmd.json");
 					break;
 				default:
-					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
+					language.LoadLanguage(RESOURCEPATH + "\\" + "en_cmd.json");
 					break;
 			}
 			Language.GetInstance().SetLanguage(language);
