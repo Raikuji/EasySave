@@ -14,6 +14,7 @@ namespace EasyCmd.ViewModel
     /// </summary>
     internal class BackupViewModel
     {
+        private BackupJobList _backupJobList;
         private BackupView _backupView;
         private string RESOURCEPATH = AppDomain.CurrentDomain.BaseDirectory + "\\resources";
         private string BACKUPJOBFILENAME = "backup_jobs.json";
@@ -25,7 +26,7 @@ namespace EasyCmd.ViewModel
 		public BackupViewModel()
         {
 			_path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
-			BackupJobList.GetInstance();
+			_backupJobList = BackupJobList.GetInstance();
 			Settings.GetInstance().LoadSettings();
 			switch (Settings.GetInstance().LogFormat)
 			{
@@ -62,7 +63,7 @@ namespace EasyCmd.ViewModel
         /// <returns></returns>
         public int GetBackupJobCount()
         {
-            return BackupJobList.GetInstance().Count();
+            return _backupJobList.Count();
         }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace EasyCmd.ViewModel
         /// <returns></returns>
         public string GetBackupJobList()
         {
-            return BackupJobList.GetInstance().ToString();
+            return _backupJobList.ToString();
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace EasyCmd.ViewModel
         /// </summary>
         public void LoadBackupJobs()
         {
-			BackupJobList.GetInstance().LoadBackupJobs(_path);
+            _backupJobList.LoadBackupJobs(_path);
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace EasyCmd.ViewModel
                 Directory.CreateDirectory(RESOURCEPATH);
             }
             string path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
-			BackupJobList.GetInstance().SaveBackupJobs(path);
+            _backupJobList.SaveBackupJobs(path);
         }
 
 		/// <summary>
@@ -108,7 +109,7 @@ namespace EasyCmd.ViewModel
 			bool isValid;
 			try
 			{
-				BackupJobList.GetInstance().AddJob(new BackupJob(name, source, destination, strategyId));
+				_backupJobList.AddJob(new BackupJob(name, source, destination, strategyId));
 				isValid = true;
 			}
 			catch (ArgumentException)
@@ -128,7 +129,7 @@ namespace EasyCmd.ViewModel
 			bool isValid;
 			try
 			{
-				BackupJobList.GetInstance().RemoveJobAt(index - 1);
+				_backupJobList.RemoveJobAt(index - 1);
 				isValid = true;
 			}
 			catch (ArgumentOutOfRangeException)
@@ -152,7 +153,7 @@ namespace EasyCmd.ViewModel
             bool isValid;
             try
             {
-				BackupJobList.GetInstance().Update(index - 1, new BackupJob(name, source, destination, strategyId));
+                _backupJobList.Update(index - 1, new BackupJob(name, source, destination, strategyId));
                 isValid = true;
             }
             catch (ArgumentOutOfRangeException)
@@ -168,7 +169,7 @@ namespace EasyCmd.ViewModel
         /// <param name="index"></param>
         public void ExecuteBackupJob(int index)
         {
-			BackupJobList.GetInstance().Execute(index - 1);
+            _backupJobList.Execute(index - 1);
         }
 
         internal bool ExecuteRange(string arg)
@@ -178,7 +179,7 @@ namespace EasyCmd.ViewModel
             {
                 if (int.TryParse(arg.Substring(arg.IndexOf('-') + 1), out int lastIndex))
                 {
-                    isValid = BackupJobList.GetInstance().ExecuteRange(firstIndex - 1, lastIndex - 1);
+                    isValid = _backupJobList.ExecuteRange(firstIndex - 1, lastIndex - 1);
                 }
             }
             return isValid;
@@ -198,7 +199,7 @@ namespace EasyCmd.ViewModel
                 {
                     if (int.TryParse(arg, out int index))
                     {
-                        isValid = BackupJobList.GetInstance().Execute(index - 1);
+                        isValid = _backupJobList.Execute(index - 1);
                     }
                     else
                     {
@@ -213,7 +214,7 @@ namespace EasyCmd.ViewModel
                             {
                                 if (int.TryParse(indexMulti, out int i))
                                 {
-                                    isValid = BackupJobList.GetInstance().Execute(i - 1);
+                                    isValid = _backupJobList.Execute(i - 1);
                                 }
                             }
                         }

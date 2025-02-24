@@ -80,7 +80,7 @@ namespace EasyCmd.Model
 		/// <param name="backupJob"></param>
 		public void Update(int index, BackupJob backupJob)
 		{
-			GetInstance()[index] = backupJob;
+			_backupJobs[index] = backupJob;
 		}
     
 		/// <summary>
@@ -89,7 +89,7 @@ namespace EasyCmd.Model
 		/// <param name="index"></param>
 		public bool Execute(int index)
 		{
-			return GetInstance()[index].Execute();
+			return _backupJobs[index].Execute();
 		}
 
 		/// <summary>
@@ -98,7 +98,7 @@ namespace EasyCmd.Model
 		/// <param name="index"></param>
 		public void ExecuteAsync(int index)
 		{
-			GetInstance()[index].Execute();
+			_backupJobs[index].Execute();
 		}
 
 		/// <summary>
