@@ -222,7 +222,7 @@ namespace EasyCmd.Model
 		{
 			int encryptionTime = 0;
 			string extension = filePath.Split(".").Last();
-			if (Settings.GetInstance().FileExtensions.Contains(extension))
+			if (Settings.GetInstance().FilesToEncrypt.Contains(extension))
 			{
 				string cryptoSoftPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft", "CryptoSoft.exe");
 				if (!File.Exists(cryptoSoftPath))

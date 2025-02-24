@@ -15,7 +15,7 @@ namespace EasyCmd.Model
 		private static Settings? _instance;
 		private string _language;
 		private LogFormat _logFormat;
-		private List<string> _fileExtensions;
+		private List<string> _filesToEncrypt;
 		private List<string> _lockProcesses;
 		private Byte[] _key;
 		public static string SETTINGSDIR = $"{AppDomain.CurrentDomain.BaseDirectory}\\resources";
@@ -26,7 +26,7 @@ namespace EasyCmd.Model
 		{
 			_language = "en";
 			_logFormat = LogFormat.JSON;
-			_fileExtensions = new List<string>();
+			_filesToEncrypt = new List<string>();
 			_lockProcesses = new List<string>();
 			Aes aes = Aes.Create();
 			aes.KeySize = 256;
@@ -50,10 +50,10 @@ namespace EasyCmd.Model
 			get => _logFormat;
 			set => _logFormat = value;
 		}
-		public List<string> FileExtensions
+		public List<string> FilesToEncrypt
 		{
-			get => _fileExtensions;
-			set => _fileExtensions = value;
+			get => _filesToEncrypt;
+			set => _filesToEncrypt = value;
 		}
 		public List<string> LockProcesses
 		{

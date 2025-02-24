@@ -29,7 +29,7 @@ namespace EasyGui.ViewModels
 			Settings.GetInstance().LoadSettings();
 			_logFormat = Settings.GetInstance().LogFormat;
 			_language = Settings.GetInstance().LanguageCode;
-			_fileExtensions = Settings.GetInstance().FileExtensions;
+			_fileExtensions = Settings.GetInstance().FilesToEncrypt;
 			_lockProcesses = Settings.GetInstance().LockProcesses;
 			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
 			ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
@@ -43,7 +43,7 @@ namespace EasyGui.ViewModels
 		{
 			if (obj != null) 
 			{
-				Settings.GetInstance().FileExtensions.Remove(obj);
+				Settings.GetInstance().FilesToEncrypt.Remove(obj);
 				Settings.GetInstance().SaveSettings();
 				MainWindowViewModel.Instance.ChangeView("Settings");
 			}
@@ -52,8 +52,8 @@ namespace EasyGui.ViewModels
 
 		private void AddExtension()
 		{
-			Settings.GetInstance().FileExtensions.Add(NewFileExtension);
-			FileExtensions = Settings.GetInstance().FileExtensions;
+			Settings.GetInstance().FilesToEncrypt.Add(NewFileExtension);
+			FileExtensions = Settings.GetInstance().FilesToEncrypt;
 			Settings.GetInstance().SaveSettings();
 			MainWindowViewModel.Instance.ChangeView("Settings");
 		}
