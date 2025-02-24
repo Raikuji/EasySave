@@ -20,6 +20,7 @@ namespace EasyCmd.Model
 		private IBackupWorkStrategy BackupStrategy { get; }
 		private WorkState _workState;
 		public bool IsRunning { get; set; }
+		public bool IsPaused { get; set; }
 
 		/// <summary>
 		/// Constructor of the BackupJob class.
@@ -242,6 +243,16 @@ namespace EasyCmd.Model
 				encryptionTime = process.ExitCode;
 			}
 			return encryptionTime;
+		}
+
+		public void Pause()
+		{
+			IsPaused = true;
+		}
+
+		public void Resume()
+		{
+			IsPaused = false;
 		}
 	}
 }

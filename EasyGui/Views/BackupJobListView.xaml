@@ -12,7 +12,7 @@
 	</Page.DataContext>
 	<Grid Background="White">
 		<DockPanel x:Name="TopDock" Margin="0,0,0,0" >
-			<ListView x:Name="BackupJobList" ItemsSource="{Binding BackupJobs}" IsSynchronizedWithCurrentItem="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" MaxWidth="{Binding ListSize}">
+            <ListView x:Name="BackupJobList" ItemsSource="{Binding BackupJobs}" IsSynchronizedWithCurrentItem="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" MaxWidth="{Binding ListSize}" SelectedItem="{Binding SelectedJob}" SelectionChanged="BackupJobList_SelectionChanged">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="{Binding NameHeaderList}" DisplayMemberBinding="{Binding Name}"/>
@@ -26,7 +26,8 @@
                 <MenuItem Header="{Binding ExecuteMenuList}" Command="{Binding ExecuteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
                 <MenuItem Header="{Binding EditMenuList}" Command="{Binding UpdateBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
                 <MenuItem Header="{Binding DeleteMenuList}" Command="{Binding DeleteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
-			</Menu>
+                <MenuItem Header="{Binding PauseMenuList}" Command="{Binding PauseBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
+            </Menu>
 		</DockPanel>
 	</Grid>
 </Page>
