@@ -42,7 +42,7 @@ namespace EasyCmd.Model
                 try
                 {
 					File.Copy(filePath, destFilePath, true);
-                    int encryptionTime = backupJob.EncryptFile(destFilePath);
+                    int encryptionTime = BackupJob.EncryptFile(destFilePath);
 
 					// Update the remaining size and file count
 					FileInfo sourceFileInfo = new FileInfo(filePath);

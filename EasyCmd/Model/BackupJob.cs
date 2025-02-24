@@ -218,8 +218,9 @@ namespace EasyCmd.Model
 			return true;
 		}
 
-		public int EncryptFile(string filePath)
+		public static int EncryptFile(string filePath)
 		{
+			Mutex mutex = new(true, "CryptoSoftMutex");
 			int encryptionTime = 0;
 			string extension = filePath.Split(".").Last();
 			if (Settings.GetInstance().FileExtensions.Contains(extension))
@@ -234,8 +235,10 @@ namespace EasyCmd.Model
 				process.StartInfo.Arguments = $"\"{filePath}\" {Settings.GetInstance().Key}";
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.CreateNoWindow = true;
+				mutex.WaitOne();
 				process.Start();
 				process.WaitForExit();
+				mutex.ReleaseMutex();
 				encryptionTime = process.ExitCode;
 			}
 			return encryptionTime;

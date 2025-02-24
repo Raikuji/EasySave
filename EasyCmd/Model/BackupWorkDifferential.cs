@@ -44,7 +44,7 @@
                     try
                     {
                         File.Copy(filePath, destFilePath, true);
-                        int encryptionTime = backupJob.EncryptFile(filePath);
+                        int encryptionTime = BackupJob.EncryptFile(filePath);
 
                         // Update the remaining size and file count
                         remainingSize -= sourceFileInfo.Length;
