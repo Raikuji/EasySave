@@ -16,6 +16,7 @@
     {"DeleteMenuList": "Delete"},
     {"PauseMenuList": "Pause"},
     {"ResumeMenuList": "Resume"},
+    {"StopMenuList": "Stop"},
     {"NameLabelAdd": "Name of the backup job:"},
     {"SourceLabelAdd": "Source directory:"},
     {"DestinationLabelAdd": "Destination directory:"},

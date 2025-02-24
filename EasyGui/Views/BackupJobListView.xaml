@@ -27,6 +27,7 @@
                 <MenuItem Header="{Binding EditMenuList}" Command="{Binding UpdateBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
                 <MenuItem Header="{Binding DeleteMenuList}" Command="{Binding DeleteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
                 <MenuItem Header="{Binding PauseMenuList}" Command="{Binding PauseBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsRunning}"/>
+                <MenuItem Header="{Binding StopMenuList}" Command="{Binding StopBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsRunning}"/>
             </Menu>
 		</DockPanel>
 	</Grid>

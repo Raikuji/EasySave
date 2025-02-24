@@ -37,6 +37,7 @@ namespace EasyGui.ViewModels
 		public ICommand DeleteBackupJobCommand { get; }
 		public ICommand ExecuteBackupJobCommand { get; }
 		public ICommand PauseBackupJobCommand { get; }
+		public ICommand StopBackupJobCommand { get; }
 
 
 		public BackupJobListViewModel()
@@ -47,6 +48,7 @@ namespace EasyGui.ViewModels
 			DeleteBackupJobCommand = new RelayCommand<BackupJob>(DeleteBackupJob);
 			ExecuteBackupJobCommand = new RelayCommand<BackupJob>(ExecuteBackupJob);
 			PauseBackupJobCommand = new RelayCommand<BackupJob>(PauseBackupJob);
+			StopBackupJobCommand = new RelayCommand<BackupJob>(StopBackupJob);
 			pauseMenuList = Language.GetInstance().GetString("PauseMenuList");
 			ProcessWatcher.GetInstance().OnProcessStateChanged += UpdatePauseMenuAction;
 		}
@@ -146,6 +148,16 @@ namespace EasyGui.ViewModels
 			OnPropertyChanged(nameof(PauseMenuList));
 		}
 
+		public void StopBackupJob(BackupJob? job)
+		{
+			if (job != null)
+			{
+				job.Stop();
+				IsRunning = false;
+				IsNotRunning = true;
+			}
+		}
+
 		public static int ListSize => Settings.GetInstance().LanguageCode == "en" ? 620 : 610;
 		public static int MenuSize => 685 - ListSize;
 		public static string NameHeaderList => Language.GetInstance().GetString("NameHeaderList");
@@ -155,6 +167,7 @@ namespace EasyGui.ViewModels
 		public static string ExecuteMenuList => Language.GetInstance().GetString("ExecuteMenuList");
 		public static string EditMenuList => Language.GetInstance().GetString("EditMenuList");
 		public static string DeleteMenuList => Language.GetInstance().GetString("DeleteMenuList");
+		public static string StopMenuList => Language.GetInstance().GetString("StopMenuList");
 
 		private string pauseMenuList;
 
