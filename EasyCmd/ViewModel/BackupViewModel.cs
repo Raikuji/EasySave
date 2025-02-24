@@ -416,16 +416,16 @@ namespace EasyCmd.ViewModel
             if (int.TryParse(input, out int languageId))
             {
                 LanguageDictionary language = new LanguageDictionary();
-                string langFileName = "en.json";
+                string langFileName = "en_cmd.json";
                 bool exists = true;
                 switch (languageId)
                 {
                     case 1:
-                        langFileName = "en.json";
+                        langFileName = "en_cmd.json";
 						Settings.GetInstance().LanguageCode = "en";
 						break;
                     case 2:
-                        langFileName = "fr.json";
+                        langFileName = "fr_cmd.json";
 						Settings.GetInstance().LanguageCode = "fr";
 						break;
                     default:
