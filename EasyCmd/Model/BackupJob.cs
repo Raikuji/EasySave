@@ -138,6 +138,10 @@ namespace EasyCmd.Model
 
 		public void Stop()
 		{
+			if (IsPaused)
+			{
+				Resume();
+			}
 			IsRunning = false;
 		}
 

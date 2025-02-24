@@ -6,7 +6,8 @@
 		xmlns:local="clr-namespace:EasyGui"
 		xmlns:ViewModels="clr-namespace:EasyGui.ViewModels"
 		mc:Ignorable="d"
-		Title="MainWindow" Height="450" Width="800" WindowStyle="ThreeDBorderWindow" Background="White">
+		Title="MainWindow" Height="450" Width="800" WindowStyle="ThreeDBorderWindow" Background="White"
+        Closed="Window_Closed">
 
     <Window.DataContext>
         <ViewModels:MainWindowViewModel x:Name="ViewModel"/>
@@ -28,6 +29,6 @@
 				 Height="40">
 			<TextBlock Text="{Binding StatusMessage}" Padding="10, 0, 0, 0"/>
 		</StatusBar>
-        <Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" Navigated="Frame_Navigated_1" />
+        <Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" />
     </DockPanel>
 </Window>

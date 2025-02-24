@@ -11,29 +11,36 @@ using EasyCmd.Model;
 
 namespace EasyGui.ViewModels
 {
-    class MainWindowViewModel : ObservableObject
+	class MainWindowViewModel : ObservableObject
 	{
 		private Page _currentView;
 
 		public ICommand ChangeViewCommand { get; }
 		public ICommand CloseApplicationCommand { get; }
 		private string _statusMessage;
-        public MainWindowViewModel()
+
+		public MainWindowViewModel()
 		{
 			ChangeViewCommand = new RelayCommand<string>(ChangeView);
-			CloseApplicationCommand = new RelayCommand(() => System.Windows.Application.Current.Shutdown());
+			CloseApplicationCommand = new RelayCommand(CloseApplication);
 			_currentView = new Views.BackupJobListView();
 			Settings.GetInstance().LoadSettings();
 			Settings.GetInstance().SetLanguage();
 			_statusMessage = Language.GetInstance().GetString("WelcomeMain");
 		}
 
+		public void CloseApplication()
+		{
+			BackupJobList.GetInstance().StopAll();
+			System.Windows.Application.Current.Shutdown();
+		}
+
 		public string StatusMessage
-        {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
-        }
-        public Page CurrentView
+		{
+			get => _statusMessage;
+			set => SetProperty(ref _statusMessage, value);
+		}
+		public Page CurrentView
 		{
 			get => _currentView;
 			set => SetProperty(ref _currentView, value);
