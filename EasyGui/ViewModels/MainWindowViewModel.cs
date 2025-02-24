@@ -27,8 +27,8 @@ namespace EasyGui.ViewModels
 			Settings.GetInstance().SetLanguage();
 			_statusMessage = Language.GetInstance().GetString("WelcomeMain");
 		}
-        
-        public string StatusMessage
+
+		public string StatusMessage
         {
             get => _statusMessage;
             set => SetProperty(ref _statusMessage, value);

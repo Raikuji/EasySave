@@ -23,7 +23,11 @@ namespace EasyGui.ViewModels
 		[ObservableProperty]
 		private BackupJob? _selectedJob;
 
+		[ObservableProperty]
 		private bool _isRunning = false;
+
+		[ObservableProperty]
+		private bool _isNotRunning = true;
 
 		public static string RESOURCEPATH = AppDomain.CurrentDomain.BaseDirectory + "\\resources";
 		public static string BACKUPJOBFILENAME = "backup_jobs.json";
@@ -44,6 +48,7 @@ namespace EasyGui.ViewModels
 			ExecuteBackupJobCommand = new RelayCommand<BackupJob>(ExecuteBackupJob);
 			PauseBackupJobCommand = new RelayCommand<BackupJob>(PauseBackupJob);
 			pauseMenuList = Language.GetInstance().GetString("PauseMenuList");
+			ProcessWatcher.GetInstance().OnProcessStateChanged += UpdatePauseMenuAction;
 		}
 
 		public void SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -51,7 +56,12 @@ namespace EasyGui.ViewModels
 			if (e.AddedItems.Count > 0)
 			{
 				SelectedJob = e.AddedItems[0] as BackupJob;
-				UpdatePauseMenu(SelectedJob);
+				if (SelectedJob != null)
+				{
+					IsRunning = SelectedJob.IsRunning;
+					IsNotRunning = !SelectedJob.IsRunning;
+					UpdatePauseMenu(SelectedJob);
+				}
 			}
 		}
 
@@ -96,7 +106,15 @@ namespace EasyGui.ViewModels
 			if (job != null)
 			{
 				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobRunning")}";
-				await job.ExecuteAsync();
+				IsRunning = true;
+				IsNotRunning = false;
+				job.Execute();
+				if (job.BackupThread != null)
+				{
+					await Task.Run(() => job.BackupThread.Join());
+				}
+				IsRunning = false;
+				IsNotRunning = true;
 				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobEnded")}";
 			}
 		}
@@ -120,6 +138,12 @@ namespace EasyGui.ViewModels
 				PauseMenuList = job.IsPaused ? Language.GetInstance().GetString("ResumeMenuList") : Language.GetInstance().GetString("PauseMenuList");
 				OnPropertyChanged(nameof(PauseMenuList));
 			}
+		}
+
+		public void UpdatePauseMenuAction(bool paused)
+		{
+			PauseMenuList = paused ? Language.GetInstance().GetString("ResumeMenuList") : Language.GetInstance().GetString("PauseMenuList");
+			OnPropertyChanged(nameof(PauseMenuList));
 		}
 
 		public static int ListSize => Settings.GetInstance().LanguageCode == "en" ? 620 : 610;

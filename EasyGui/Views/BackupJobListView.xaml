@@ -23,10 +23,10 @@
 				</ListView.View>
 			</ListView>
 			<Menu DockPanel.Dock="Right" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="{Binding MenuSize}" Visibility="Visible" HorizontalAlignment="Right" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
-                <MenuItem Header="{Binding ExecuteMenuList}" Command="{Binding ExecuteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
-                <MenuItem Header="{Binding EditMenuList}" Command="{Binding UpdateBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
-                <MenuItem Header="{Binding DeleteMenuList}" Command="{Binding DeleteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
-                <MenuItem Header="{Binding PauseMenuList}" Command="{Binding PauseBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}"/>
+                <MenuItem Header="{Binding ExecuteMenuList}" Command="{Binding ExecuteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
+                <MenuItem Header="{Binding EditMenuList}" Command="{Binding UpdateBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
+                <MenuItem Header="{Binding DeleteMenuList}" Command="{Binding DeleteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
+                <MenuItem Header="{Binding PauseMenuList}" Command="{Binding PauseBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsRunning}"/>
             </Menu>
 		</DockPanel>
 	</Grid>

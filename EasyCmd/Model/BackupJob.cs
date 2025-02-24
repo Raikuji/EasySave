@@ -21,6 +21,8 @@ namespace EasyCmd.Model
 		private WorkState _workState;
 		public bool IsRunning { get; set; }
 		public bool IsPaused { get; set; }
+		public Thread? BackupThread;
+		public ManualResetEventSlim PauseEvent;
 
 		/// <summary>
 		/// Constructor of the BackupJob class.
@@ -38,6 +40,7 @@ namespace EasyCmd.Model
 			BackupStrategy = GetBackupStrategy(strategyId);
 			_workState = new WorkState();
 			IsRunning = false;
+			PauseEvent = new ManualResetEventSlim(true);
 		}
 
 		/// <summary>
@@ -143,8 +146,9 @@ namespace EasyCmd.Model
 		/// </summary>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
-		public async Task ExecuteAsync()
+		public bool Execute()
 		{
+			bool success = false;
 			IsRunning = true;
 			foreach (string process in Settings.GetInstance().LockProcesses)
 			{
@@ -167,56 +171,31 @@ namespace EasyCmd.Model
 				{
 					Directory.CreateDirectory(Destination);
 				}
-				await Task.Run(() => BackupStrategy.Execute(this, Source, Destination));
+				
+				BackupThread = new Thread(() =>
+				{
+					try
+					{
+						BackupStrategy.Execute(this, Source, Destination);
+					}
+					catch (Exception)
+					{
+						IsRunning = false;
+					}
+					finally
+					{
+						UpdateWorkState(0, 0, "", "");
+						IsRunning = false;
+					}
+				});
+				BackupThread.Start();
+				success = true;
 			}
 			catch (Exception)
 			{
 				IsRunning = false;
 			}
-			finally
-			{
-				UpdateWorkState(0, 0, "", "");
-				IsRunning = false;
-			}
-		}
-
-		public bool Execute()
-		{
-			
-			foreach (string process in Settings.GetInstance().LockProcesses)
-			{
-				if (Process.GetProcessesByName(process).Length > 0)
-				{
-					return false;
-				}
-			}
-			IsRunning = true;
-			try
-			{
-				if (string.IsNullOrWhiteSpace(Source) || string.IsNullOrWhiteSpace(Destination))
-				{
-					throw new ArgumentNullException();
-				}
-				if (!Directory.Exists(Source))
-				{
-					throw new DirectoryNotFoundException(Source);
-				}
-				if (!Directory.Exists(Destination))
-				{
-					Directory.CreateDirectory(Destination);
-				}
-				BackupStrategy.Execute(this, Source, Destination);
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-			finally
-			{
-				UpdateWorkState(0, 0, "", "");
-				IsRunning = false;
-			}
-			return true;
+			return success;
 		}
 
 		public static int EncryptFile(string filePath)
@@ -248,11 +227,13 @@ namespace EasyCmd.Model
 		public void Pause()
 		{
 			IsPaused = true;
+			PauseEvent.Reset();
 		}
 
 		public void Resume()
 		{
 			IsPaused = false;
+			PauseEvent.Set();
 		}
 	}
 }
