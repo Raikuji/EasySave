@@ -36,6 +36,10 @@ namespace EasyCmd.Model
 				{
 					break;
 				}
+                while (backupJob.IsPaused)
+				{
+					Thread.Sleep(1000);
+				}
 
 				DateTime transfertStart = DateTime.Now;
                 string destFilePath = filePath.Replace(source, destination);
