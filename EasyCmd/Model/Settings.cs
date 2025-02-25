@@ -17,7 +17,8 @@ namespace EasyCmd.Model
 		private LogFormat _logFormat;
 		private List<string> _filesToEncrypt;
 		private List<string> _lockProcesses;
-		private Byte[] _key;
+        private List<string> _priorityExtensions;
+        private Byte[] _key;
 		public static string SETTINGSDIR = $"{AppDomain.CurrentDomain.BaseDirectory}\\resources";
 		public static string SETTINGSFILEPATH = $"{SETTINGSDIR}\\settings.json";
 
@@ -28,7 +29,8 @@ namespace EasyCmd.Model
 			_logFormat = LogFormat.JSON;
 			_filesToEncrypt = new List<string>();
 			_lockProcesses = new List<string>();
-			Aes aes = Aes.Create();
+			_priorityExtensions = new List<string>();
+            Aes aes = Aes.Create();
 			aes.KeySize = 256;
 			_key = aes.Key;
 		}
@@ -60,7 +62,12 @@ namespace EasyCmd.Model
 			get => _lockProcesses;
 			set => _lockProcesses = value;
 		}
-		public Byte[] Key
+		public List<string> PriorityExtensions
+        {
+            get => _priorityExtensions;
+            set => _priorityExtensions = value;
+        }
+        public Byte[] Key
 		{
 			get => _key;
 			set => _key = value;

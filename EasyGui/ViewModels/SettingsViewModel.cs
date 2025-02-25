@@ -16,10 +16,8 @@ namespace EasyGui.ViewModels
 	{
 		private LogFormat _logFormat;
 		private string _language;
-		private List<string> _newExtension;
+		private List<string> _priorityExtensions;
         private List<string> _fileExtensions;
-        public List<string> PriorityFileExtensions { get; set; } = new List<string>();
-        private List<string> PriorityExtensions;
 		private List<string> _lockProcesses;
 		public ICommand ChangeLogFormat { get; }
 		public ICommand ChangeLanguage { get; }
@@ -27,8 +25,8 @@ namespace EasyGui.ViewModels
 		public ICommand RemoveFileExtension { get; }
 		public ICommand AddLockProcess { get; }
 		public ICommand RemoveLockProcess { get; }
-		public ICommand AddPriorityExtensionCommand {  get; }
-		public ICommand RemovePriorityExtensionCommand { get; }
+		public ICommand AddPriorityExtension {  get; }
+		public ICommand RemovePriorityExtension { get; }
 
 		public SettingsViewModel()
 		{
@@ -36,7 +34,7 @@ namespace EasyGui.ViewModels
 			_logFormat = Settings.GetInstance().LogFormat;
 			_language = Settings.GetInstance().LanguageCode;
             _fileExtensions = Settings.GetInstance().FilesToEncrypt;
-            PriorityExtensions = new ObservableCollection<string>(Settings.GetInstance().PriorityFileExtensions);
+            _priorityExtensions = Settings.GetInstance().PriorityExtensions;
             _lockProcesses = Settings.GetInstance().LockProcesses;
 			
 			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
@@ -45,8 +43,8 @@ namespace EasyGui.ViewModels
 			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
 			AddLockProcess = new RelayCommand(AddProcess);
 			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
-			AddPriorityExtensionCommand = new RelayCommand(AddPriorityExtension);
-            RemovePriorityExtensionCommand = new RelayCommand<string>(RemovePriorityExtension);
+			AddPriorityExtension = new RelayCommand(AddPriority);
+            RemovePriorityExtension = new RelayCommand<string>(RemovePriority);
         }
 
 		private void RemoveExtension(string? obj)
@@ -89,21 +87,21 @@ namespace EasyGui.ViewModels
 		}
         private void AddPriorityExtension()
         {
-            if (!string.IsNullOrWhiteSpace(NewExtension) && !PriorityExtensions.Contains(NewExtension))
+           
             {
-                PriorityExtensions.Add(NewExtension);
-                Settings.GetInstance().PriorityFileExtensions.Add(NewExtension);
+                Settings.GetInstance().PriorityExtensions.Add(PriorityExtensions);
+                PriorityExtensions = Settings.GetInstance().PriorityExtensions;
                 Settings.GetInstance().SaveSettings();
-                NewExtension = string.Empty;
+                MainWindowViewModel.Instance.ChangeView("Settings");
             }
         }
-        private void RemovePriorityExtension(string extension)
+        private void RemovePriorityExtension(string? obj)
         {
-            if (PriorityExtensions.Contains(extension))
+            if (obj != null)
             {
-                PriorityExtensions.Remove(extension);
-                Settings.GetInstance().PriorityFileExtensions.Remove(extension);
+                Settings.GetInstance().LockProcesses.Remove(obj);
                 Settings.GetInstance().SaveSettings();
+                MainWindowViewModel.Instance.ChangeView("Settings");
             }
         }
 
@@ -121,10 +119,10 @@ namespace EasyGui.ViewModels
 			set => SetProperty(ref _language, value);
 		}
 
-        public List<string> NewExtension
+        public List<string> PriorityExtensions
         {
-            get => _newExtension;
-            set => SetProperty(ref _newExtension, value);
+            get => _priorityExtensions;
+            set => SetProperty(ref _priorityExtensions, value);
         }
         public List<string> FileExtensions
         {
