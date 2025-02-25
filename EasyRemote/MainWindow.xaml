@@ -1,17 +1,22 @@
 ﻿<Window x:Class="EasySaveClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Remote Console" Height="300" Width="400">
+        Title="Remote Console" Height="400" Width="400">
     <Grid>
-        <TextBlock Name="StatusText" Text="Connection in progress..." 
+        <TextBlock Name="StatusText" Text="Connexion en cours..." 
                    VerticalAlignment="Top" HorizontalAlignment="Center"
                    FontSize="16" Margin="10"/>
 
-        <Button Content="Pause" Click="Pause_Click" Width="80" Height="30" 
-                VerticalAlignment="Bottom" Margin="10,0,300,20"/>
-        <Button Content="Play" Click="Play_Click" Width="80" Height="30" 
-                VerticalAlignment="Bottom" Margin="150,0,150,20"/>
-        <Button Content="Stop" Click="Stop_Click" Width="80" Height="30" 
-                VerticalAlignment="Bottom" Margin="300,0,10,20"/>
+        <ListBox Name="JobListBox" Height="150" Width="300"
+                 VerticalAlignment="Center" HorizontalAlignment="Center"
+                 SelectionChanged="JobListBox_SelectionChanged"/>
+
+        <!-- Retiré le bouton "Voir Travaux" -->
+        <Button Name="PauseButton" Content="Pause" Click="Pause_Click" Width="80" Height="30" 
+                VerticalAlignment="Bottom" Margin="10,0,300,10" IsEnabled="False"/>
+        <Button Name="PlayButton" Content="Play" Click="Play_Click" Width="80" Height="30" 
+                VerticalAlignment="Bottom" Margin="150,0,150,10" IsEnabled="False"/>
+        <Button Name="StopButton" Content="Stop" Click="Stop_Click" Width="80" Height="30" 
+                VerticalAlignment="Bottom" Margin="300,0,10,10" IsEnabled="False"/>
     </Grid>
 </Window>
