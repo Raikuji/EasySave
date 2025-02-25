@@ -12,8 +12,11 @@
 	</Page.DataContext>
 	<Grid Background="White">
 		<DockPanel x:Name="TopDock" Margin="0,0,0,0" >
-            <ListView x:Name="BackupJobList" ItemsSource="{Binding BackupJobs}" IsSynchronizedWithCurrentItem="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" MaxWidth="{Binding ListSize}" SelectedItem="{Binding SelectedJob}" SelectionChanged="BackupJobList_SelectionChanged">
-				<ListView.View>
+            <ListView x:Name="BackupJobList" ItemsSource="{Binding BackupJobs}" IsSynchronizedWithCurrentItem="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" MaxWidth="{Binding ListSize}" SelectedItem="{Binding SelectedJob}" SelectionChanged="BackupJobList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
+                <ListView.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}"/>
+                </ListView.Foreground>
+                <ListView.View>
 					<GridView>
 						<GridViewColumn Header="{Binding NameHeaderList}" DisplayMemberBinding="{Binding Name}"/>
                         <GridViewColumn Header="{Binding SourceHeaderList}" DisplayMemberBinding="{Binding Source}"/>

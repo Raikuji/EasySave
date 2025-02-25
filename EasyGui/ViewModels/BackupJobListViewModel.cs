@@ -12,6 +12,7 @@ using EasyCmd.Model;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows;
+using System.Diagnostics;
 
 namespace EasyGui.ViewModels
 {
@@ -89,7 +90,7 @@ namespace EasyGui.ViewModels
 			if (job != null)
 			{
 				RemoveBackupJob(job);
-				MainWindowViewModel.Instance.BackupJob = job;
+				MainWindowViewModel.Instance.CurrentBackupJob = job;
 				MainWindowViewModel.Instance.ChangeView("UpdateBackup");
 			}
 		}
@@ -107,17 +108,24 @@ namespace EasyGui.ViewModels
 		{
 			if (job != null)
 			{
-				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobRunning")}";
 				IsRunning = true;
 				IsNotRunning = false;
-				job.Execute();
-				if (job.BackupThread != null)
+				await Task.Run(() =>
 				{
-					await Task.Run(() => job.BackupThread.Join());
-				}
-				IsRunning = false;
-				IsNotRunning = true;
-				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobEnded")}";
+					MainWindowViewModel.Instance.AddRunningJob(job);
+					job.Execute();
+					while (job.IsRunning)
+					{
+						System.Windows.Application.Current.Dispatcher.Invoke(() =>
+						{
+							job.ProgressValue = job.Progress();
+						});
+					}
+				}).ContinueWith(t =>
+				{
+					IsRunning = false;
+					IsNotRunning = true;
+				}, TaskScheduler.FromCurrentSynchronizationContext());
 			}
 		}
 

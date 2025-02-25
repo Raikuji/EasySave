@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
@@ -11,7 +12,7 @@ namespace EasyCmd.Model
 	/// <summary>
 	/// Represents a backup job.
 	/// </summary>
-	public class BackupJob
+	public class BackupJob : INotifyPropertyChanged
 	{
 		public string Name { get; set; }
 		public string Source { get; set; }
@@ -21,6 +22,20 @@ namespace EasyCmd.Model
 		private WorkState _workState;
 		public bool IsRunning { get; set; }
 		public bool IsPaused { get; set; }
+		private double _progressValue;
+		public double ProgressValue
+		{
+			get => _progressValue;
+			set
+			{
+				if (_progressValue != value)
+				{
+					_progressValue = value;
+					OnPropertyChanged(nameof(ProgressValue));
+				}
+			}
+		}
+
 		public Thread? BackupThread;
 		public ManualResetEventSlim PauseEvent;
 
@@ -41,6 +56,14 @@ namespace EasyCmd.Model
 			_workState = new WorkState();
 			IsRunning = false;
 			PauseEvent = new ManualResetEventSlim(true);
+			PropertyChanged = new PropertyChangedEventHandler((sender, e) => { });
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		/// <summary>
@@ -124,6 +147,7 @@ namespace EasyCmd.Model
 		public void UpdateWorkState(int files, long size, string currentFileSource, string currentFileDestination)
 		{
 			_workState.UpdateRemaining(files, size);
+			ProgressValue = Progress();
 			WorkStateNode.AddOrUpdateWorkStateNode(Name, currentFileSource, currentFileDestination, _workState);
 		}
 
@@ -134,6 +158,13 @@ namespace EasyCmd.Model
 		public WorkState GetWorkState()
 		{
 			return _workState;
+		}
+
+		public double Progress()
+		{
+			if (_workState.GetTotalSize() > 0)
+				return (double) (100 - ((_workState.GetRemainingSize() * 100) / _workState.GetTotalSize()));
+			return 0;
 		}
 
 		public void Stop()
