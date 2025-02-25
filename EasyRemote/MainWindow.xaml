@@ -1,22 +1,27 @@
-﻿<Window x:Class="EasySaveClient.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Remote Console" Height="400" Width="400">
-    <Grid>
-        <TextBlock Name="StatusText" Text="Connexion en cours..." 
-                   VerticalAlignment="Top" HorizontalAlignment="Center"
-                   FontSize="16" Margin="10"/>
-
-        <ListBox Name="JobListBox" Height="150" Width="300"
-                 VerticalAlignment="Center" HorizontalAlignment="Center"
-                 SelectionChanged="JobListBox_SelectionChanged"/>
-
-        <!-- Retiré le bouton "Voir Travaux" -->
-        <Button Name="PauseButton" Content="Pause" Click="Pause_Click" Width="80" Height="30" 
-                VerticalAlignment="Bottom" Margin="10,0,300,10" IsEnabled="False"/>
-        <Button Name="PlayButton" Content="Play" Click="Play_Click" Width="80" Height="30" 
-                VerticalAlignment="Bottom" Margin="150,0,150,10" IsEnabled="False"/>
-        <Button Name="StopButton" Content="Stop" Click="Stop_Click" Width="80" Height="30" 
-                VerticalAlignment="Bottom" Margin="300,0,10,10" IsEnabled="False"/>
+﻿<Window x:Class="EasyRemote.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:EasyRemote"
+		xmlns:ViewModels="clr-namespace:EasyRemote.ViewModels"
+		mc:Ignorable="d"
+		Title="Remote Console" Height="400" Width="400">
+	<Window.DataContext>
+		<ViewModels:MainWindowViewModel x:Name="ViewModel"/>
+	</Window.DataContext>
+	<Grid>
+		<TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Server adress:" VerticalAlignment="Top"/>
+		<TextBox HorizontalAlignment="Left" Margin="10,35,0,0" TextWrapping="Wrap" Text="{Binding ServerAdress, Mode=TwoWay}" VerticalAlignment="Top" Width="80"/>
+		<TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="Port number:" VerticalAlignment="Top"/>
+		<TextBox HorizontalAlignment="Left" Margin="10,85,0,0" TextWrapping="Wrap" Text="{Binding PortNumber, Mode=TwoWay}" VerticalAlignment="Top" Width="80"/>
+		<Button Content="Connect" HorizontalAlignment="Left" Margin="10,110,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ConnectCommand}"/>
+        <ListView HorizontalAlignment="Left" Height="180" Margin="120,10,0,0" VerticalAlignment="Top" Width="260" ItemsSource="{Binding Path=ListTest}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Server"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>

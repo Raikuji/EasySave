@@ -23,6 +23,7 @@ namespace EasyGui.ViewModels
 		public ICommand RemoveFileExtension { get; }
 		public ICommand AddLockProcess { get; }
 		public ICommand RemoveLockProcess { get; }
+		public ICommand StartServerCommand { get; }
 
 		public SettingsViewModel()
 		{
@@ -37,6 +38,18 @@ namespace EasyGui.ViewModels
 			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
 			AddLockProcess = new RelayCommand(AddProcess);
 			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
+			StartServerCommand = new RelayCommand(StartServer);
+		}
+
+		private void StartServer()
+		{
+			Task.Run(async () => await StartServerAsync());
+		}
+
+		public async Task StartServerAsync()
+		{
+			Server server = new Server(6464);
+			await server.StartAsync();
 		}
 
 		private void RemoveExtension(string? obj)

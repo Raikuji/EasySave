@@ -60,5 +60,6 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
+        <Button Content="Start Server" HorizontalAlignment="Left" Margin="20,225,0,0" VerticalAlignment="Top" Command="{Binding StartServerCommand}"/>
     </Grid>
 </Page>

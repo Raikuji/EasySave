@@ -17,6 +17,7 @@ namespace EasyGui.ViewModels
 
 		public ICommand ChangeViewCommand { get; }
 		public ICommand CloseApplicationCommand { get; }
+
 		private string _statusMessage;
         public MainWindowViewModel()
 		{
