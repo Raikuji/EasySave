@@ -15,11 +15,22 @@ namespace EasyCmd.Model
         /// <param name="destination"></param>
         public void Execute(BackupJob backupJob, string source, string destination)
         {
+            // Get priority extensions
+            var priorityExtensions = Settings.GetInstance().PriorityExtensions.Select(ext => ext.ToLower()).ToList();
+            // Look for the extensions
+            var allFiles = Directory.GetFiles(source, "*.*", SearchOption.AllDirectories);
+            //Priority Files List
+            var priorityFiles = allFiles.Where(file => priorityExtensions.Contains(Path.GetExtension(file).ToLower())).ToList();
+            //Standard Files List
+            var standardFiles = allFiles.Except(priorityFiles).ToList();
             // Get the total size and number of all files to copy
             long totalSize = GetTotalSizeOfFiles(source);
             int totalFiles = GetTotalNumberOfFiles(source);
             long remainingSize = totalSize;
             int remainingFiles = totalFiles;
+
+           
+
 
             // Recreate all the directories
             foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
@@ -28,9 +39,35 @@ namespace EasyCmd.Model
                 Directory.CreateDirectory(destPath);
                 backupJob.Log(dirPath, destPath, 0, DateTime.Now, 0);
             }
+            
+            //Copy of the priority files first
+            foreach (string filePath in priorityFiles)
+            {
+                DateTime transfertStart = DateTime.Now;
+                string destFilePath = filePath.Replace(source, destination);
+
+                try
+                {
+                    File.Copy(filePath, destFilePath, true);
+
+                    // WorkState update remaining files and size
+                    FileInfo fi = new FileInfo(filePath);
+                    long size = fi.Length;
+                    int remainingFiles = backupJob.GetWorkState().GetRemainingFiles() - 1;
+                    long remainingSize = backupJob.GetWorkState().GetRemainingSize() - size;
+
+                    backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
+                    backupJob.Log(filePath, destFilePath, size, transfertStart);
+                }
+                catch (Exception)
+                {
+                    backupJob.Log(filePath, destFilePath, -1, transfertStart);
+                }
+            }
+
 
             // Copy all the files
-            foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+            foreach (string filePath in standardFiles)
             {
 				if (!backupJob.IsRunning)
 				{

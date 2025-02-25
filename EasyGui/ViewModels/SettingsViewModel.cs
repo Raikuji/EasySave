@@ -39,10 +39,13 @@ namespace EasyGui.ViewModels
 			
 			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
 			ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
+
 			AddFileExtension = new RelayCommand(AddExtension);
 			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
+
 			AddLockProcess = new RelayCommand(AddProcess);
 			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
+
             AddPriorityExtension = new RelayCommand(AddPriority);
             RemovePriorityExtension = new RelayCommand<string>(RemovePriority);
         }
@@ -88,12 +91,41 @@ namespace EasyGui.ViewModels
         private void AddPriority()
         {
             {
-                Settings.GetInstance().PriorityExtensions.Add(NewPriority);
+				var rawInput = NewPriority;
+                var splitted = rawInput.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var item in splitted)
+                {
+                    // on normalise
+                    var extension = item.Trim().ToLower();
+                    if (!extension.StartsWith("."))
+                    {
+                        extension = "." + extension;
+                    }
+
+                    // on ajoute uniquement si pas déjà existant
+                    if (!Settings.GetInstance().PriorityExtensions.Contains(extension))
+                    {
+                        Settings.GetInstance().PriorityExtensions.Add(extension);
+                    }
+                }
+                // On rafraîchit la liste + on sauvegarde
                 PriorityExtensions = Settings.GetInstance().PriorityExtensions;
                 Settings.GetInstance().SaveSettings();
+
+                // On nettoie le champ
+                NewPriority = string.Empty;
+                OnPropertyChanged(nameof(NewPriority));
+
+                // On revient sur la vue "Settings"
                 MainWindowViewModel.Instance.ChangeView("Settings");
             }
+            //Settings.GetInstance().PriorityExtensions.Add(NewPriority);
+            //PriorityExtensions = Settings.GetInstance().PriorityExtensions;
+            //Settings.GetInstance().SaveSettings();
+            //MainWindowViewModel.Instance.ChangeView("Settings");
         }
+        
         public string NewPriority { get; set; } = string.Empty;
         private void RemovePriority(string? obj)
         {
