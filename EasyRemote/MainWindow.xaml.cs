@@ -29,27 +29,51 @@ namespace EasySaveClient
             }
             catch (Exception ex)
             {
-                StatusText.Text = "Erreur de connexion";
+                Dispatcher.Invoke(() => StatusText.Text = "Server connection error.");
+                MessageBox.Show("Unable to connect to the server.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ReceiveData()
         {
-            byte[] buffer = new byte[1024];
-            while (true)
+            try
             {
-                int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                if (bytesRead == 0) break;
+                byte[] buffer = new byte[1024];
 
-                string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                Dispatcher.Invoke(() => StatusText.Text = message); // Mise à jour UI
+                while (true)
+                {
+                    if (stream == null) return; // Check that stream is not null
+
+                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    if (bytesRead == 0) break;
+
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    Dispatcher.Invoke(() => StatusText.Text = message); // UI update
+                }
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() => StatusText.Text = "Disconnected from the server.");
             }
         }
 
         private void SendCommand(string command)
         {
-            byte[] data = Encoding.UTF8.GetBytes(command);
-            stream.Write(data, 0, data.Length);
+            if (stream == null)
+            {
+                MessageBox.Show("Connection to server lost. Relaunch client.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                byte[] data = Encoding.UTF8.GetBytes(command);
+                stream.Write(data, 0, data.Length);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error when sending order.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Pause_Click(object sender, RoutedEventArgs e) => SendCommand("PAUSE");
