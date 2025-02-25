@@ -249,6 +249,6 @@ namespace EasyGui.ViewModels
 		public string AddButtonSetting => Language.GetInstance().GetString("AddButtonSetting");
 		public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
         public string FileExtensionPriority => Language.GetInstance().GetString("FileExtensionsPriority");
-        public string PriorityExtensionsSetting => Language.GetInstance().GetString(PriorityExtensionsSetting);
+        public string PriorityExtensionsSetting => Language.GetInstance().GetString("PriorityExtensionsSetting");
     }
 }
