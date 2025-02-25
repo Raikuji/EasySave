@@ -49,19 +49,19 @@ namespace EasyCmd.Model
                 try
                 {
                     File.Copy(filePath, destFilePath, true);
+                    int encryptionTime = backupJob.EncryptFile(destFilePath);
+                    // Update the remaining size and file count
+                    FileInfo sourceFileInfo = new FileInfo(filePath);
+                    remainingSize -= sourceFileInfo.Length;
+                    remainingFiles--;
 
-                    // WorkState update remaining files and size
-                    FileInfo fi = new FileInfo(filePath);
-                    long size = fi.Length;
-                    int remainingFiles = backupJob.GetWorkState().GetRemainingFiles() - 1;
-                    long remainingSize = backupJob.GetWorkState().GetRemainingSize() - size;
-
+                    // Update remaining size and file count in the backup job
                     backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
-                    backupJob.Log(filePath, destFilePath, size, transfertStart);
+                    backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
                 }
                 catch (Exception)
                 {
-                    backupJob.Log(filePath, destFilePath, -1, transfertStart);
+                    backupJob.Log(filePath, destFilePath, -1, transfertStart, -1);
                 }
             }
 
