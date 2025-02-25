@@ -60,7 +60,7 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="{Binding PriorityExtensionsSetting}" Margin="150, 250, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding PriorityExtensionsSetting}" Margin="150, 200, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>

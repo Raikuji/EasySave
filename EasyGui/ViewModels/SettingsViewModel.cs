@@ -43,7 +43,7 @@ namespace EasyGui.ViewModels
 			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
 			AddLockProcess = new RelayCommand(AddProcess);
 			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
-			AddPriorityExtension = new RelayCommand(AddPriority);
+            AddPriorityExtension = new RelayCommand(AddPriority);
             RemovePriorityExtension = new RelayCommand<string>(RemovePriority);
         }
 
@@ -85,21 +85,21 @@ namespace EasyGui.ViewModels
 			Settings.GetInstance().SaveSettings();
 			MainWindowViewModel.Instance.ChangeView("Settings");
 		}
-        private void AddPriorityExtension()
+        private void AddPriority()
         {
-           
             {
-                Settings.GetInstance().PriorityExtensions.Add(PriorityExtensions);
+                Settings.GetInstance().PriorityExtensions.Add(NewPriority);
                 PriorityExtensions = Settings.GetInstance().PriorityExtensions;
                 Settings.GetInstance().SaveSettings();
                 MainWindowViewModel.Instance.ChangeView("Settings");
             }
         }
-        private void RemovePriorityExtension(string? obj)
+        public string NewPriority { get; set; } = string.Empty;
+        private void RemovePriority(string? obj)
         {
             if (obj != null)
             {
-                Settings.GetInstance().LockProcesses.Remove(obj);
+                Settings.GetInstance().PriorityExtensions.Remove(obj);
                 Settings.GetInstance().SaveSettings();
                 MainWindowViewModel.Instance.ChangeView("Settings");
             }
@@ -155,7 +155,8 @@ namespace EasyGui.ViewModels
 			OnPropertyChanged(nameof(EnglishRadioSetting));
 			OnPropertyChanged(nameof(EncryptExtensionSetting));
 			OnPropertyChanged(nameof(ProcessLockSetting));
-			OnPropertyChanged(nameof(AddButtonSetting));
+            OnPropertyChanged(nameof(PriorityExtensionsSetting));
+            OnPropertyChanged(nameof(AddButtonSetting));
 			OnPropertyChanged(nameof(RemoveButtonSetting));
 			MainWindowViewModel.Instance.UpdateLanguage();
 		}
@@ -215,6 +216,6 @@ namespace EasyGui.ViewModels
 		public string ProcessLockSetting => Language.GetInstance().GetString("ProcessLockSetting");
 		public string AddButtonSetting => Language.GetInstance().GetString("AddButtonSetting");
 		public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
-
-	}
+        public string FileExtensionPriority => Language.GetInstance().GetString("FileExtensionPriority");
+    }
 }
