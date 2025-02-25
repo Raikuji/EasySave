@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,10 @@ namespace EasyGui.ViewModels
 	{
 		private LogFormat _logFormat;
 		private string _language;
-		private List<string> _fileExtensions;
+		private List<string> _newExtension;
+        private List<string> _fileExtensions;
+        public List<string> PriorityFileExtensions { get; set; } = new List<string>();
+        private List<string> PriorityExtensions;
 		private List<string> _lockProcesses;
 		public ICommand ChangeLogFormat { get; }
 		public ICommand ChangeLanguage { get; }
@@ -23,21 +27,27 @@ namespace EasyGui.ViewModels
 		public ICommand RemoveFileExtension { get; }
 		public ICommand AddLockProcess { get; }
 		public ICommand RemoveLockProcess { get; }
+		public ICommand AddPriorityExtensionCommand {  get; }
+		public ICommand RemovePriorityExtensionCommand { get; }
 
 		public SettingsViewModel()
 		{
 			Settings.GetInstance().LoadSettings();
 			_logFormat = Settings.GetInstance().LogFormat;
 			_language = Settings.GetInstance().LanguageCode;
-			_fileExtensions = Settings.GetInstance().FilesToEncrypt;
-			_lockProcesses = Settings.GetInstance().LockProcesses;
+            _fileExtensions = Settings.GetInstance().FilesToEncrypt;
+            PriorityExtensions = new ObservableCollection<string>(Settings.GetInstance().PriorityFileExtensions);
+            _lockProcesses = Settings.GetInstance().LockProcesses;
+			
 			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
 			ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
 			AddFileExtension = new RelayCommand(AddExtension);
 			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
 			AddLockProcess = new RelayCommand(AddProcess);
 			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
-		}
+			AddPriorityExtensionCommand = new RelayCommand(AddPriorityExtension);
+            RemovePriorityExtensionCommand = new RelayCommand<string>(RemovePriorityExtension);
+        }
 
 		private void RemoveExtension(string? obj)
 		{
@@ -77,8 +87,27 @@ namespace EasyGui.ViewModels
 			Settings.GetInstance().SaveSettings();
 			MainWindowViewModel.Instance.ChangeView("Settings");
 		}
+        private void AddPriorityExtension()
+        {
+            if (!string.IsNullOrWhiteSpace(NewExtension) && !PriorityExtensions.Contains(NewExtension))
+            {
+                PriorityExtensions.Add(NewExtension);
+                Settings.GetInstance().PriorityFileExtensions.Add(NewExtension);
+                Settings.GetInstance().SaveSettings();
+                NewExtension = string.Empty;
+            }
+        }
+        private void RemovePriorityExtension(string extension)
+        {
+            if (PriorityExtensions.Contains(extension))
+            {
+                PriorityExtensions.Remove(extension);
+                Settings.GetInstance().PriorityFileExtensions.Remove(extension);
+                Settings.GetInstance().SaveSettings();
+            }
+        }
 
-		public string NewLockProcess { get; set; } = string.Empty;
+        public string NewLockProcess { get; set; } = string.Empty;
 
 		public LogFormat LogFormat
 		{
@@ -92,13 +121,18 @@ namespace EasyGui.ViewModels
 			set => SetProperty(ref _language, value);
 		}
 
-		public List<string> FileExtensions
-		{
-			get => _fileExtensions;
-			set => SetProperty(ref _fileExtensions, value);
-		}
+        public List<string> NewExtension
+        {
+            get => _newExtension;
+            set => SetProperty(ref _newExtension, value);
+        }
+        public List<string> FileExtensions
+        {
+            get => _fileExtensions;
+            set => SetProperty(ref _fileExtensions, value);
+        }
 
-		public List<string> LockProcesses
+        public List<string> LockProcesses
 		{
 			get => _lockProcesses;
 			set => SetProperty(ref _lockProcesses, value);
@@ -127,8 +161,8 @@ namespace EasyGui.ViewModels
 			OnPropertyChanged(nameof(RemoveButtonSetting));
 			MainWindowViewModel.Instance.UpdateLanguage();
 		}
-
-		public bool LogFormatJson
+       
+        public bool LogFormatJson
 		{
 			get => _logFormat == LogFormat.JSON;
 			set
