@@ -12,8 +12,18 @@ namespace EasyCmd.Model
 {
 	public class Settings
 	{
-		private static Settings? _instance;
-		private string _language;
+		private static Settings _instance;
+		public static Settings GetInstance()
+		{
+			if (_instance == null)
+			{
+				_instance = new Settings();
+			}
+			return _instance;
+	 }
+
+	public int MaxParallelFileSizeKB { get; set; } = 1024; // Default value of 1024 KB
+        private string _language;
 		private LogFormat _logFormat;
 		private List<string> _filesToEncrypt;
 		private List<string> _lockProcesses;
