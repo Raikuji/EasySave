@@ -29,6 +29,10 @@
   Class diagram
   </h3>
   <img src="ressources/class_diagram.png" alt="Class diagram">
+  <h3>
+  Sequence diagram
+  </h3>
+  <img src="ressources/sequence_diagram.png" alt="Sequence diagram">>
 </div>
 
 <!-- MARKDOWN LINKS & IMAGES -->
