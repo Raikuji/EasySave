@@ -42,7 +42,7 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="{Binding ProcessLockSetting}" Margin="220, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding ProcessLockSetting}" Margin="440, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -60,7 +60,7 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="{Binding PriorityExtensionsSetting}" Margin="440, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding PriorityExtensionsSetting}" Margin="220, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
