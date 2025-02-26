@@ -96,28 +96,28 @@ namespace EasyGui.ViewModels
 
                 foreach (var item in splitted)
                 {
-                    // on normalise
+                    // Lower case
                     var extension = item.Trim().ToLower();
                     if (!extension.StartsWith("."))
                     {
                         extension = "." + extension;
                     }
 
-                    // on ajoute uniquement si pas déjà existant
+
                     if (!Settings.GetInstance().PriorityExtensions.Contains(extension))
                     {
                         Settings.GetInstance().PriorityExtensions.Add(extension);
                     }
                 }
-                // On rafraîchit la liste + on sauvegarde
+                // Refresh
                 PriorityExtensions = Settings.GetInstance().PriorityExtensions;
                 Settings.GetInstance().SaveSettings();
 
-                // On nettoie le champ
+                
                 NewPriority = string.Empty;
                 OnPropertyChanged(nameof(NewPriority));
 
-                // On revient sur la vue "Settings"
+                // Get back to settings view
                 MainWindowViewModel.Instance.ChangeView("Settings");
             }
             //Settings.GetInstance().PriorityExtensions.Add(NewPriority);

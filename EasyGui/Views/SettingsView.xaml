@@ -12,19 +12,19 @@
         <ViewModels:SettingsViewModel x:Name="ViewModel"/>
     </Page.DataContext>
     <Grid>
-        <GroupBox Header="{Binding LogBoxSetting}" Margin="10, 10, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding LogBoxSetting}" Margin="150, 200, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <RadioButton x:Name="LogFormatJson" Content="JSON" IsChecked="{Binding LogFormatJson}" Margin="10, 10, 0, 0"/>
                 <RadioButton x:Name="LogFormatXml" Content="XML" IsChecked="{Binding LogFormatXml}" Margin="10, 10, 0, 0"/>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Language" Margin="10, 100, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="Language" Margin="10, 200, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <RadioButton x:Name="LanguageEnglish" Content="{Binding EnglishRadioSetting}" IsChecked="{Binding LanguageEnglish}" Margin="10, 10, 0, 0"/>
                 <RadioButton x:Name="LanguageFrench" Content="{Binding FrenchRadioSetting}" IsChecked="{Binding LanguageFrench}" Margin="10, 10, 0, 0"/>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="{Binding EncryptExtensionSetting}" Margin="150, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding EncryptExtensionSetting}" Margin="10, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -42,7 +42,7 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="{Binding ProcessLockSetting}" Margin="370, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding ProcessLockSetting}" Margin="220, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -60,7 +60,7 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="{Binding PriorityExtensionsSetting}" Margin="150, 200, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding PriorityExtensionsSetting}" Margin="440, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
