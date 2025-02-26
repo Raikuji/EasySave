@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
@@ -11,7 +12,7 @@ namespace EasyCmd.Model
 	/// <summary>
 	/// Represents a backup job.
 	/// </summary>
-	public class BackupJob
+	public class BackupJob : INotifyPropertyChanged
 	{
 		public string Name { get; set; }
 		public string Source { get; set; }
@@ -20,6 +21,23 @@ namespace EasyCmd.Model
 		private IBackupWorkStrategy BackupStrategy { get; }
 		private WorkState _workState;
 		public bool IsRunning { get; set; }
+		public bool IsPaused { get; set; }
+		private double _progressValue;
+		public double ProgressValue
+		{
+			get => _progressValue;
+			set
+			{
+				if (_progressValue != value)
+				{
+					_progressValue = value;
+					OnPropertyChanged(nameof(ProgressValue));
+				}
+			}
+		}
+
+		public Thread? BackupThread;
+		public ManualResetEventSlim PauseEvent;
 
 		/// <summary>
 		/// Constructor of the BackupJob class.
@@ -37,6 +55,14 @@ namespace EasyCmd.Model
 			BackupStrategy = GetBackupStrategy(strategyId);
 			_workState = new WorkState();
 			IsRunning = false;
+			PauseEvent = new ManualResetEventSlim(true);
+		}
+
+		public event PropertyChangedEventHandler? PropertyChanged;
+
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		/// <summary>
@@ -120,6 +146,7 @@ namespace EasyCmd.Model
 		public void UpdateWorkState(int files, long size, string currentFileSource, string currentFileDestination)
 		{
 			_workState.UpdateRemaining(files, size);
+			ProgressValue = Progress();
 			WorkStateNode.AddOrUpdateWorkStateNode(Name, currentFileSource, currentFileDestination, _workState);
 		}
 
@@ -132,8 +159,19 @@ namespace EasyCmd.Model
 			return _workState;
 		}
 
+		public double Progress()
+		{
+			if (_workState.GetTotalSize() > 0)
+				return (double) (100 - ((_workState.GetRemainingSize() * 100) / _workState.GetTotalSize()));
+			return 0;
+		}
+
 		public void Stop()
 		{
+			if (IsPaused)
+			{
+				Resume();
+			}
 			IsRunning = false;
 		}
 
@@ -142,8 +180,9 @@ namespace EasyCmd.Model
 		/// </summary>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
-		public async Task ExecuteAsync()
+		public bool Execute()
 		{
+			bool success = false;
 			IsRunning = true;
 			foreach (string process in Settings.GetInstance().LockProcesses)
 			{
@@ -166,62 +205,38 @@ namespace EasyCmd.Model
 				{
 					Directory.CreateDirectory(Destination);
 				}
-				await Task.Run(() => BackupStrategy.Execute(this, Source, Destination));
+				
+				BackupThread = new Thread(() =>
+				{
+					try
+					{
+						BackupStrategy.Execute(this, Source, Destination);
+					}
+					catch (Exception)
+					{
+						IsRunning = false;
+					}
+					finally
+					{
+						UpdateWorkState(0, 0, "", "");
+						IsRunning = false;
+					}
+				});
+				BackupThread.Start();
+				success = true;
 			}
 			catch (Exception)
 			{
 				IsRunning = false;
 			}
-			finally
-			{
-				UpdateWorkState(0, 0, "", "");
-				IsRunning = false;
-			}
+			return success;
 		}
 
-		public bool Execute()
+		public static int EncryptFile(string filePath)
 		{
-			
-			foreach (string process in Settings.GetInstance().LockProcesses)
-			{
-				if (Process.GetProcessesByName(process).Length > 0)
-				{
-					return false;
-				}
-			}
-			IsRunning = true;
-			try
-			{
-				if (string.IsNullOrWhiteSpace(Source) || string.IsNullOrWhiteSpace(Destination))
-				{
-					throw new ArgumentNullException();
-				}
-				if (!Directory.Exists(Source))
-				{
-					throw new DirectoryNotFoundException(Source);
-				}
-				if (!Directory.Exists(Destination))
-				{
-					Directory.CreateDirectory(Destination);
-				}
-				BackupStrategy.Execute(this, Source, Destination);
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-			finally
-			{
-				UpdateWorkState(0, 0, "", "");
-				IsRunning = false;
-			}
-			return true;
-		}
-
-		public int EncryptFile(string filePath)
-		{
+			Mutex mutex = new(true, "CryptoSoftMutex");
 			int encryptionTime = 0;
-			string extension = filePath.Split(".").Last();
+			string extension = Path.GetExtension(filePath).ToLower();
 			if (Settings.GetInstance().FilesToEncrypt.Contains(extension))
 			{
 				string cryptoSoftPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft", "CryptoSoft.exe");
@@ -234,11 +249,25 @@ namespace EasyCmd.Model
 				process.StartInfo.Arguments = $"\"{filePath}\" {Settings.GetInstance().Key}";
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.CreateNoWindow = true;
+				mutex.WaitOne();
 				process.Start();
 				process.WaitForExit();
+				mutex.ReleaseMutex();
 				encryptionTime = process.ExitCode;
 			}
 			return encryptionTime;
+		}
+
+		public void Pause()
+		{
+			IsPaused = true;
+			PauseEvent.Reset();
+		}
+
+		public void Resume()
+		{
+			IsPaused = false;
+			PauseEvent.Set();
 		}
 	}
 }

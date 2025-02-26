@@ -11,13 +11,24 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using EasyCmd.Model;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows;
+using System.Diagnostics;
 
 namespace EasyGui.ViewModels
 {
-	public class BackupJobListViewModel : ObservableObject
+	public partial class BackupJobListViewModel : ObservableObject
 	{
+		[ObservableProperty]
 		private BackupJobList _backupJobs;
+
+		[ObservableProperty]
+		private BackupJob? _selectedJob;
+
+		[ObservableProperty]
 		private bool _isRunning = false;
+
+		[ObservableProperty]
+		private bool _isNotRunning = true;
 
 		public static string RESOURCEPATH = AppDomain.CurrentDomain.BaseDirectory + "\\resources";
 		public static string BACKUPJOBFILENAME = "backup_jobs.json";
@@ -26,6 +37,9 @@ namespace EasyGui.ViewModels
 		public ICommand UpdateBackupJobCommand { get; }
 		public ICommand DeleteBackupJobCommand { get; }
 		public ICommand ExecuteBackupJobCommand { get; }
+		public ICommand PauseBackupJobCommand { get; }
+		public ICommand StopBackupJobCommand { get; }
+
 
 		public BackupJobListViewModel()
 		{
@@ -34,6 +48,24 @@ namespace EasyGui.ViewModels
 			UpdateBackupJobCommand = new RelayCommand<BackupJob>(UpdateBackupJob);
 			DeleteBackupJobCommand = new RelayCommand<BackupJob>(DeleteBackupJob);
 			ExecuteBackupJobCommand = new RelayCommand<BackupJob>(ExecuteBackupJob);
+			PauseBackupJobCommand = new RelayCommand<BackupJob>(PauseBackupJob);
+			StopBackupJobCommand = new RelayCommand<BackupJob>(StopBackupJob);
+			pauseMenuList = Language.GetInstance().GetString("PauseMenuList");
+			ProcessWatcher.GetInstance().OnProcessStateChanged += UpdatePauseMenuAction;
+		}
+
+		public void SelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count > 0)
+			{
+				SelectedJob = e.AddedItems[0] as BackupJob;
+				if (SelectedJob != null)
+				{
+					IsRunning = SelectedJob.IsRunning;
+					IsNotRunning = !SelectedJob.IsRunning;
+					UpdatePauseMenu(SelectedJob);
+				}
+			}
 		}
 
 		public void LoadBackupJobs()
@@ -41,7 +73,6 @@ namespace EasyGui.ViewModels
 			if (File.Exists(PATH))
 			{
 				BackupJobList.GetInstance().LoadBackupJobs(PATH);
-				OnPropertyChanged(nameof(BackupJobs));
 			}
 		}
 
@@ -59,7 +90,7 @@ namespace EasyGui.ViewModels
 			if (job != null)
 			{
 				RemoveBackupJob(job);
-				MainWindowViewModel.Instance.BackupJob = job;
+				MainWindowViewModel.Instance.CurrentBackupJob = job;
 				MainWindowViewModel.Instance.ChangeView("UpdateBackup");
 			}
 		}
@@ -77,34 +108,62 @@ namespace EasyGui.ViewModels
 		{
 			if (job != null)
 			{
-				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobRunning")}";
-				await job.ExecuteAsync();
-				MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobEnded")}";
-			}
-		}
-
-		public async void Execute()
-		{
-			if (!_isRunning)
-			{
-				_isRunning = true;
-				foreach (BackupJob job in BackupJobs)
+				IsRunning = true;
+				IsNotRunning = false;
+				await Task.Run(() =>
 				{
-					if (job.IsRunning)
+					MainWindowViewModel.Instance.AddRunningJob(job);
+					job.Execute();
+					while (job.IsRunning)
 					{
-						MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobRunning")}";
-						await job.ExecuteAsync();
-						MainWindowViewModel.Instance.StatusMessage = $"{job.Name} {Language.GetInstance().GetString("JobEnded")}";
+						System.Windows.Application.Current.Dispatcher.Invoke(() =>
+						{
+							job.ProgressValue = job.Progress();
+						});
 					}
-				}
-				_isRunning = false;
+				}).ContinueWith(t =>
+				{
+					IsRunning = false;
+					IsNotRunning = true;
+				}, TaskScheduler.FromCurrentSynchronizationContext());
 			}
 		}
 
-		public BackupJobList BackupJobs
+		public void PauseBackupJob(BackupJob? job)
 		{
-			get => _backupJobs;
-			set => SetProperty(ref _backupJobs, value);
+			if (job != null)
+			{
+				if (!job.IsPaused)
+					job.Pause();
+				else
+					job.Resume();
+				UpdatePauseMenu(job);
+			}
+		}
+
+		public void UpdatePauseMenu(BackupJob? job)
+		{
+			if (job != null)
+			{
+				PauseMenuList = job.IsPaused ? Language.GetInstance().GetString("ResumeMenuList") : Language.GetInstance().GetString("PauseMenuList");
+				OnPropertyChanged(nameof(PauseMenuList));
+			}
+		}
+
+		public void UpdatePauseMenuAction(bool paused)
+		{
+			PauseMenuList = paused ? Language.GetInstance().GetString("ResumeMenuList") : Language.GetInstance().GetString("PauseMenuList");
+			OnPropertyChanged(nameof(PauseMenuList));
+		}
+
+		public void StopBackupJob(BackupJob? job)
+		{
+			if (job != null)
+			{
+				job.Stop();
+				IsRunning = false;
+				IsNotRunning = true;
+			}
 		}
 
 		public static int ListSize => Settings.GetInstance().LanguageCode == "en" ? 620 : 610;
@@ -116,5 +175,10 @@ namespace EasyGui.ViewModels
 		public static string ExecuteMenuList => Language.GetInstance().GetString("ExecuteMenuList");
 		public static string EditMenuList => Language.GetInstance().GetString("EditMenuList");
 		public static string DeleteMenuList => Language.GetInstance().GetString("DeleteMenuList");
+		public static string StopMenuList => Language.GetInstance().GetString("StopMenuList");
+
+		private string pauseMenuList;
+
+		public string PauseMenuList { get => pauseMenuList; set => SetProperty(ref pauseMenuList, value); }
 	}
 }

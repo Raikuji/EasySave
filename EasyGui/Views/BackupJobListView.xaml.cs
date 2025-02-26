@@ -25,5 +25,14 @@ namespace EasyGui.Views
 			InitializeComponent();
 			DataContext = new ViewModels.BackupJobListViewModel();
 		}
+
+		private void BackupJobList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count > 0)
+			{
+				ViewModels.BackupJobListViewModel vm = (ViewModels.BackupJobListViewModel)DataContext;
+				vm.SelectionChanged(sender, e);
+			}
+		}
 	}
 }

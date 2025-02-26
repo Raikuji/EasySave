@@ -9,10 +9,21 @@ namespace EasyCmd.Model
 {
 	public class ProcessWatcher
 	{
+		private static ProcessWatcher _instance;
+
 		ManagementEventWatcher _processStartEvent;
 		ManagementEventWatcher _processStopEvent;
+		public event Action<bool>? OnProcessStateChanged;
 
-		public ProcessWatcher()
+		public static ProcessWatcher GetInstance() 
+		{
+			if (_instance == null)
+			{
+				_instance = new ProcessWatcher();
+			}
+			return _instance;
+		}
+		private ProcessWatcher()
 		{
 			try
 			{
@@ -43,7 +54,8 @@ namespace EasyCmd.Model
 				{
 					if (process.Equals(p.ProcessName, StringComparison.OrdinalIgnoreCase))
 					{
-						BackupJobList.GetInstance().StopAll();
+						BackupJobList.GetInstance().PauseAll();
+						OnProcessStateChanged?.Invoke(true);
 						break;
 					}
 				}
@@ -54,7 +66,28 @@ namespace EasyCmd.Model
 			}
 		}
 
-		void ProcessStopEvent_EventArrived(object sender, EventArrivedEventArgs e) { }
+		void ProcessStopEvent_EventArrived(object sender, EventArrivedEventArgs e)
+		{
+			string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
+			int processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value);
+			try
+			{
+				processName = processName.Split(".")[0];
+				foreach (string process in Settings.GetInstance().LockProcesses)
+				{
+					if (process.Contains(processName, StringComparison.OrdinalIgnoreCase))
+					{
+						BackupJobList.GetInstance().ResumeAll();
+						OnProcessStateChanged?.Invoke(false);
+						break;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Failed to check process: {ex.Message}");
+			}
+		}
 	}
 }
 
