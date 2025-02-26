@@ -29,8 +29,9 @@
     {"LogBoxSetting": "Log format"},
     {"FrenchRadioSetting": "French"},
     {"EnglishRadioSetting": "English"},
-    {"EncryptExtensionSetting": "Files to encrypt"},
+    { "EncryptExtensionSetting": "Files to encrypt (Extension)" },
     {"ProcessLockSetting": "Work processes"},
     {"AddButtonSetting": "Add"},
-    {"RemoveButtonSetting": "Remove"}
+    { "RemoveButtonSetting": "Remove" },
+    { "PriorityExtensionsSetting": "Files to prioritize (Extension)" }
 ]

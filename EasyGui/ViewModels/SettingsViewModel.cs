@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,8 @@ namespace EasyGui.ViewModels
 	{
 		private LogFormat _logFormat;
 		private string _language;
-		private List<string> _fileExtensions;
+		private List<string> _priorityExtensions;
+        private List<string> _fileExtensions;
 		private List<string> _lockProcesses;
 		public ICommand ChangeLogFormat { get; }
 		public ICommand ChangeLanguage { get; }
@@ -23,21 +25,30 @@ namespace EasyGui.ViewModels
 		public ICommand RemoveFileExtension { get; }
 		public ICommand AddLockProcess { get; }
 		public ICommand RemoveLockProcess { get; }
+		public ICommand AddPriorityExtension {  get; }
+		public ICommand RemovePriorityExtension { get; }
 
 		public SettingsViewModel()
 		{
 			Settings.GetInstance().LoadSettings();
 			_logFormat = Settings.GetInstance().LogFormat;
 			_language = Settings.GetInstance().LanguageCode;
-			_fileExtensions = Settings.GetInstance().FilesToEncrypt;
-			_lockProcesses = Settings.GetInstance().LockProcesses;
+            _fileExtensions = Settings.GetInstance().FilesToEncrypt;
+            _priorityExtensions = Settings.GetInstance().PriorityExtensions;
+            _lockProcesses = Settings.GetInstance().LockProcesses;
+			
 			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
 			ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
+
 			AddFileExtension = new RelayCommand(AddExtension);
 			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
+
 			AddLockProcess = new RelayCommand(AddProcess);
 			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
-		}
+
+            AddPriorityExtension = new RelayCommand(AddPriority);
+            RemovePriorityExtension = new RelayCommand<string>(RemovePriority);
+        }
 
 		private void RemoveExtension(string? obj)
 		{
@@ -77,8 +88,58 @@ namespace EasyGui.ViewModels
 			Settings.GetInstance().SaveSettings();
 			MainWindowViewModel.Instance.ChangeView("Settings");
 		}
+        public string NewPriority { get; set; } = string.Empty;
+        private void RemovePriority(string? obj)
+        {
+            if (obj != null)
+            {
+                Settings.GetInstance().PriorityExtensions.Remove(obj);
+                Settings.GetInstance().SaveSettings();
+                MainWindowViewModel.Instance.ChangeView("Settings");
+            }
+        }
+        private void AddPriority()
+        {
+            {
+				var rawInput = NewPriority;
+                var splitted = rawInput.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		public string NewLockProcess { get; set; } = string.Empty;
+                foreach (var item in splitted)
+                {
+                    // Lower case
+                    var extension = item.Trim().ToLower();
+                    if (!extension.StartsWith("."))
+                    {
+                        extension = "." + extension;
+                    }
+
+
+                    if (!Settings.GetInstance().PriorityExtensions.Contains(extension))
+                    {
+                        Settings.GetInstance().PriorityExtensions.Add(extension);
+                    }
+                }
+                // Refresh
+                PriorityExtensions = Settings.GetInstance().PriorityExtensions;
+                Settings.GetInstance().SaveSettings();
+
+                
+                NewPriority = string.Empty;
+                OnPropertyChanged(nameof(NewPriority));
+
+                // Get back to settings view
+                MainWindowViewModel.Instance.ChangeView("Settings");
+            }
+            //Settings.GetInstance().PriorityExtensions.Add(NewPriority);
+            //PriorityExtensions = Settings.GetInstance().PriorityExtensions;
+            //Settings.GetInstance().SaveSettings();
+            //MainWindowViewModel.Instance.ChangeView("Settings");
+        }
+        
+        
+        
+
+        public string NewLockProcess { get; set; } = string.Empty;
 
 		public LogFormat LogFormat
 		{
@@ -92,13 +153,18 @@ namespace EasyGui.ViewModels
 			set => SetProperty(ref _language, value);
 		}
 
-		public List<string> FileExtensions
-		{
-			get => _fileExtensions;
-			set => SetProperty(ref _fileExtensions, value);
-		}
+        public List<string> PriorityExtensions
+        {
+            get => _priorityExtensions;
+            set => SetProperty(ref _priorityExtensions, value);
+        }
+        public List<string> FileExtensions
+        {
+            get => _fileExtensions;
+            set => SetProperty(ref _fileExtensions, value);
+        }
 
-		public List<string> LockProcesses
+        public List<string> LockProcesses
 		{
 			get => _lockProcesses;
 			set => SetProperty(ref _lockProcesses, value);
@@ -123,12 +189,13 @@ namespace EasyGui.ViewModels
 			OnPropertyChanged(nameof(EnglishRadioSetting));
 			OnPropertyChanged(nameof(EncryptExtensionSetting));
 			OnPropertyChanged(nameof(ProcessLockSetting));
-			OnPropertyChanged(nameof(AddButtonSetting));
+            OnPropertyChanged(nameof(PriorityExtensionsSetting));
+            OnPropertyChanged(nameof(AddButtonSetting));
 			OnPropertyChanged(nameof(RemoveButtonSetting));
 			MainWindowViewModel.Instance.UpdateLanguage();
 		}
-
-		public bool LogFormatJson
+       
+        public bool LogFormatJson
 		{
 			get => _logFormat == LogFormat.JSON;
 			set
@@ -183,6 +250,7 @@ namespace EasyGui.ViewModels
 		public string ProcessLockSetting => Language.GetInstance().GetString("ProcessLockSetting");
 		public string AddButtonSetting => Language.GetInstance().GetString("AddButtonSetting");
 		public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
-
-	}
+        public string FileExtensionPriority => Language.GetInstance().GetString("FileExtensionsPriority");
+        public string PriorityExtensionsSetting => Language.GetInstance().GetString("PriorityExtensionsSetting");
+    }
 }
