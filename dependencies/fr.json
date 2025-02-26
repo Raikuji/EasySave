@@ -14,6 +14,8 @@
     { "ExecuteMenuList": "Executer" },
     { "EditMenuList": "Modifier" },
     { "DeleteMenuList": "Supprimer" },
+    {"PauseMenuList": "Pause"},
+    {"ResumeMenuList": "Reprendre"},
     { "NameLabelAdd": "Nom du travail de sauvegarde :" },
     { "SourceLabelAdd": "Répertoire source :" },
     { "DestinationLabelAdd": "Répertoire de destination :" },

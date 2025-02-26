@@ -19,8 +19,9 @@ namespace EasyLog
     {
         private readonly string _logFilePath;
         private readonly LogFormat _format;
+		private static Mutex _mutex = new Mutex();
 
-        public Logger(string logFilePath, LogFormat format)
+		public Logger(string logFilePath, LogFormat format)
         {
             switch (format)
 			{
@@ -38,14 +39,16 @@ namespace EasyLog
 
 		public void Log(Dictionary<string, object> data)
 		{
+			_mutex.WaitOne();
 			if (_format == LogFormat.JSON)
 			{
 				File.WriteAllText(_logFilePath, SerializeToJson(data));
 			}
 			else
 			{
-				File.WriteAllText(_logFilePath, SerializeToXml(data));
+				File.WriteAllTextAsync(_logFilePath, SerializeToXml(data));
 			}
+			_mutex.ReleaseMutex();
 		}
 
 		private string SerializeToJson(Dictionary<string, object> data)
@@ -69,16 +72,16 @@ namespace EasyLog
 
 			jsonArray.Add(jsonObject);
 			string json = JsonSerializer.Serialize(jsonArray, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(_logFilePath, json);
 			return json;
 		}
 
 		private string SerializeToXml(Dictionary<string, object> data)
-        {
+		{
 			XElement root;
 			if (File.Exists(_logFilePath))
 			{
-				root = XElement.Load(_logFilePath);
+				string existingXml = File.ReadAllText(_logFilePath);
+				root = XElement.Parse(existingXml);
 			}
 			else
 			{

@@ -23,14 +23,9 @@ namespace EasyGui
 			DataContext = MainWindowViewModel.Instance;
 		}
 
-        private void Frame_Navigated(object sender, NavigationEventArgs e)
-        {
-
-        }
-
-        private void Frame_Navigated_1(object sender, NavigationEventArgs e)
-        {
-
-        }
-    }
+		private void Window_Closed(object sender, EventArgs e)
+		{
+			MainWindowViewModel.Instance.CloseApplication();
+		}
+	}
 }

@@ -22,16 +22,19 @@ namespace EasyCmd.Model
         public static string LOGPATH = AppDomain.CurrentDomain.BaseDirectory + "\\log";
         public static string WORKSTATENAME = "work_state.json";
 
-        /// <summary>
-        /// Adds or updates a work state node in the work_state.json file.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="source"></param>
-        /// <param name="destination"></param>
-        /// <param name="workState"></param>
-        public static void AddOrUpdateWorkStateNode(string name, string source, string destination, WorkState workState)
+        private static Mutex _mutex = new Mutex();
+
+		/// <summary>
+		/// Adds or updates a work state node in the work_state.json file.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <param name="workState"></param>
+		public static void AddOrUpdateWorkStateNode(string name, string source, string destination, WorkState workState)
         {
-            var obj = new WorkStateNode
+			_mutex.WaitOne();
+			var obj = new WorkStateNode
             {
                 Name = name,
                 SourceFilePath = workState.GetRemainingFiles() == 0 ? "" : source,
@@ -81,7 +84,8 @@ namespace EasyCmd.Model
 
             string updatedJson = JsonSerializer.Serialize(workStates, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(filePath, updatedJson);
-        }
+			_mutex.ReleaseMutex();
+		}
 
         /// <summary>
         /// Removes a work state node from the work_state.json file.
@@ -89,7 +93,8 @@ namespace EasyCmd.Model
         /// <param name="name"></param>
         public static void RemoveWorkStateNode(string name)
         {
-            string filePath = LOGPATH + "\\" + WORKSTATENAME;
+            _mutex.WaitOne();
+			string filePath = LOGPATH + "\\" + WORKSTATENAME;
             List<WorkStateNode> workStates;
             if (File.Exists(filePath))
             {
@@ -112,6 +117,7 @@ namespace EasyCmd.Model
             }
             string updatedJson = JsonSerializer.Serialize(workStates, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(filePath, updatedJson);
-        }
+			_mutex.ReleaseMutex();
+		}
     }
 }

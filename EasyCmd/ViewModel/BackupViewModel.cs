@@ -14,7 +14,6 @@ namespace EasyCmd.ViewModel
     /// </summary>
     internal class BackupViewModel
     {
-        private BackupJobList _backupJobList;
         private BackupView _backupView;
         private string RESOURCEPATH = AppDomain.CurrentDomain.BaseDirectory + "\\resources";
         private string BACKUPJOBFILENAME = "backup_jobs.json";
@@ -26,7 +25,7 @@ namespace EasyCmd.ViewModel
 		public BackupViewModel()
         {
 			_path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
-			_backupJobList = BackupJobList.GetInstance();
+			BackupJobList.GetInstance();
 			Settings.GetInstance().LoadSettings();
 			switch (Settings.GetInstance().LogFormat)
 			{
@@ -44,13 +43,13 @@ namespace EasyCmd.ViewModel
 			switch (Settings.GetInstance().LanguageCode)
 			{
 				case "en":
-					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
+					language.LoadLanguage(RESOURCEPATH + "\\" + "en_cmd.json");
 					break;
 				case "fr":
-					language.LoadLanguage(RESOURCEPATH + "\\" + "fr.json");
+					language.LoadLanguage(RESOURCEPATH + "\\" + "fr_cmd.json");
 					break;
 				default:
-					language.LoadLanguage(RESOURCEPATH + "\\" + "en.json");
+					language.LoadLanguage(RESOURCEPATH + "\\" + "en_cmd.json");
 					break;
 			}
 			Language.GetInstance().SetLanguage(language);
@@ -63,7 +62,7 @@ namespace EasyCmd.ViewModel
         /// <returns></returns>
         public int GetBackupJobCount()
         {
-            return _backupJobList.Count();
+            return BackupJobList.GetInstance().Count();
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace EasyCmd.ViewModel
         /// <returns></returns>
         public string GetBackupJobList()
         {
-            return _backupJobList.ToString();
+            return BackupJobList.GetInstance().ToString();
         }
 
         /// <summary>
@@ -80,7 +79,7 @@ namespace EasyCmd.ViewModel
         /// </summary>
         public void LoadBackupJobs()
         {
-            _backupJobList.LoadBackupJobs(_path);
+			BackupJobList.GetInstance().LoadBackupJobs(_path);
         }
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace EasyCmd.ViewModel
                 Directory.CreateDirectory(RESOURCEPATH);
             }
             string path = RESOURCEPATH + "\\" + BACKUPJOBFILENAME;
-            _backupJobList.SaveBackupJobs(path);
+			BackupJobList.GetInstance().SaveBackupJobs(path);
         }
 
 		/// <summary>
@@ -109,7 +108,7 @@ namespace EasyCmd.ViewModel
 			bool isValid;
 			try
 			{
-				_backupJobList.AddJob(new BackupJob(name, source, destination, strategyId));
+				BackupJobList.GetInstance().AddJob(new BackupJob(name, source, destination, strategyId));
 				isValid = true;
 			}
 			catch (ArgumentException)
@@ -129,7 +128,7 @@ namespace EasyCmd.ViewModel
 			bool isValid;
 			try
 			{
-				_backupJobList.RemoveJobAt(index - 1);
+				BackupJobList.GetInstance().RemoveJobAt(index - 1);
 				isValid = true;
 			}
 			catch (ArgumentOutOfRangeException)
@@ -153,7 +152,7 @@ namespace EasyCmd.ViewModel
             bool isValid;
             try
             {
-                _backupJobList.Update(index - 1, new BackupJob(name, source, destination, strategyId));
+				BackupJobList.GetInstance().Update(index - 1, new BackupJob(name, source, destination, strategyId));
                 isValid = true;
             }
             catch (ArgumentOutOfRangeException)
@@ -169,7 +168,7 @@ namespace EasyCmd.ViewModel
         /// <param name="index"></param>
         public void ExecuteBackupJob(int index)
         {
-            _backupJobList.Execute(index - 1);
+			BackupJobList.GetInstance().Execute(index - 1);
         }
 
         internal bool ExecuteRange(string arg)
@@ -179,7 +178,7 @@ namespace EasyCmd.ViewModel
             {
                 if (int.TryParse(arg.Substring(arg.IndexOf('-') + 1), out int lastIndex))
                 {
-                    isValid = _backupJobList.ExecuteRange(firstIndex - 1, lastIndex - 1);
+                    isValid = BackupJobList.GetInstance().ExecuteRange(firstIndex - 1, lastIndex - 1);
                 }
             }
             return isValid;
@@ -199,7 +198,7 @@ namespace EasyCmd.ViewModel
                 {
                     if (int.TryParse(arg, out int index))
                     {
-                        isValid = _backupJobList.Execute(index - 1);
+                        isValid = BackupJobList.GetInstance().Execute(index - 1);
                     }
                     else
                     {
@@ -214,7 +213,7 @@ namespace EasyCmd.ViewModel
                             {
                                 if (int.TryParse(indexMulti, out int i))
                                 {
-                                    isValid = _backupJobList.Execute(i - 1);
+                                    isValid = BackupJobList.GetInstance().Execute(i - 1);
                                 }
                             }
                         }

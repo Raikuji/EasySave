@@ -48,6 +48,28 @@ namespace EasyCmd.Model
 			}
 		}
 
+		public void PauseAll()
+		{
+			foreach (BackupJob job in GetInstance())
+			{
+				if (job.IsRunning)
+				{
+					job.Pause();
+				}
+			}
+		}
+
+		public void ResumeAll()
+		{
+			foreach (BackupJob job in GetInstance())
+			{
+				if (job.IsPaused)
+				{
+					job.Resume();
+				}
+			}
+		}
+
 		public void AddJob(BackupJob backupJob)
 		{
 			GetInstance().Add(backupJob);
@@ -80,25 +102,16 @@ namespace EasyCmd.Model
 		/// <param name="backupJob"></param>
 		public void Update(int index, BackupJob backupJob)
 		{
-			_backupJobs[index] = backupJob;
+			GetInstance()[index] = backupJob;
 		}
-    
+	
 		/// <summary>
 		/// Executes a backup job.
 		/// </summary>
 		/// <param name="index"></param>
 		public bool Execute(int index)
 		{
-			return _backupJobs[index].Execute();
-		}
-
-		/// <summary>
-		/// Executes a backup job.
-		/// </summary>
-		/// <param name="index"></param>
-		public void ExecuteAsync(int index)
-		{
-			_backupJobs[index].Execute();
+			return GetInstance()[index].Execute();
 		}
 
 		/// <summary>
@@ -168,14 +181,15 @@ namespace EasyCmd.Model
 				}
 			}
 		}
-    internal bool ExecuteRange(int v1, int v2)
-    {
-        bool result = false;
-        for (int i = v1; i <= v2; i++)
-        {
-            result = Execute(i);
-        }
-        return result;
-    }
-  }
+
+		internal bool ExecuteRange(int v1, int v2)
+		{
+			bool result = false;
+			for (int i = v1; i <= v2; i++)
+			{
+				result = Execute(i);
+			}
+			return result;
+		}
+	}
 }
