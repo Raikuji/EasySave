@@ -56,10 +56,9 @@ namespace EasyCmd.Model
 			_workState = new WorkState();
 			IsRunning = false;
 			PauseEvent = new ManualResetEventSlim(true);
-			PropertyChanged = new PropertyChangedEventHandler((sender, e) => { });
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		protected virtual void OnPropertyChanged(string propertyName)
 		{

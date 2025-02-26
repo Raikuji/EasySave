@@ -104,7 +104,7 @@ namespace EasyCmd.Model
 		{
 			GetInstance()[index] = backupJob;
 		}
-    
+	
 		/// <summary>
 		/// Executes a backup job.
 		/// </summary>
@@ -112,15 +112,6 @@ namespace EasyCmd.Model
 		public bool Execute(int index)
 		{
 			return GetInstance()[index].Execute();
-		}
-
-		/// <summary>
-		/// Executes a backup job.
-		/// </summary>
-		/// <param name="index"></param>
-		public void ExecuteAsync(int index)
-		{
-			GetInstance()[index].Execute();
 		}
 
 		/// <summary>
@@ -190,14 +181,15 @@ namespace EasyCmd.Model
 				}
 			}
 		}
-    internal bool ExecuteRange(int v1, int v2)
-    {
-        bool result = false;
-        for (int i = v1; i <= v2; i++)
-        {
-            result = Execute(i);
-        }
-        return result;
-    }
-  }
+
+		internal bool ExecuteRange(int v1, int v2)
+		{
+			bool result = false;
+			for (int i = v1; i <= v2; i++)
+			{
+				result = Execute(i);
+			}
+			return result;
+		}
+	}
 }
