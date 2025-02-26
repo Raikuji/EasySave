@@ -7,31 +7,34 @@
    xmlns:ViewModels="clr-namespace:EasyGui.ViewModels" d:DataContext="{d:DesignInstance Type=ViewModels:BackupJobListViewModel}"
    mc:Ignorable="d" 
    d:DesignHeight="450" d:DesignWidth="750">
-	<Page.DataContext>
-		<ViewModels:BackupJobListViewModel x:Name="ViewModel"/>
-	</Page.DataContext>
-	<Grid Background="White">
-		<DockPanel x:Name="TopDock" Margin="0,0,0,0" >
+    <Page.DataContext>
+        <ViewModels:BackupJobListViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
+    <Grid Background="White">
+        <DockPanel x:Name="TopDock" Margin="0,0,0,0" >
             <ListView x:Name="BackupJobList" ItemsSource="{Binding BackupJobs}" IsSynchronizedWithCurrentItem="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" MaxWidth="{Binding ListSize}" SelectedItem="{Binding SelectedJob}" SelectionChanged="BackupJobList_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}">
                 <ListView.Foreground>
                     <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}"/>
                 </ListView.Foreground>
                 <ListView.View>
-					<GridView>
-						<GridViewColumn Header="{Binding NameHeaderList}" DisplayMemberBinding="{Binding Name}"/>
+                    <GridView>
+                        <GridViewColumn Header="{Binding NameHeaderList}" DisplayMemberBinding="{Binding Name}"/>
                         <GridViewColumn Header="{Binding SourceHeaderList}" DisplayMemberBinding="{Binding Source}"/>
                         <GridViewColumn Header="{Binding DestinationHeaderList}" DisplayMemberBinding="{Binding Destination}"/>
                         <GridViewColumn Header="{Binding TypeHeaderList}" DisplayMemberBinding="{Binding Strategy}"/>
-					</GridView>
-				</ListView.View>
-			</ListView>
-			<Menu DockPanel.Dock="Right" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="{Binding MenuSize}" Visibility="Visible" HorizontalAlignment="Right" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Menu DockPanel.Dock="Right" ScrollViewer.CanContentScroll="True" Width="{Binding MenuSize}" Visibility="Visible" HorizontalAlignment="Right" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+                <Menu.Background>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+                </Menu.Background>
                 <MenuItem Header="{Binding ExecuteMenuList}" Command="{Binding ExecuteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
                 <MenuItem Header="{Binding EditMenuList}" Command="{Binding UpdateBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
                 <MenuItem Header="{Binding DeleteMenuList}" Command="{Binding DeleteBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsNotRunning}"/>
                 <MenuItem Header="{Binding PauseMenuList}" Command="{Binding PauseBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsRunning}"/>
                 <MenuItem Header="{Binding StopMenuList}" Command="{Binding StopBackupJobCommand}" CommandParameter="{Binding SelectedItem, ElementName=BackupJobList}" IsEnabled="{Binding IsRunning}"/>
             </Menu>
-		</DockPanel>
-	</Grid>
+        </DockPanel>
+    </Grid>
 </Page>

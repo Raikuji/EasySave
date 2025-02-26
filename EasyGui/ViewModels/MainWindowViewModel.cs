@@ -12,6 +12,7 @@ using EasyCmd.Model;
 using System.Windows.Threading;
 using System.Windows.Data;
 using System.Windows;
+using System.IO;
 
 namespace EasyGui.ViewModels
 {
@@ -45,6 +46,8 @@ namespace EasyGui.ViewModels
 			_isExpanded = false;
 			BindingOperations.EnableCollectionSynchronization(StatusList, new object());
 		}
+
+		public string IconPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/icon.png");
 
 		public void CloseApplication()
 		{

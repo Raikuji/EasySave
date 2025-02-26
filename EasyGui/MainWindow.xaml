@@ -6,44 +6,61 @@
 		xmlns:local="clr-namespace:EasyGui"
 		xmlns:ViewModels="clr-namespace:EasyGui.ViewModels"
 		mc:Ignorable="d"
-		Title="MainWindow" Height="450" Width="800" WindowStyle="ThreeDBorderWindow" Background="White"
+		Title="EasySave" Height="450" Width="800" WindowStyle="ThreeDBorderWindow"
+        WindowStartupLocation="CenterScreen" ResizeMode="CanResize" WindowState="Normal"
+        Icon="{Binding IconPath}"
 		Closed="Window_Closed">
+    <Window.Foreground>
+        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+    </Window.Foreground>
+    <Window.Background>
+        <SolidColorBrush Color="#FFFFFFFF"/>
+    </Window.Background>
 
-	<Window.DataContext>
-		<ViewModels:MainWindowViewModel x:Name="ViewModel"/>
-	</Window.DataContext>
-	<Window.InputBindings>
+    <Window.DataContext>
+        <ViewModels:MainWindowViewModel x:Name="ViewModel"/>
+    </Window.DataContext>
+    <Window.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="Q" Command="{Binding ClearStatusListCommand}" />
-	</Window.InputBindings>
-	<DockPanel x:Name="TopDock" Margin="0,0,0,0" >
-		<Menu DockPanel.Dock="Top" Focusable="False" >
-			<MenuItem Header="{Binding FileDockMain}" IsTabStop="False">
-				<MenuItem Header="{Binding SettingsMain}" />
-				<MenuItem Header="{Binding ClearStatusListMain}" Command="{Binding ClearStatusListCommand}" InputGestureText="CTRL+Q"/>
-				<MenuItem Header="{Binding QuitDockMain}" Command="{Binding CloseApplicationCommand}" InputGestureText="ALT+F4"/>
-			</MenuItem>
-		</Menu>
-		<Menu DockPanel.Dock="Left" Background="#FFF6F6F6" ScrollViewer.CanContentScroll="True" Width="105" Visibility="Visible">
-			<MenuItem Header="{Binding ListMenuMain}" Command="{Binding ChangeViewCommand}" CommandParameter="BackupList"/>
-			<MenuItem Header="{Binding AddMenuMain}" Command="{Binding ChangeViewCommand}" CommandParameter="AddBackup"/>
-			<MenuItem Header="{Binding SettingsMain}" Command="{Binding ChangeViewCommand}" CommandParameter="Settings"/>
-		</Menu>
-		<StatusBar DockPanel.Dock="Bottom" Background="LightGray">
-			<Expander Header="{Binding ExpanderMain}" IsExpanded="{Binding IsExpanded}" MaxHeight="150">
+    </Window.InputBindings>
+    <DockPanel x:Name="TopDock" Margin="0,0,0,0" >
+        <Menu DockPanel.Dock="Top" Focusable="False" >
+            <Menu.Foreground>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.MenuTextColorKey}}"/>
+            </Menu.Foreground>
+            <Menu.Background>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
+            </Menu.Background>
+            <MenuItem Header="{Binding FileDockMain}" IsTabStop="False">
+                <MenuItem Header="{Binding SettingsMain}" />
+                <MenuItem Header="{Binding ClearStatusListMain}" Command="{Binding ClearStatusListCommand}" InputGestureText="CTRL+Q"/>
+                <MenuItem Header="{Binding QuitDockMain}" Command="{Binding CloseApplicationCommand}" InputGestureText="ALT+F4"/>
+            </MenuItem>
+        </Menu>
+        <Menu DockPanel.Dock="Left" ScrollViewer.CanContentScroll="True" Width="105" Visibility="Visible">
+            <Menu.Background>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+            </Menu.Background>
+            <MenuItem Header="{Binding ListMenuMain}" Command="{Binding ChangeViewCommand}" CommandParameter="BackupList"/>
+            <MenuItem Header="{Binding AddMenuMain}" Command="{Binding ChangeViewCommand}" CommandParameter="AddBackup"/>
+            <MenuItem Header="{Binding SettingsMain}" Command="{Binding ChangeViewCommand}" CommandParameter="Settings"/>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="LightGray">
+            <Expander Header="{Binding ExpanderMain}" IsExpanded="{Binding IsExpanded}" MaxHeight="150">
                 <DataGrid ItemsSource="{Binding StatusList}" AutoGenerateColumns="False" DockPanel.Dock="Top" Margin="10" HeadersVisibility="None" Visibility="{Binding IsStatusListVisible}" IsReadOnly="True" BorderThickness="0,0,0,0" HorizontalAlignment="Right" Focusable="False" IsHitTestVisible="False" GridLinesVisibility="None">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}" Width="75" IsReadOnly="True"/>
-						<DataGridTemplateColumn Width="*" Header="Progress">
-							<DataGridTemplateColumn.CellTemplate>
-								<DataTemplate>
-									<ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="20"/>
-								</DataTemplate>
-							</DataGridTemplateColumn.CellTemplate>
-						</DataGridTemplateColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</Expander>
-		</StatusBar>
-		<Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" />
-	</DockPanel>
+                        <DataGridTemplateColumn Width="*" Header="Progress">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="20"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Expander>
+        </StatusBar>
+        <Frame NavigationUIVisibility="Hidden" Content="{Binding CurrentView}" IsTabStop="False" />
+    </DockPanel>
 </Window>
