@@ -19,7 +19,7 @@
 
         <ListView HorizontalAlignment="Left" Height="180" Margin="120,10,0,0" 
           VerticalAlignment="Top" Width="260" 
-          ItemsSource="{Binding BackupJob}" 
+          ItemsSource="{Binding BackupJobs}" 
           SelectedItem="{Binding SelectedJob, Mode=TwoWay}" SelectionChanged="ListView_SelectionChanged">
             <ListView.View>
                 <GridView>

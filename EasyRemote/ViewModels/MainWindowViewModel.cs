@@ -28,6 +28,7 @@ namespace EasyRemote.ViewModels
             ServerAdress = "127.0.0.1";
             PortNumber = 5000;
             BackupJobs = new ObservableCollection<BackupJob>();
+           
         }
 
         public async void Connect()
@@ -44,7 +45,7 @@ namespace EasyRemote.ViewModels
                 while (true)
                 {
                     string data = await Task.Run(() => Client.GetInstance().ReceiveDataAsync());
-                    Console.WriteLine($"Données reçues du serveur : {data}"); // Log pour voir ce que vous recevez du serveur
+                    Console.WriteLine($"Data received from server : {data}"); 
 
                     if (!string.IsNullOrEmpty(data))
                     {
@@ -52,14 +53,14 @@ namespace EasyRemote.ViewModels
                     }
                     else
                     {
-                        Console.WriteLine("Connexion fermée par le serveur.");
+                        Console.WriteLine("Connection closed by server.");
                         break;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur : {ex.Message}");
+                Console.WriteLine($"Error : {ex.Message}");
             }
         }
 
@@ -71,7 +72,7 @@ namespace EasyRemote.ViewModels
                 string[] lines = data.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string line in lines)
                 {
-                    var parts = line.Split(new[] { '-' }, StringSplitOptions.TrimEntries);
+                    var parts = line.Split(new[] { '|' }, StringSplitOptions.TrimEntries);
                     if (parts.Length == 3)
                     {
                         BackupJobs.Add(new BackupJob
