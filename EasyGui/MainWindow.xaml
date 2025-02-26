@@ -46,7 +46,7 @@
             <MenuItem Header="{Binding SettingsMain}" Command="{Binding ChangeViewCommand}" CommandParameter="Settings"/>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="LightGray">
-            <Expander Header="{Binding ExpanderMain}" IsExpanded="{Binding IsExpanded}" MaxHeight="150">
+            <Expander Header="{Binding ExpanderMain}" IsExpanded="{Binding IsExpanded}" MaxHeight="150" TabIndex="1000000">
                 <DataGrid ItemsSource="{Binding StatusList}" AutoGenerateColumns="False" DockPanel.Dock="Top" Margin="10" HeadersVisibility="None" Visibility="{Binding IsStatusListVisible}" IsReadOnly="True" BorderThickness="0,0,0,0" HorizontalAlignment="Right" Focusable="False" IsHitTestVisible="False" GridLinesVisibility="None">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}" Width="75" IsReadOnly="True"/>
