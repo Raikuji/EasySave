@@ -15,13 +15,19 @@
         <GroupBox Header="{Binding LogBoxSetting}" Margin="150, 200, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <RadioButton x:Name="LogFormatJson" Content="JSON" IsChecked="{Binding LogFormatJson}" Margin="10, 10, 0, 0" TabIndex="214"/>
-                <RadioButton x:Name="LogFormatXml" Content="XML" IsChecked="{Binding LogFormatXml}" Margin="10, 10, 0, 0" TabIndex="219"/>
+                <RadioButton x:Name="LogFormatXml" Content="XML" IsChecked="{Binding LogFormatXml}" Margin="10, 10, 0, 0" TabIndex="215"/>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Language" Margin="10, 200, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <GroupBox Header="{Binding LanguageBoxSetting}" Margin="10, 200, 0, 0" Height="80" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <RadioButton x:Name="LanguageEnglish" Content="{Binding EnglishRadioSetting}" IsChecked="{Binding LanguageEnglish}" Margin="10, 10, 0, 0" TabIndex="212"/>
                 <RadioButton x:Name="LanguageFrench" Content="{Binding FrenchRadioSetting}" IsChecked="{Binding LanguageFrench}" Margin="10, 10, 0, 0" TabIndex="213"/>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="{Binding MaxSizeBoxSetting}" Margin="290, 200, 0, 0" Height="90" Width="150" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <StackPanel>
+                <TextBox x:Name="MaxSizeTextBox" Text="{Binding MaxSize}" Width="120" Margin="10, 10, 0, 0" HorizontalAlignment="Left" Height="20" TabIndex="216"/>
+                <Button x:Name="MaxSizeButton" Content="{Binding SaveButtonSetting}" Command="{Binding SaveMaxSize}" Margin="10" HorizontalAlignment="Left" Width="118" Height="20" TabIndex="217"/>
             </StackPanel>
         </GroupBox>
         <GroupBox Header="{Binding EncryptExtensionSetting}" Margin="10, 10, 0, 0" Height="170" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">

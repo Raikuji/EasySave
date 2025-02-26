@@ -33,5 +33,7 @@
     {"ProcessLockSetting": "Work processes"},
     {"AddButtonSetting": "Add"},
     { "RemoveButtonSetting": "Remove" },
+    { "MaxSizeBoxSetting": "Size of large files" },
+    { "LanguageBoxSetting": "Language" },
     { "PriorityExtensionsSetting": "Files to prioritize (Extension)" }
 ]

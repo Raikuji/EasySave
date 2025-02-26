@@ -22,6 +22,7 @@ namespace EasyCmd.Model
 		private WorkState _workState;
 		public bool IsRunning { get; set; }
 		public bool IsPaused { get; set; }
+
 		private double _progressValue;
 		public double ProgressValue
 		{
@@ -162,7 +163,7 @@ namespace EasyCmd.Model
 		public double Progress()
 		{
 			if (_workState.GetTotalSize() > 0)
-				return (double) (100 - ((_workState.GetRemainingSize() * 100) / _workState.GetTotalSize()));
+				return (double)(100 - ((_workState.GetRemainingSize() * 100) / _workState.GetTotalSize()));
 			return 0;
 		}
 
@@ -205,7 +206,7 @@ namespace EasyCmd.Model
 				{
 					Directory.CreateDirectory(Destination);
 				}
-				
+
 				BackupThread = new Thread(() =>
 				{
 					try
@@ -268,6 +269,14 @@ namespace EasyCmd.Model
 		{
 			IsPaused = false;
 			PauseEvent.Set();
+		}
+
+		public static void CopyBigFile(string filePath, string destFilePath)
+		{
+			using (Mutex mutex = new(true, "BigFileMutex"))
+			{
+				File.Copy(filePath, destFilePath, true);
+			}
 		}
 	}
 }

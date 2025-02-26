@@ -34,5 +34,7 @@
     { "ProcessLockSetting": "Processus métier" },
     { "AddButtonSetting": "Ajouter" },
     { "RemoveButtonSetting": "Retirer" },
+    { "MaxSizeBoxSetting": "Taille des gros fichiers"},
+    { "LanguageBoxSetting": "Langue" },
     { "PriorityExtensionsSetting": "Fichiers prioritaires (Extension)" }
 ]

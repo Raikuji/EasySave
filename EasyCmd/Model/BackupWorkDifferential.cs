@@ -21,8 +21,8 @@
             var allFiles = Directory.GetFiles(source, "*.*", SearchOption.AllDirectories);
             //Priority Files List
             var priorityFiles = allFiles.Where(file => priorityExtensions.Contains(Path.GetExtension(file).ToLower())).ToList();
-            //Standard Files List
-            var standardFiles = allFiles.Except(priorityFiles).ToList();
+			//Standard Files List
+			var standardFiles = allFiles.Except(priorityFiles).ToList();
             // Get the total size and number of all files to copy
             long totalSize = GetTotalSizeOfFiles(source, destination);
             int totalFiles = GetTotalNumberOfFiles(source, destination);
@@ -30,7 +30,7 @@
             int remainingFiles = totalFiles;
             
             // Set the total number of files and total size of the files to copy
-			      backupJob.SetTotalWorkState(totalFiles, totalSize);
+			backupJob.SetTotalWorkState(totalFiles, totalSize);
 
             // Recreate all the directories
             foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
@@ -40,13 +40,29 @@
             //Copy of the priority files first
             foreach (string filePath in priorityFiles)
             {
-                DateTime transfertStart = DateTime.Now;
+				if (!backupJob.IsRunning)
+				{
+					break;
+				}
+				if (backupJob.IsPaused)
+				{
+					backupJob.PauseEvent.Wait();
+				}
+				DateTime transfertStart = DateTime.Now;
                 string destFilePath = filePath.Replace(source, destination);
 
                 try
                 {
-                    File.Copy(filePath, destFilePath, true);
-                    int encryptionTime = BackupJob.EncryptFile(destFilePath);
+					FileInfo fileInfo = new FileInfo(filePath);
+					if (fileInfo.Length >= Settings.GetInstance().BigFileSize)
+					{
+						BackupJob.CopyBigFile(filePath, destFilePath);
+					}
+					else
+					{
+						File.Copy(filePath, destFilePath, true);
+					}
+					int encryptionTime = BackupJob.EncryptFile(destFilePath);
                     // Update the remaining size and file count
                     FileInfo sourceFileInfo = new FileInfo(filePath);
                     remainingSize -= sourceFileInfo.Length;
@@ -83,7 +99,15 @@
 					DateTime transfertStart = DateTime.Now;
 					try
 					{
-						File.Copy(filePath, destFilePath, true);
+						FileInfo fileInfo = new FileInfo(filePath);
+						if (fileInfo.Length >= Settings.GetInstance().BigFileSize)
+						{
+							BackupJob.CopyBigFile(filePath, destFilePath);
+						}
+						else
+						{
+							File.Copy(filePath, destFilePath, true);
+						}
 						int encryptionTime = BackupJob.EncryptFile(filePath);
 
 						// Update the remaining size and file count
