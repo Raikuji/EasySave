@@ -29,10 +29,21 @@
   Class diagram
   </h3>
   <img src="ressources/class_diagram.png" alt="Class diagram">
+  <p>
+  Nous avons utilisé un design pattern Strategy pour gérer les différents types de sauvegarde (complète, différentielle) avec la méthode commune Execute qui lance la sauvegarde.
+  </p>
+  <p>
+  Nous avons aussi utilisé un design pattern Singleton pour la langue utilisé par le programme pour s’assurer de n’avoir qu’une seule langue lors de l’exécution du programme, et de même pour les Settings, le ProcessWatcher et la BackupList.  </p>
+  <p>
+  Le tout fonctionne sur un modèle MVVM avec WPF (non visible sur le diagramme car indigeste et n’explique pas les fonctions) afin de bien séparer les différentes couches et d’avoir un code modulable.
+  </p>
   <h3>
   Sequence diagram
   </h3>
-  <img src="ressources/sequence_diagram.png" alt="Sequence diagram">>
+  <img src="ressources/sequence_diagram.png" alt="Sequence diagram">
+  <p>
+  Voici l’exécution d’un travail de sauvegarde, du chargement de la liste de travaux jusqu’à la copie de chaque fichier, leur chiffrement et l’écriture des logs.
+  </p>
 </div>
 
 <!-- MARKDOWN LINKS & IMAGES -->
