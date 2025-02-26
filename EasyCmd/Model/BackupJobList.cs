@@ -159,7 +159,7 @@ namespace EasyCmd.Model
 
 					if (name != null && source != null && destination != null)
 					{
-						GetInstance().AddJob(new BackupJob(name, source, destination, strategyId));
+                        GetInstance().AddJob(new BackupJob(name, source, destination, strategyId));
 					}
 					else
 					{

@@ -11,178 +11,209 @@ using EasyLog;
 
 namespace EasyGui.ViewModels
 {
-	class SettingsViewModel : ObservableObject
-	{
-		private LogFormat _logFormat;
-		private string _language;
-		private List<string> _fileExtensions;
-		private List<string> _lockProcesses;
-		public ICommand ChangeLogFormat { get; }
-		public ICommand ChangeLanguage { get; }
-		public ICommand AddFileExtension { get; }
-		public ICommand RemoveFileExtension { get; }
-		public ICommand AddLockProcess { get; }
-		public ICommand RemoveLockProcess { get; }
+    class SettingsViewModel : ObservableObject
+    {
+        private LogFormat _logFormat;
+        private string _language;
+        private List<string> _fileExtensions;
+        private List<string> _lockProcesses;
+        private long _maxFileSizeInKB;
+        private string _notificationMessage = string.Empty; // Initialisation du champ
 
-		public SettingsViewModel()
-		{
-			Settings.GetInstance().LoadSettings();
-			_logFormat = Settings.GetInstance().LogFormat;
-			_language = Settings.GetInstance().LanguageCode;
-			_fileExtensions = Settings.GetInstance().FilesToEncrypt;
-			_lockProcesses = Settings.GetInstance().LockProcesses;
-			ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
-			ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
-			AddFileExtension = new RelayCommand(AddExtension);
-			RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
-			AddLockProcess = new RelayCommand(AddProcess);
-			RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
-		}
+        public ICommand ChangeLogFormat { get; }
+        public ICommand ChangeLanguage { get; }
+        public ICommand AddFileExtension { get; }
+        public ICommand RemoveFileExtension { get; }
+        public ICommand AddLockProcess { get; }
+        public ICommand RemoveLockProcess { get; }
+        public ICommand SaveMaxFileSizeCommand { get; }
 
-		private void RemoveExtension(string? obj)
-		{
-			if (obj != null) 
-			{
-				Settings.GetInstance().FilesToEncrypt.Remove(obj);
-				Settings.GetInstance().SaveSettings();
-				MainWindowViewModel.Instance.ChangeView("Settings");
-			}
-				
-		}
+        public SettingsViewModel()
+        {
+            Settings.GetInstance().LoadSettings();
+            _logFormat = Settings.GetInstance().LogFormat;
+            _language = Settings.GetInstance().LanguageCode;
+            _fileExtensions = Settings.GetInstance().FilesToEncrypt;
+            _lockProcesses = Settings.GetInstance().LockProcesses;
+            _maxFileSizeInKB = Settings.GetInstance().MaxFileSizeInKB;
 
-		private void AddExtension()
-		{
-			Settings.GetInstance().FilesToEncrypt.Add(NewFileExtension);
-			FileExtensions = Settings.GetInstance().FilesToEncrypt;
-			Settings.GetInstance().SaveSettings();
-			MainWindowViewModel.Instance.ChangeView("Settings");
-		}
+            ChangeLogFormat = new RelayCommand<LogFormat>(UpdateLogFormat);
+            ChangeLanguage = new RelayCommand<string?>(UpdateLanguage);
+            AddFileExtension = new RelayCommand(AddExtension);
+            RemoveFileExtension = new RelayCommand<string>(RemoveExtension);
+            AddLockProcess = new RelayCommand(AddProcess);
+            RemoveLockProcess = new RelayCommand<string>(RemoveProcess);
+            SaveMaxFileSizeCommand = new RelayCommand(SaveMaxFileSize);
+        }
 
-		public string NewFileExtension { get; set; } = string.Empty;
+        private void RemoveExtension(string? obj)
+        {
+            if (obj != null)
+            {
+                Settings.GetInstance().FilesToEncrypt.Remove(obj);
+                Settings.GetInstance().SaveSettings();
+                MainWindowViewModel.Instance.ChangeView("Settings");
+            }
+        }
 
-		private void RemoveProcess(string? obj)
-		{
-			if (obj != null)
-			{
-				Settings.GetInstance().LockProcesses.Remove(obj);
-				Settings.GetInstance().SaveSettings();
-				MainWindowViewModel.Instance.ChangeView("Settings");
-			}
-		}
+        private void AddExtension()
+        {
+            Settings.GetInstance().FilesToEncrypt.Add(NewFileExtension);
+            FileExtensions = Settings.GetInstance().FilesToEncrypt;
+            Settings.GetInstance().SaveSettings();
+            MainWindowViewModel.Instance.ChangeView("Settings");
+        }
 
-		private void AddProcess()
-		{
-			Settings.GetInstance().LockProcesses.Add(NewLockProcess);
-			LockProcesses = Settings.GetInstance().LockProcesses;
-			Settings.GetInstance().SaveSettings();
-			MainWindowViewModel.Instance.ChangeView("Settings");
-		}
+        public string NewFileExtension { get; set; } = string.Empty;
 
-		public string NewLockProcess { get; set; } = string.Empty;
+        private void RemoveProcess(string? obj)
+        {
+            if (obj != null)
+            {
+                Settings.GetInstance().LockProcesses.Remove(obj);
+                Settings.GetInstance().SaveSettings();
+                MainWindowViewModel.Instance.ChangeView("Settings");
+            }
+        }
 
-		public LogFormat LogFormat
-		{
-			get => _logFormat;
-			set => SetProperty(ref _logFormat, value);
-		}
+        private void AddProcess()
+        {
+            Settings.GetInstance().LockProcesses.Add(NewLockProcess);
+            LockProcesses = Settings.GetInstance().LockProcesses;
+            Settings.GetInstance().SaveSettings();
+            MainWindowViewModel.Instance.ChangeView("Settings");
+        }
 
-		public string CurrentLanguage
-		{
-			get => _language;
-			set => SetProperty(ref _language, value);
-		}
+        public string NewLockProcess { get; set; } = string.Empty;
 
-		public List<string> FileExtensions
-		{
-			get => _fileExtensions;
-			set => SetProperty(ref _fileExtensions, value);
-		}
+        public LogFormat LogFormat
+        {
+            get => _logFormat;
+            set => SetProperty(ref _logFormat, value);
+        }
 
-		public List<string> LockProcesses
-		{
-			get => _lockProcesses;
-			set => SetProperty(ref _lockProcesses, value);
-		}
+        public string CurrentLanguage
+        {
+            get => _language;
+            set => SetProperty(ref _language, value);
+        }
 
-		public void UpdateLogFormat(LogFormat format)
-		{
-			_logFormat = format;
-			Settings.GetInstance().LogFormat = format;
-			Settings.GetInstance().SaveSettings();
-		}
+        public List<string> FileExtensions
+        {
+            get => _fileExtensions;
+            set => SetProperty(ref _fileExtensions, value);
+        }
 
-		public void UpdateLanguage(string? language)
-		{
-			if (language is null) return;
-			_language = language;
-			Settings.GetInstance().LanguageCode = language;
-			Settings.GetInstance().SetLanguage();
-			Settings.GetInstance().SaveSettings();
-			OnPropertyChanged(nameof(LogBoxSetting));
-			OnPropertyChanged(nameof(FrenchRadioSetting));
-			OnPropertyChanged(nameof(EnglishRadioSetting));
-			OnPropertyChanged(nameof(EncryptExtensionSetting));
-			OnPropertyChanged(nameof(ProcessLockSetting));
-			OnPropertyChanged(nameof(AddButtonSetting));
-			OnPropertyChanged(nameof(RemoveButtonSetting));
-			MainWindowViewModel.Instance.UpdateLanguage();
-		}
+        public List<string> LockProcesses
+        {
+            get => _lockProcesses;
+            set => SetProperty(ref _lockProcesses, value);
+        }
 
-		public bool LogFormatJson
-		{
-			get => _logFormat == LogFormat.JSON;
-			set
-			{
-				if (value)
-				{
-					UpdateLogFormat(LogFormat.JSON);
-				}
-			}
-		}
+        public long MaxFileSizeInKB
+        {
+            get => _maxFileSizeInKB;
+            set => SetProperty(ref _maxFileSizeInKB, value);
+        }
 
-		public bool LogFormatXml
-		{
-			get => _logFormat == LogFormat.XML;
-			set
-			{
-				if (value)
-				{
-					UpdateLogFormat(LogFormat.XML);
-				}
-			}
-		}
+        public string NotificationMessage
+        {
+            get => _notificationMessage;
+            set => SetProperty(ref _notificationMessage, value);
+        }
 
-		public bool LanguageEnglish
-		{
-			get => _language == "en";
-			set
-			{
-				if (value)
-				{
-					UpdateLanguage("en");
-				}
-			}
-		}
+        public void UpdateLogFormat(LogFormat format)
+        {
+            _logFormat = format;
+            Settings.GetInstance().LogFormat = format;
+            Settings.GetInstance().SaveSettings();
+        }
 
-		public bool LanguageFrench
-		{
-			get => _language == "fr";
-			set
-			{
-				if (value)
-				{
-					UpdateLanguage("fr");
-				}
-			}
-		}
+        public void UpdateLanguage(string? language)
+        {
+            if (language is null) return;
+            _language = language;
+            Settings.GetInstance().LanguageCode = language;
+            Settings.GetInstance().SetLanguage();
+            Settings.GetInstance().SaveSettings();
+            OnPropertyChanged(nameof(LogBoxSetting));
+            OnPropertyChanged(nameof(FrenchRadioSetting));
+            OnPropertyChanged(nameof(EnglishRadioSetting));
+            OnPropertyChanged(nameof(EncryptExtensionSetting));
+            OnPropertyChanged(nameof(ProcessLockSetting));
+            OnPropertyChanged(nameof(AddButtonSetting));
+            OnPropertyChanged(nameof(RemoveButtonSetting));
+            MainWindowViewModel.Instance.UpdateLanguage();
+        }
 
-		public string LogBoxSetting => Language.GetInstance().GetString("LogBoxSetting");
-		public string FrenchRadioSetting => Language.GetInstance().GetString("FrenchRadioSetting");
-		public string EnglishRadioSetting => Language.GetInstance().GetString("EnglishRadioSetting");
-		public string EncryptExtensionSetting => Language.GetInstance().GetString("EncryptExtensionSetting");
-		public string ProcessLockSetting => Language.GetInstance().GetString("ProcessLockSetting");
-		public string AddButtonSetting => Language.GetInstance().GetString("AddButtonSetting");
-		public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
+        public void SaveMaxFileSize()
+        {
+            if (long.TryParse(MaxFileSizeInKB.ToString(), out long result) && result > 0)
+            {
+                Settings.GetInstance().MaxFileSizeInKB = result;
+                Settings.GetInstance().SaveSettings();
+                NotificationMessage = $"Maximum file size set to {MaxFileSizeInKB} Ko.";
+            }
+            else
+            {
+                NotificationMessage = "Please enter a valid value for the maximum file size.";
+            }
+        }
 
-	}
+        public bool LogFormatJson
+        {
+            get => _logFormat == LogFormat.JSON;
+            set
+            {
+                if (value)
+                {
+                    UpdateLogFormat(LogFormat.JSON);
+                }
+            }
+        }
+
+        public bool LogFormatXml
+        {
+            get => _logFormat == LogFormat.XML;
+            set
+            {
+                if (value)
+                {
+                    UpdateLogFormat(LogFormat.XML);
+                }
+            }
+        }
+
+        public bool LanguageEnglish
+        {
+            get => _language == "en";
+            set
+            {
+                if (value)
+                {
+                    UpdateLanguage("en");
+                }
+            }
+        }
+
+        public bool LanguageFrench
+        {
+            get => _language == "fr";
+            set
+            {
+                if (value)
+                {
+                    UpdateLanguage("fr");
+                }
+            }
+        }
+
+        public string LogBoxSetting => Language.GetInstance().GetString("LogBoxSetting");
+        public string FrenchRadioSetting => Language.GetInstance().GetString("FrenchRadioSetting");
+        public string EnglishRadioSetting => Language.GetInstance().GetString("EnglishRadioSetting");
+        public string EncryptExtensionSetting => Language.GetInstance().GetString("EncryptExtensionSetting");
+        public string ProcessLockSetting => Language.GetInstance().GetString("ProcessLockSetting");
+        public string AddButtonSetting => Language.GetInstance().GetString("AddButtonSetting");
+        public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
+    }
 }

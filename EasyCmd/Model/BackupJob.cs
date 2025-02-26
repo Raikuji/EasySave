@@ -21,6 +21,8 @@ namespace EasyCmd.Model
         private WorkState _workState;
         public bool IsRunning { get; set; }
         public long MaxFileSizeInKB { get; set; } // Added property for size limit
+        public int StrategyId { get; }
+
         private readonly FileTransferManager _fileTransferManager = new FileTransferManager();
 
         /// <summary>
@@ -41,6 +43,17 @@ namespace EasyCmd.Model
             _workState = new WorkState();
             IsRunning = false;
             MaxFileSizeInKB = maxFileSizeInKB; // Initializing the property
+        }
+
+        public BackupJob(string name, string source, string destination, int strategyId)
+        {
+            Name = name;
+            Source = source;
+            Destination = destination;
+            Strategy = GetBackupStrategy(strategyId).GetType().Name;
+            BackupStrategy = GetBackupStrategy(strategyId);
+            _workState = new WorkState();
+            IsRunning = false;
         }
 
         /// <summary>
