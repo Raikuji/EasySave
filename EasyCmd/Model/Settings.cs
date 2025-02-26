@@ -19,6 +19,7 @@ namespace EasyCmd.Model
 		private List<string> _lockProcesses;
         private List<string> _priorityExtensions;
         private Byte[] _key;
+		private int _bigFileSize;
 		public static string SETTINGSDIR = $"{AppDomain.CurrentDomain.BaseDirectory}\\resources";
 		public static string SETTINGSFILEPATH = $"{SETTINGSDIR}\\settings.json";
 
@@ -33,6 +34,7 @@ namespace EasyCmd.Model
             Aes aes = Aes.Create();
 			aes.KeySize = 256;
 			_key = aes.Key;
+			_bigFileSize = 1024;
 		}
 		public static Settings GetInstance()
 		{
@@ -71,6 +73,11 @@ namespace EasyCmd.Model
 		{
 			get => _key;
 			set => _key = value;
+		}
+		public int BigFileSize
+		{
+			get => _bigFileSize;
+			set => _bigFileSize = value;
 		}
 		public void LoadSettings()
 		{

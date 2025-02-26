@@ -27,6 +27,7 @@ namespace EasyGui.ViewModels
 		public ICommand RemoveLockProcess { get; }
 		public ICommand AddPriorityExtension {  get; }
 		public ICommand RemovePriorityExtension { get; }
+		public ICommand SaveMaxSize { get; }
 
 		public SettingsViewModel()
 		{
@@ -48,7 +49,9 @@ namespace EasyGui.ViewModels
 
             AddPriorityExtension = new RelayCommand(AddPriority);
             RemovePriorityExtension = new RelayCommand<string>(RemovePriority);
-        }
+
+			SaveMaxSize = new RelayCommand(SaveMaxSizeSetting);
+		}
 
 		private void RemoveExtension(string? obj)
 		{
@@ -130,10 +133,6 @@ namespace EasyGui.ViewModels
                 // Get back to settings view
                 MainWindowViewModel.Instance.ChangeView("Settings");
             }
-            //Settings.GetInstance().PriorityExtensions.Add(NewPriority);
-            //PriorityExtensions = Settings.GetInstance().PriorityExtensions;
-            //Settings.GetInstance().SaveSettings();
-            //MainWindowViewModel.Instance.ChangeView("Settings");
         }
         
         
@@ -192,6 +191,9 @@ namespace EasyGui.ViewModels
             OnPropertyChanged(nameof(PriorityExtensionsSetting));
             OnPropertyChanged(nameof(AddButtonSetting));
 			OnPropertyChanged(nameof(RemoveButtonSetting));
+			OnPropertyChanged(nameof(LanguageBoxSetting));
+			OnPropertyChanged(nameof(MaxSizeBoxSetting));
+			OnPropertyChanged(nameof(SaveButtonSetting));
 			MainWindowViewModel.Instance.UpdateLanguage();
 		}
        
@@ -243,7 +245,27 @@ namespace EasyGui.ViewModels
 			}
 		}
 
+		public int MaxSize
+		{
+			get => Settings.GetInstance().BigFileSize;
+			set
+			{
+				Settings.GetInstance().BigFileSize = value;
+				Settings.GetInstance().SaveSettings();
+			}
+		}
+
+		public void SaveMaxSizeSetting()
+		{
+			if (int.TryParse(MaxSizeBoxSetting, out int size))
+			{
+				Settings.GetInstance().BigFileSize = size;
+				Settings.GetInstance().SaveSettings();
+			}
+		}
+
 		public string LogBoxSetting => Language.GetInstance().GetString("LogBoxSetting");
+		public string LanguageBoxSetting => Language.GetInstance().GetString("LanguageBoxSetting");
 		public string FrenchRadioSetting => Language.GetInstance().GetString("FrenchRadioSetting");
 		public string EnglishRadioSetting => Language.GetInstance().GetString("EnglishRadioSetting");
 		public string EncryptExtensionSetting => Language.GetInstance().GetString("EncryptExtensionSetting");
@@ -252,5 +274,7 @@ namespace EasyGui.ViewModels
 		public string RemoveButtonSetting => Language.GetInstance().GetString("RemoveButtonSetting");
         public string FileExtensionPriority => Language.GetInstance().GetString("FileExtensionsPriority");
         public string PriorityExtensionsSetting => Language.GetInstance().GetString("PriorityExtensionsSetting");
-    }
+		public string MaxSizeBoxSetting => Language.GetInstance().GetString("MaxSizeBoxSetting");
+		public string SaveButtonSetting => Language.GetInstance().GetString("SaveButtonAdd");
+	}
 }

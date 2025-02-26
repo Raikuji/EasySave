@@ -31,7 +31,7 @@ namespace EasyCmd.Model
             int remainingFiles = totalFiles;
             
             // Set the total number of files and total size of the files to copy
-			      backupJob.SetTotalWorkState(totalFiles, totalSize);
+			backupJob.SetTotalWorkState(totalFiles, totalSize);
 
             // Recreate all the directories
             foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
