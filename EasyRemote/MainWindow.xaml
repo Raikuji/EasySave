@@ -7,21 +7,33 @@
 		xmlns:ViewModels="clr-namespace:EasyRemote.ViewModels"
 		mc:Ignorable="d"
 		Title="Remote Console" Height="400" Width="400">
-	<Window.DataContext>
-		<ViewModels:MainWindowViewModel x:Name="ViewModel"/>
-	</Window.DataContext>
-	<Grid>
-		<TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Server adress:" VerticalAlignment="Top"/>
-		<TextBox HorizontalAlignment="Left" Margin="10,35,0,0" TextWrapping="Wrap" Text="{Binding ServerAdress, Mode=TwoWay}" VerticalAlignment="Top" Width="80"/>
-		<TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="Port number:" VerticalAlignment="Top"/>
-		<TextBox HorizontalAlignment="Left" Margin="10,85,0,0" TextWrapping="Wrap" Text="{Binding PortNumber, Mode=TwoWay}" VerticalAlignment="Top" Width="80"/>
-		<Button Content="Connect" HorizontalAlignment="Left" Margin="10,110,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ConnectCommand}"/>
-        <ListView HorizontalAlignment="Left" Height="180" Margin="120,10,0,0" VerticalAlignment="Top" Width="260" ItemsSource="{Binding Path=ListTest}">
+    <Window.DataContext>
+        <ViewModels:MainWindowViewModel x:Name="ViewModel"/>
+    </Window.DataContext>
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Server address:" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="10,35,0,0" TextWrapping="Wrap" Text="{Binding ServerAdress, Mode=TwoWay}" VerticalAlignment="Top" Width="80"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="Port number:" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="10,85,0,0" TextWrapping="Wrap" Text="{Binding PortNumber, Mode=TwoWay}" VerticalAlignment="Top" Width="80"/>
+        <Button Content="Connect" HorizontalAlignment="Left" Margin="10,110,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ConnectCommand}"/>
+
+        <ListView HorizontalAlignment="Left" Height="180" Margin="120,10,0,0" 
+          VerticalAlignment="Top" Width="260" 
+          ItemsSource="{Binding BackupJob}" 
+          SelectedItem="{Binding SelectedJob, Mode=TwoWay}" SelectionChanged="ListView_SelectionChanged">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Server"/>
+                    <GridViewColumn Header="Nom" DisplayMemberBinding="{Binding Name}" Width="100"/>
+                    <GridViewColumn Header="Progression" DisplayMemberBinding="{Binding Progress}" Width="80"/>
+                    <GridViewColumn Header="Statut" DisplayMemberBinding="{Binding Status}" Width="80"/>
                 </GridView>
             </ListView.View>
         </ListView>
+
+
+        <TextBlock HorizontalAlignment="Left" Margin="10,300,0,0" TextWrapping="Wrap" Text="{Binding StatusMessage}" VerticalAlignment="Top"/>
+        <Button Content="Pause" HorizontalAlignment="Left" Margin="10,340,0,0" VerticalAlignment="Top" Width="75" Command="{Binding PauseCommand}"/>
+        <Button Content="Play" HorizontalAlignment="Left" Margin="100,340,0,0" VerticalAlignment="Top" Width="75" Command="{Binding PlayCommand}"/>
+        <Button Content="Stop" HorizontalAlignment="Left" Margin="190,340,0,0" VerticalAlignment="Top" Width="75" Command="{Binding StopCommand}"/>
     </Grid>
 </Window>
