@@ -74,7 +74,7 @@
                     <TextBox x:Name="PriorityTextBox" Text="{Binding NewPriority}" Width="100" Margin="10, 10, 0, 10" HorizontalAlignment="Left" Height="20" Grid.Column="0" Grid.Row="0"/>
                     <Button x:Name="AddPrioritynButton" Content="{Binding AddButtonSetting}" Command="{Binding AddPriorityExtension}" CommandParameter="{Binding NewPriority}" Margin="10" HorizontalAlignment="Left" Width="60" Grid.Column="1" Grid.Row="0"/>
                     <ListBox x:Name="PriorityExtensionList" ItemsSource="{Binding PriorityExtensions}" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 10, 0, 10" Grid.Column="0" Grid.Row="1"/>
-                    <Button x:Name="DeletePriorityButton" Content="{Binding RemoveButtonSetting}" Command="{Binding RemovePriorityExtension}" CommandParameter="{Binding SelectedItem, ElementName=FileExtensionList}" Margin="10" HorizontalAlignment="Left" Width="60" Height="20" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
+                    <Button x:Name="DeletePriorityButton" Content="{Binding RemoveButtonSetting}" Command="{Binding RemovePriorityExtension}" CommandParameter="{Binding SelectedItem, ElementName=PriorityExtensionList}" Margin="10" HorizontalAlignment="Left" Width="60" Height="20" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
                 </Grid>
             </StackPanel>
         </GroupBox>

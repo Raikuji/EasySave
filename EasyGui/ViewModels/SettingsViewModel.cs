@@ -88,6 +88,16 @@ namespace EasyGui.ViewModels
 			Settings.GetInstance().SaveSettings();
 			MainWindowViewModel.Instance.ChangeView("Settings");
 		}
+        public string NewPriority { get; set; } = string.Empty;
+        private void RemovePriority(string? obj)
+        {
+            if (obj != null)
+            {
+                Settings.GetInstance().PriorityExtensions.Remove(obj);
+                Settings.GetInstance().SaveSettings();
+                MainWindowViewModel.Instance.ChangeView("Settings");
+            }
+        }
         private void AddPriority()
         {
             {
@@ -126,16 +136,8 @@ namespace EasyGui.ViewModels
             //MainWindowViewModel.Instance.ChangeView("Settings");
         }
         
-        public string NewPriority { get; set; } = string.Empty;
-        private void RemovePriority(string? obj)
-        {
-            if (obj != null)
-            {
-                Settings.GetInstance().PriorityExtensions.Remove(obj);
-                Settings.GetInstance().SaveSettings();
-                MainWindowViewModel.Instance.ChangeView("Settings");
-            }
-        }
+        
+        
 
         public string NewLockProcess { get; set; } = string.Empty;
 
