@@ -273,9 +273,19 @@ namespace EasyCmd.Model
 
 		public static void CopyBigFile(string filePath, string destFilePath)
 		{
-			using (Mutex mutex = new(true, "BigFileMutex"))
+			using (Mutex mutex = new Mutex(false, "Global\\BigFileCopyMutex"))
 			{
-				File.Copy(filePath, destFilePath, true);
+				try
+				{
+					mutex.WaitOne();
+					{
+						File.Copy(filePath, destFilePath, true);
+					}
+				}
+				finally
+				{
+					mutex.ReleaseMutex();
+				}
 			}
 		}
 	}

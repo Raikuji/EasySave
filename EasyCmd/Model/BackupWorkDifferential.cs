@@ -48,34 +48,38 @@
 				{
 					backupJob.PauseEvent.Wait();
 				}
-				DateTime transfertStart = DateTime.Now;
-                string destFilePath = filePath.Replace(source, destination);
 
-                try
-                {
-					FileInfo fileInfo = new FileInfo(filePath);
-					if (fileInfo.Length >= Settings.GetInstance().BigFileSize)
+				string destFilePath = filePath.Replace(source, destination);
+				FileInfo sourceFileInfo = new FileInfo(filePath);
+				FileInfo destFileInfo = new FileInfo(destFilePath);
+				if (!destFileInfo.Exists || sourceFileInfo.LastWriteTime > destFileInfo.LastWriteTime)
+				{
+					DateTime transfertStart = DateTime.Now;
+					try
 					{
-						BackupJob.CopyBigFile(filePath, destFilePath);
-					}
-					else
-					{
-						File.Copy(filePath, destFilePath, true);
-					}
-					int encryptionTime = BackupJob.EncryptFile(destFilePath);
-                    // Update the remaining size and file count
-                    FileInfo sourceFileInfo = new FileInfo(filePath);
-                    remainingSize -= sourceFileInfo.Length;
-                    remainingFiles--;
+						FileInfo fileInfo = new FileInfo(filePath);
+						if (fileInfo.Length >= Settings.GetInstance().BigFileSize * 1024)
+						{
+							BackupJob.CopyBigFile(filePath, destFilePath);
+						}
+						else
+						{
+							File.Copy(filePath, destFilePath, true);
+						}
+						int encryptionTime = BackupJob.EncryptFile(destFilePath);
+						// Update the remaining size and file count
+						remainingSize -= sourceFileInfo.Length;
+						remainingFiles--;
 
-                    // Update remaining size and file count in the backup job
-                    backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
-                    backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
-                }
-                catch (Exception)
-                {
-                    backupJob.Log(filePath, destFilePath, -1, transfertStart, -1);
-                }
+						// Update remaining size and file count in the backup job
+						backupJob.UpdateWorkState(remainingFiles, remainingSize, filePath, destFilePath);
+						backupJob.Log(filePath, destFilePath, sourceFileInfo.Length, transfertStart, encryptionTime);
+					}
+					catch (Exception)
+					{
+						backupJob.Log(filePath, destFilePath, -1, transfertStart, -1);
+					}
+				}
             }
             // Copy only the modified files
             foreach (string filePath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
@@ -100,7 +104,7 @@
 					try
 					{
 						FileInfo fileInfo = new FileInfo(filePath);
-						if (fileInfo.Length >= Settings.GetInstance().BigFileSize)
+						if (fileInfo.Length >= Settings.GetInstance().BigFileSize*1024)
 						{
 							BackupJob.CopyBigFile(filePath, destFilePath);
 						}

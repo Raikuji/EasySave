@@ -49,8 +49,16 @@ namespace EasyCmd.Model
 
                 try
                 {
-                    File.Copy(filePath, destFilePath, true);
-                    int encryptionTime = BackupJob.EncryptFile(destFilePath);
+					FileInfo fileInfo = new FileInfo(filePath);
+					if (fileInfo.Length >= Settings.GetInstance().BigFileSize * 1024)
+					{
+						BackupJob.CopyBigFile(filePath, destFilePath);
+					}
+					else
+					{
+						File.Copy(filePath, destFilePath, true);
+					}
+					int encryptionTime = BackupJob.EncryptFile(destFilePath);
                     // Update the remaining size and file count
                     FileInfo sourceFileInfo = new FileInfo(filePath);
                     remainingSize -= sourceFileInfo.Length;
@@ -83,7 +91,15 @@ namespace EasyCmd.Model
 				string destFilePath = filePath.Replace(source, destination);
 				try
 				{
-					File.Copy(filePath, destFilePath, true);
+					FileInfo fileInfo = new FileInfo(filePath);
+					if (fileInfo.Length >= Settings.GetInstance().BigFileSize * 1024)
+					{
+						BackupJob.CopyBigFile(filePath, destFilePath);
+					}
+					else
+					{
+						File.Copy(filePath, destFilePath, true);
+					}
 					int encryptionTime = BackupJob.EncryptFile(destFilePath);
 
 					// Update the remaining size and file count
